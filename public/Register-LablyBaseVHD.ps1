@@ -1,5 +1,5 @@
 Function Register-LablyBaseVHD {
-    [CmdLetBinding()]
+    [CmdLetBinding(DefaultParameterSetName='ProductKey')]
     Param(
         [Parameter(Mandatory=$True)]
         [String]$VHD,
@@ -8,8 +8,27 @@ Function Register-LablyBaseVHD {
         [Int]$PartitionNumber,
 
         [Parameter(Mandatory=$False)]
-        [String]$FriendlyName = ""
+        [String]$FriendlyName = "",
+
+        [Parameter(Mandatory=$False,ParameterSetName='ProductKey')]
+        [String]$ProductKey = "",
+
+        [Parameter(Mandatory=$False,ParameterSetName='NoProductKey')]
+        [Switch]$NoProductKey
     )    
+
+    If(-Not($NoProductKey) -and $ProductKey -eq "") {
+        Write-Host "You are encouraged to include a Product Key when registring. You may use KMS Client Keys from Here:" -ForegroundColor Yellow
+        Write-Host "https://docs.microsoft.com/windows-server/get-started/kms-client-activation-keys" -ForegroundColor Yellow
+        Write-Host "To Skip using a Product Key, use the -NoProductKey Parameter" -ForegroundColor Yellow
+        Write-Host ""
+        Throw "Missing Product Key"
+    }
+
+    If($NoProductKey) {
+        Write-Host "You are encouraged to include a Product Key when registring. You may use KMS Client Keys from Here:" -ForegroundColor Yellow
+        Write-Host "You may need to manually enter a product key when building VMs from this base image." -ForegroundColor Yellow
+    }
 
     Try {
         Write-Host "Mounting $VHD to gather Image Details"
@@ -141,6 +160,7 @@ Function Register-LablyBaseVHD {
             "OSEdition" = $imageEdition
             "DateAdded" = $(Get-DateUTC)
             "LastValidated" = $(Get-DateUTC)
+            "ProductKey" = $ProductKey
         }
     ) | Out-Null
 
@@ -154,4 +174,6 @@ Function Register-LablyBaseVHD {
     } Catch {
         Throw "Unable to save registry. $($_.Exception.Message)"
     }
+
+    Write-Host "BaseVHD has been registered."
 }
