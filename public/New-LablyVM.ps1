@@ -57,7 +57,7 @@ Function New-LablyVM {
     Write-Verbose "Reading Lably Scaffolding File at $LablyScaffold"
 
     If(-Not(Test-Path $LablyScaffold -ErrorAction SilentlyContinue)){
-        Throw "There is no Lably at $LablyPath."
+        Throw "There is no Lably at $Path."
     }
 
     Try {
