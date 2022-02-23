@@ -119,7 +119,7 @@ Function Register-LablyBaseVHD {
         $RegistryObject = @{
             "Meta" = @{
                 "Comment" = "This is your Lably Registry that points to your base images that labs can use to build labs. There's no value in sharing this file, it's meant for this PC."
-                "CreatedDateUTC" = $(Get-Date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")
+                "CreatedDateUTC" = $(Get-DateUTC)
                 "Version" = "0.1"
             }
         } | ConvertTo-Json | ConvertFrom-Json
@@ -139,14 +139,14 @@ Function Register-LablyBaseVHD {
             "OSName" = "Windows"
             "OSVersion" = $imageVersion
             "OSEdition" = $imageEdition
-            "DateAdded" = $(Get-Date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")
-            "LastValidated" = $(Get-Date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")
+            "DateAdded" = $(Get-DateUTC)
+            "LastValidated" = $(Get-DateUTC)
         }
     ) | Out-Null
 
     $RegistryObject.BaseImages = $BaseImages
 
-    Add-Member -InputObject $RegistryObject.Meta -MemberType NoteProperty -Name "ModifedDateUTC" -Value $(Get-Date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss") -Force
+    Add-Member -InputObject $RegistryObject.Meta -MemberType NoteProperty -Name "ModifedDateUTC" -Value $(Get-DateUTC) -Force
 
     Try {
         Write-Verbose "Exporting Registry Data to $ImageRegistry"
