@@ -1,15 +1,15 @@
 Function Register-LablyBaseVHD {
     [CmdLetBinding()]
     Param(
-        [Parameter(Mandatory=$True,Position=1)]
+        [Parameter(Mandatory=$True)]
         [String]$VHD,
 
-        [Parameter(Mandatory=$False,Position=2)]
+        [Parameter(Mandatory=$False)]
         [Int]$PartitionNumber,
 
-        [Parameter(Mandatory=$False,Position=3)]
+        [Parameter(Mandatory=$False)]
         [String]$FriendlyName = ""
-    )
+    )    
 
     Try {
         Write-Host "Mounting $VHD to gather Image Details"
