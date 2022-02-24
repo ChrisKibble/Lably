@@ -2,9 +2,14 @@ Function Remove-Lably {
 
     [CmdLetBinding()]
     Param(
+        [Parameter(Mandatory=$False)]    
         [String]$Path = $PWD,
+
+        [Parameter(Mandatory=$False)]
         [Switch]$Confirm
     )
+
+    ##TODO: Remove switch if nothing else is using it (with param to skip this?)
 
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
     Write-Verbose "Reading Lably Scaffolding File at $LablyScaffold"
@@ -96,7 +101,5 @@ Function Remove-Lably {
     }
 
     Write-Host "Done."
-
-
 
 }
