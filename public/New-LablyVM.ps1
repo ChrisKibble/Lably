@@ -252,6 +252,26 @@ Function New-LablyVM {
         Write-Warning "Unable to change VM CPU Settings. $($_.Exception.Message)"        
     }
 
+    Try {
+        $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
+        If(-Not($Scaffold.Assets)) {
+            Add-Member -InputObject $Scaffold -MemberType NoteProperty -Name Assets -Value @()
+        }
+        $Scaffold.Assets += @(
+            [PSCustomObject]@{
+                DisplayName = $DisplayName
+                TemplateGuid = $TemplateGuid
+                VMId = $NewVM.VMId
+                CreatedUTC = $(Get-DateUTC)
+                ModifiedUTC = $(Get-DateUTC)
+            }
+        )
+        $Scaffold | ConvertTo-Json | Out-File $LablyScaffold -Force
+    } Catch {
+        Write-Warning "VM is online but we were unable to add it to your Lably scaffoling."
+        Write-Warning $_.Exception.Message
+    }
+
     Write-Host "Awesome! Your new Virtual Machine is ready to use." -ForegroundColor Green
 
     Return $NewVM
