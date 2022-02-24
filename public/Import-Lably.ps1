@@ -203,8 +203,6 @@ Function Import-Lably {
                                                        
                             $StepScript = $Step.Script -join "`n"
                             $StepScript = Literalize -InputResponse $InputResponse -InputData $($StepScript)
-                            Write-Host "Running:"
-                            Write-Host $StepScript
                             $stepScriptBlock = [ScriptBlock]::Create($StepScript)
 
                             Try {
