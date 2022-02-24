@@ -3,7 +3,8 @@ Function Stop-Lably {
     [CmdLetBinding()]
     Param(
         [String]$Path = $PWD,
-        [Switch]$Force
+        [Switch]$Force,
+        [Switch]$TurnOff
     )
 
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
@@ -27,7 +28,7 @@ Function Stop-Lably {
             } Else {
                 If($VM.State -eq [Microsoft.HyperV.PowerShell.VMState]::Running) {
                     Write-Host "Stopping $($VM.Name) with Force=$Force"
-                    $VM | Stop-VM -Force:$Force
+                    $VM | Stop-VM -Force:$Force -TurnOff:$TurnOff
                 } Else {
                     Write-Verbose "$($VM.Name) is not in state 'Running'.  State is '$($VM.State)'"
                 }
