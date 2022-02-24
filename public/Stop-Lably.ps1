@@ -2,8 +2,13 @@ Function Stop-Lably {
 
     [CmdLetBinding()]
     Param(
+        [Parameter(Mandatory=$False)]
         [String]$Path = $PWD,
+        
+        [Parameter(Mandatory=$False)]
         [Switch]$Force,
+        
+        [Parameter(Mandatory=$False)]
         [Switch]$TurnOff
     )
 

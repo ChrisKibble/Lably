@@ -2,7 +2,10 @@ Function Start-Lably {
 
     [CmdLetBinding()]
     Param(
+        [Parameter(Mandatory=$False)]
         [String]$Path = $PWD,
+        
+        [Parameter(Mandatory=$False)]
         [Int]$DelaySeconds = 0
     )
 
