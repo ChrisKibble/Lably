@@ -48,13 +48,20 @@ Function Remove-Lably {
     }
 
     Write-Host "Stopping All VMs ..."
-    Stop-Lably -Path $Path -Force
+    Stop-Lably -Path $Path -TurnOff -Force
+
+    Start-Sleep -Seconds 1
 
     ForEach($VM in $VMsToDestroy) {
+        Write-Verbose "State of $($VM.Name) is $($VM.State). Status is $($VM.Status)."
+        While($VM.State -ne [Microsoft.HyperV.PowerShell.VMState]::Off -and $VM.Status -ne "Operating Normally") {
+            Write-Verbose "Waiting for VM to Stop (State=$($VM.State) Status=$($VM.Status))..."
+            Start-Sleep -Seconds 1
+        }
         $VM | Get-VMHardDiskDrive | ForEach-Object { 
             Write-Host "Deleting $($_.Path) ..."
             Try {
-                Remove-Item $($_.Path) -Force
+                Remove-Item $($_.Path) -Force -ErrorAction Stop
             } Catch {
                 Write-Warning "Could not delete $($_.Path). $($_.Exception.Message)"
             }
@@ -74,6 +81,17 @@ Function Remove-Lably {
         Write-Warning "Could not Scaffold. $($_.Exception.Message)"
     }
 
+    Write-Host "Removing Empty Folders from $VHDPath"
+    Get-ChildItem $VHDPath -Recurse -Force -Directory | Sort-Object -Property FullName -Descending | Where-Object { $($_ | Get-ChildItem -Force | Select-Object -First 1).Count -eq 0 } | Remove-Item -ErrorAction SilentlyContinue
+    If(-Not (Get-ChildItem $VHDPath | Select-Object -First 1)) { Remove-Item $VHDPath -ErrorAction SilentlyContinue }
+    
+    If(-Not (Get-ChildItem $Path | Select-Object -First 1)) { 
+        Write-Host "Removing $Path"
+        Remove-Item $Path -ErrorAction SilentlyContinue
+    } Else {
+        Write-Host "There are files/folders left over in $Path. Will not remove."
+    }
+
     If($KeyFile) {
         Write-Host "Your KeyFile has not been deleted. If you no longer require it, you may delete it manually."
         Write-Host $KeyFile
@@ -81,6 +99,6 @@ Function Remove-Lably {
 
     Write-Host "Done."
 
-    ## To Do - Remove Empty Folders All the way back to the VHD Root from the Scaffold.
+
 
 }
