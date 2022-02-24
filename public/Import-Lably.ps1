@@ -156,7 +156,7 @@ Function Import-Lably {
 
         Try {
             Write-Host "Building $VMHostName"
-            $VM = New-LablyVM -Path $Path -DisplayName $VMHostName -Hostname $VMHostName -BaseVHD $Asset.BaseVHD -AdminPassword $VMPassword
+            $VM = New-LablyVM -Path $Path -DisplayName $VMHostName -Hostname $VMHostName -BaseVHD $Asset.BaseVHD -AdminPassword $VMPassword -TemplateGuid $ThisTemplate.Meta.Id
             Get-VM -Id $VM.VMid | Start-VM
             # Sleep to let the system start.
             Start-Sleep -Seconds 5

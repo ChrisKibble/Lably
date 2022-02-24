@@ -45,6 +45,9 @@ Function New-LablyVM {
         [Parameter(Mandatory=$False)]
         [String]$Locale = $(Get-WinSystemLocale).Name,
 
+        [Parameter(Mandatory=$False,DontShow=$True)]
+        [String]$TemplateGuid = "",
+
         [Parameter(Mandatory=$False)]
         [Switch]$Force
     )
