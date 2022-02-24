@@ -23,8 +23,6 @@ Function Remove-Lably {
     $KeyFile = $Scaffold.Meta.KeyFile
     $Assets = $Scaffold.Assets
 
-    $SwitchId = $Scaffold.Meta.SwitchId
-
     $VMsToDestroy = ForEach($Asset in $Assets) {
         Get-VM -id $Asset.VMId
     }
