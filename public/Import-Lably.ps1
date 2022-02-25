@@ -14,7 +14,7 @@ Function Import-Lably {
     }
 
     Try {
-        $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
+        Get-Content $LablyScaffold -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop | Out-Null
     } Catch {
         Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
     }
