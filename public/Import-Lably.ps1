@@ -226,9 +226,6 @@ Function Import-Lably {
 
     }
 
-
-    ## TO DO ---- NEED TO MAKE THIS ADD TO AN ARRAY AND NOT SET A VALUE (OR MAKE THAT OPTIONAL?)
-
     Try {
         $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
         If(-Not($Scaffold.Properties)) {
