@@ -29,7 +29,7 @@ Function Remove-Lably {
     $Assets = $Scaffold.Assets
 
     $VMsToDestroy = ForEach($Asset in $Assets) {
-        Get-VM -id $Asset.VMId
+        Get-VM -id $Asset.VMId -ErrorAction SilentlyContinue
     }
 
     If(-Not($Confirm)) {
