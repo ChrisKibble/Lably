@@ -14,8 +14,16 @@ Function Get-AnswersToInputQuestions {
                 Write-Verbose "   Prompting for '$($P.Prompt)'"
                 
                 If($P.Secure -eq $True) {
-                    $SecureVal = Read-Host "$($P.Prompt)" -AsSecureString
-                    $Val = [System.Net.NetworkCredential]::new("", $SecureVal).Password
+                    Do {
+                        $SecureVal = Read-Host "$($P.Prompt)" -AsSecureString
+                        $Val = [System.Net.NetworkCredential]::new("", $SecureVal).Password   
+                        Write-Host "[Confirmation] " -ForegroundColor Yellow -NoNewLine
+                        $SecureValConfirm = Read-Host "$($P.Prompt)" -AsSecureString
+                        $ValConfirm = [System.Net.NetworkCredential]::new("", $SecureValConfirm).Password
+                        If(-Not($Val -ceq $ValConfirm)) {
+                            Write-Host "Passwords do not match. Try again." -ForegroundColor Red
+                        }
+                    } Until($Val -ceq $ValConfirm)
                 } else {
                     $Val = Read-Host "$($P.Prompt)"
 
