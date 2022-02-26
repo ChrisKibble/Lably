@@ -263,7 +263,6 @@ Function New-LablyVM {
                 TemplateGuid = $TemplateGuid
                 VMId = $NewVM.VMId
                 CreatedUTC = $(Get-DateUTC)
-                ModifiedUTC = $(Get-DateUTC)
             }
         )
         $Scaffold | ConvertTo-Json | Out-File $LablyScaffold -Force
