@@ -19,6 +19,7 @@ Function Import-Lably {
         Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
     }
 
+
     Try {
         $BaseVHDRegistryFile = "$env:UserProfile\Lably\BaseImageRegistry.json"
         Write-Verbose "Reading BaseVHDs from $BaseVHDRegistryFile"
@@ -224,5 +225,30 @@ Function Import-Lably {
         }
 
     }
+
+
+    ## TO DO ---- NEED TO MAKE THIS ADD TO AN ARRAY AND NOT SET A VALUE (OR MAKE THAT OPTIONAL?)
+
+    Try {
+        $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
+        If(-Not($Scaffold.Properties)) {
+            Add-Member -InputObject $Scaffold -MemberType NoteProperty -Name Properties -Value @{}
+        }
+        ForEach($Property in $($ThisTemplate.Properties | Get-Member | Where-Object { $_.MemberType -eq "NoteProperty" })) {
+            $PropertyName = $Property.Name
+            $PropertyNameLiteralized = Literalize -InputResponse $InputResponse -InputData $PropertyName
+            $PropertyValue = Literalize -InputResponse $InputResponse -InputData $ThisTemplate.Properties.$PropertyName.Value
+            If($Scaffold.Properties.$PropertyNameLiteralized) {
+                $Scaffold.Properties.$PropertyNameLiteralized += $PropertyValue
+            } Else {
+                $Scaffold.Properties.$PropertyNameLiteralized = @($PropertyValue)
+            }
+        }
+        $Scaffold | ConvertTo-Json | Out-File $LablyScaffold -Force
+    } Catch {
+        Write-Warning "VM is online but we were unable to add the custom properties to your Lably scaffoling."
+        Write-Warning $_.Exception.Message
+    }
+
 
 }
