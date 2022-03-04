@@ -3,7 +3,7 @@ Function Update-Unattend {
     [CmdLetBinding()]
     Param(
 
-    [Parameter(Mandatory=$True)]
+        [Parameter(Mandatory=$True)]
         [String]$ComputerName,
 
         [Parameter(Mandatory=$False)]
@@ -150,7 +150,7 @@ $xmlData = [xml]@"
 
     # Product Key
     If($ProductKey) {
-        Write-Verbose "Writing Product $ProductKey Key to XML"
+        Write-Verbose "Writing Product Key $ProductKey Key to XML"
         Try {
             ForEach($component in $specializeShell) {
                 [System.Xml.XmlNode]$xmlProductKey = $xmlData.CreateElement("ProductKey", $component.NamespaceURI)
