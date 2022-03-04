@@ -11,6 +11,10 @@ Function Remove-Lably {
 
     ##TODO: Remove switch if nothing else is using it (with param to skip this?)
 
+    ##TODO: This doesnt' follow the directory properly when run outside the lably path - fix this.
+
+    ##TODO: File is often showing in use. Need to find a better way on this.
+
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
     Write-Verbose "Reading Lably Scaffolding File at $LablyScaffold"
 
