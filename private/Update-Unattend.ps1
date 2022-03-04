@@ -1,4 +1,4 @@
-Function Update-Unattend2 {
+Function Update-Unattend {
 
     [CmdLetBinding()]
     Param(
