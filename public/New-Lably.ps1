@@ -1,15 +1,15 @@
 Function New-Lably {
 
-    [CmdLetBinding()]
+    [CmdLetBinding(DefaultParameterSetName='NewSwitch')]
     Param(
         [Parameter(Mandatory=$False)]
         [String]$Path = $PWD,
 
         [Parameter(Mandatory=$False)]
-        [String]$Name,
+        [String]$Name = (Split-Path $Path -Leaf),
 
-        [Parameter(Mandatory=$True,ParameterSetName='NewSwitch')]
-        [String]$NewSwitchName,
+        [Parameter(Mandatory=$False,ParameterSetName='NewSwitch')]
+        [String]$NewSwitchName = (Split-Path $Path -Leaf),
 
         [Parameter(Mandatory=$True,ParameterSetName='Switch')]
         [String]$SwitchName,
@@ -79,10 +79,6 @@ Function New-Lably {
         }
     }
 
-    If(-Not($Name)) {
-        $Name = Split-Path $Path -Leaf
-    }
-
     If($SecretKeyFile) {
         $SecretType = "KeyFile"
         Try {
@@ -127,7 +123,7 @@ Function New-Lably {
         Throw "Could not create Lably $Name. $($_.Exception.Message)"
     }
 
-    Write-Host "Congratulations! Your Lably is created." -ForegroundColor Green
+    Write-Host "Congratulations! Your Lably '$Name'." -ForegroundColor Green
     If($SecretKeyFile) {
         Write-Host "Warning! Your key files are stored in $($KeyFilePath)." -ForegroundColor Yellow
         Write-Host "You're encouraged to **secure this folder** to ensure your lab secrets are kept safe." -ForegroundColor Yellow
