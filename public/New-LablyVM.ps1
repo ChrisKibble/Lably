@@ -193,12 +193,9 @@ Function New-LablyVM {
             New-Item -ItemType Directory -Path $unattendPath -ErrorAction Stop | Out-Null
         }
         
-        $unattendSource = Join-Path $PSScriptRoot -ChildPath "..\Private\Support\Unattend\windows.xml"
         $unattendFile = Join-Path $unattendPath -ChildPath "unattend.xml"
 
-        [xml]$xmlUnattend = Get-Content $unattendSource -Raw
         $xmlArgs = @{
-            xmlUnattend = $xmlUnattend
             ComputerName = $Hostname
             Timezone = $Timezone
             AdminPassword = $AdminPassword
