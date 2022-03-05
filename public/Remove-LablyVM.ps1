@@ -1,14 +1,14 @@
 Function Remove-LablyVM {
 
-    [CmdLetBinding()]
+    [CmdLetBinding(DefaultParameterSetName='DisplayName')]
     Param(
         [Parameter(Mandatory=$False)]    
         [String]$Path = $PWD,
 
-        [Parameter(Mandatory=$True,ParameterSetName="DisplayName")]
+        [Parameter(Mandatory=$True,ParameterSetName="DisplayName",Position=0)]
         [String]$DisplayName,
 
-        [Parameter(Mandatory=$True,ParameterSetName='VMID')]
+        [Parameter(Mandatory=$True,ParameterSetName='VMID',Position=0)]
         [String]$VMId,
 
         [Parameter(Mandatory=$False)]
