@@ -42,7 +42,7 @@ $scriptGetVMDisplayNames = [scriptblock]::Create({
     If(-Not(Test-Path $ScaffoldPath -ErrorAction SilentlyContinue)) { Return $null}
 
     Try {
-        $(Get-Content .\scaffold.lably.json | ConvertFrom-Json).Assets.DisplayName | ForEach-Object {
+        $(Get-Content $ScaffoldPath | ConvertFrom-Json).Assets.DisplayName | ForEach-Object {
             If($_ -like "* *") {
                 "`"$_`""
             } else {
