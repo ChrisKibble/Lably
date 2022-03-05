@@ -243,6 +243,7 @@ Function New-LablyVM {
             [PSCustomObject]@{
                 DisplayName = $DisplayName
                 TemplateGuid = $TemplateGuid
+                BaseVHD = $BaseVHD
                 VMId = $NewVM.VMId
                 CreatedUTC = $(Get-DateUTC)
             }
