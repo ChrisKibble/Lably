@@ -237,7 +237,7 @@ Function New-LablyVM {
     Try {
         $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
         If(-Not($Scaffold.Assets)) {
-            Add-Member -InputObject $Scaffold -MemberType NoteProperty -Name Assets -Value @()
+            Add-Member -InputObject $Scaffold -MemberType NoteProperty -Name Assets -Value @() -ErrorAction SilentlyContinue
         }
         $Scaffold.Assets += @(
             [PSCustomObject]@{
