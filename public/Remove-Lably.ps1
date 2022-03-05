@@ -26,6 +26,7 @@ Function Remove-Lably {
     $KeyFile = $Scaffold.Meta.KeyFile
     $Assets = $Scaffold.Assets
     $SwitchId = $Scaffold.Meta.SwitchId
+    $TemplatePath = Join-Path $Path -ChildPath "Template Cache"
 
     If(-Not($Confirm)) {
         Write-Host "WARNING! You are about to delete your Lably." -ForegroundColor Red
@@ -33,7 +34,10 @@ Function Remove-Lably {
         Write-Host "This will also stop and delete the following VMs and their associated disks:"
         ForEach($Asset in $Assets) { Write-Host " - $($Asset.DisplayName) ($($Asset.VmId))" }
         Write-Host ""
-        Write-Host "Your current scaffold ($LablyScaffold) will also be removed."
+        Write-Host "Your current scaffold ($LablyScaffold) will be removed."
+        If(Test-Path $TemplatePath) {
+            Write-Host "Your Template Cache ($TemplatePath) will be removed."
+        }
         Write-Host ""
         Write-Host "This operation cannot be undone." -ForegroundColor Red
         Write-Host ""
@@ -72,6 +76,8 @@ Function Remove-Lably {
     } Else {
         Write-Host "There are files/folders left over in $Path. Will not remove."
     }
+
+    Remove-Item $TemplatePath -ErrorAction SilentlyContinue -Recurse
 
     If($KeyFile) {
         Write-Host "Your KeyFile has not been deleted. If you no longer require it, you may delete it manually."

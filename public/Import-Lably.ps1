@@ -2,8 +2,11 @@ Function Import-Lably {
 
     [CmdLetBinding()]
     Param(
-        [String]$Path,
-        [String]$Template
+        [Parameter(Mandatory=$True,Position=0)]
+        [String]$Template,
+
+        [Parameter(Mandatory=$False)]
+        [String]$Path = $PWD
     )
 
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
@@ -18,7 +21,6 @@ Function Import-Lably {
     } Catch {
         Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
     }
-
 
     Try {
         $BaseVHDRegistryFile = "$env:UserProfile\Lably\BaseImageRegistry.json"
@@ -42,7 +44,6 @@ Function Import-Lably {
     } catch {
         Throw "Unable to read template file. $($_.Exception.Message)"
     }
-
 
     Write-Verbose "Processing List of Assets Required"
     $Assets = $ThisTemplate.Assets | Get-Member -MemberType NoteProperty | ForEach-Object { 
@@ -158,6 +159,7 @@ Function Import-Lably {
         Try {
             Write-Host "Building $VMHostName"
             $VM = New-LablyVM -Path $Path -DisplayName $VMHostName -Hostname $VMHostName -BaseVHD $Asset.BaseVHD -AdminPassword $VMPassword -TemplateGuid $ThisTemplate.Meta.Id
+            Write-Host "Starting your new VM ..."
             Get-VM -Id $VM.VMid | Start-VM
             # Sleep to let the system start.
             Start-Sleep -Seconds 5
@@ -227,6 +229,17 @@ Function Import-Lably {
     }
 
     Try {
+        $TemplateCache = Join-Path $Path -ChildPath "Template Cache"
+        Write-Verbose "Copying Template to Cache ($TemplateCache)"
+        If(-Not(Test-Path $TemplateCache -ErrorAction SilentlyContinue)) {
+            New-Item $TemplateCache -ItemType Directory | Out-Null
+        }
+        Copy-Item $Template -Destination $(Join-Path $TemplateCache -ChildPath "$($ThisTemplate.Meta.Id).json")
+    } Catch {
+        Write-Warning "Unable to Cache Template. $($_.Exception.Message)"
+    }
+
+    Try {
         $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
         If(-Not($Scaffold.Properties)) {
             Add-Member -InputObject $Scaffold -MemberType NoteProperty -Name Properties -Value @{}
@@ -246,6 +259,5 @@ Function Import-Lably {
         Write-Warning "VM is online but we were unable to add the custom properties to your Lably scaffoling."
         Write-Warning $_.Exception.Message
     }
-
 
 }
