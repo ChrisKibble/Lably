@@ -63,11 +63,19 @@ Function Remove-Lably {
             Start-Sleep -Seconds 1
         }
 
+        $ActivityStart = Get-Date
+        $RunTime = New-TimeSpan -Start $ActivityStart -End (Get-Date)
+        While(@($VM | Get-VMHardDiskDrive | Select-Object -ExpandProperty Path) -like "*.avhdx" -or $RunTime.TotalMinutes -ge 1) {
+            Write-Verbose "Waiting for Disk Merging Activities to Complete ..."
+            Start-Sleep -Seconds 1
+            $RunTime = New-TimeSpan -Start $ActivityStart -End (Get-Date)
+        }
+
         $VM | Get-VMHardDiskDrive | ForEach-Object { 
             Write-Host "Deleting $($_.Path) ..."
         
             $AttemptNumber = 0
-            $MaxAttempts = 3
+            $MaxAttempts = 5
 
             Do {
                 Try {
@@ -78,8 +86,9 @@ Function Remove-Lably {
                 } Catch {
                     # In edge cases, VHDx is still merging even though status doesn't seem to show that's the case. The file
                     # appears to be held in use for an extra second or so.
-                    Write-Warning "Could not delete $($_.Path) (Attempt $AttemptNumber of $MaxAttempts). $($_.Exception.Message)"
-                    Start-Sleep -Seconds 1
+                    Write-Warning "Could not delete $($_.Path) (Attempt $AttemptNumber of $MaxAttempts)."
+                    If($Attempt -eq $MaxAttempt) { Write-Warning $($_.Exception.Message) }
+                    Start-Sleep -Seconds 5
                 }    
             } Until ($FileDeleteSuccess -or $AttemptNumber -eq $MaxAttempts)
         }
