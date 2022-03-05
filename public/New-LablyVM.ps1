@@ -6,7 +6,7 @@ Function New-LablyVM {
         [Parameter(Mandatory=$False)]
         [String]$Path = $PWD,
 
-        [Parameter(Mandatory=$True)]    
+        [Parameter(Mandatory=$False)]
         [String]$DisplayName,
 
         [Parameter(Mandatory=$True)]
@@ -78,6 +78,10 @@ Function New-LablyVM {
         Write-Verbose "Using Switch $SwitchName"    
     } Catch {
         Throw "Unable to get name of switch $SwitchId."
+    }
+
+    If(-Not($DisplayName)) {
+        $DisplayName = $Hostname
     }
 
     If($DisplayName -notlike "\[$($Scaffold.Meta.Name)\]*") {
