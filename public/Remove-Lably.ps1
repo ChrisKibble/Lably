@@ -48,7 +48,7 @@ Function Remove-Lably {
     }
 
     ForEach($Asset in $Assets) {
-        Remove-LablyVM -Path $Path -VMId $Asset.VMId -Confirm
+        Remove-LablyVM -Path $Path -VMId $Asset.VMId -Confirm | Out-Null
     }
 
     $SwitchName = Get-VMSwitch -Id $SwitchId | Select-Object -ExpandProperty Name
@@ -77,7 +77,7 @@ Function Remove-Lably {
         Write-Host "There are files/folders left over in $Path. Will not remove."
     }
 
-    Remove-Item $TemplatePath -ErrorAction SilentlyContinue -Recurse
+    Remove-Item $TemplatePath -ErrorAction SilentlyContinue -Recurse -Force
 
     If($KeyFile) {
         Write-Host "Your KeyFile has not been deleted. If you no longer require it, you may delete it manually."
