@@ -9,10 +9,6 @@ Function Remove-Lably {
         [Switch]$Confirm
     )
 
-    ##TODO: Remove switch if nothing else is using it (with param to skip this?)
-
-    ##TODO: This doesn't follow the directory properly when run outside the lably path - fix this.
-
     ##TODO: File is often showing in use. Need to find a better way on this.
 
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
@@ -27,7 +23,6 @@ Function Remove-Lably {
     } Catch {
         Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
     }
-
 
     $VHDPath = $Scaffold.Meta.VirtualDiskPath
     $KeyFile = $Scaffold.Meta.KeyFile
@@ -60,25 +55,43 @@ Function Remove-Lably {
     Start-Sleep -Seconds 1
 
     ForEach($VM in $VMsToDestroy) {
+
         Write-Verbose "State of $($VM.Name) is $($VM.State). Status is $($VM.Status)."
+
         While($VM.State -ne [Microsoft.HyperV.PowerShell.VMState]::Off -and $VM.Status -ne "Operating Normally") {
             Write-Verbose "Waiting for VM to Stop (State=$($VM.State) Status=$($VM.Status))..."
             Start-Sleep -Seconds 1
         }
+
         $VM | Get-VMHardDiskDrive | ForEach-Object { 
             Write-Host "Deleting $($_.Path) ..."
-            Try {
-                Remove-Item $($_.Path) -Force -ErrorAction Stop
-            } Catch {
-                Write-Warning "Could not delete $($_.Path). $($_.Exception.Message)"
-            }
+        
+            $AttemptNumber = 0
+            $MaxAttempts = 3
+
+            Do {
+                Try {
+                    $FileDeleteSuccess = $False
+                    $AttemptNumber++
+                    Remove-Item $($_.Path) -Force -ErrorAction Stop
+                    $FileDeleteSuccess = $True
+                } Catch {
+                    # In edge cases, VHDx is still merging even though status doesn't seem to show that's the case. The file
+                    # appears to be held in use for an extra second or so.
+                    Write-Warning "Could not delete $($_.Path) (Attempt $AttemptNumber of $MaxAttempts). $($_.Exception.Message)"
+                    Start-Sleep -Seconds 1
+                }    
+            } Until ($FileDeleteSuccess -or $AttemptNumber -eq $MaxAttempts)
         }
+
         Write-Host "Removing VM $($VM.Name)"
+
         Try {
             $VM | Remove-VM -Force
         } Catch {
             Write-Warning "Could not delete $($VM.Name). $($_.Exception.Message)"            
         }      
+
     }
 
     $SwitchName = Get-VMSwitch -Id $SwitchId | Select -ExpandProperty Name
