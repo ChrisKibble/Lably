@@ -1,6 +1,6 @@
 Function New-LablyVM {
 
-    [CmdLetBinding(DefaultParameterSetName='BaseVHD')]
+    [CmdLetBinding()]
     Param(
 
         [Parameter(Mandatory=$False)]
@@ -9,14 +9,8 @@ Function New-LablyVM {
         [Parameter(Mandatory=$True)]    
         [String]$DisplayName,
 
-        [Parameter(Mandatory=$True,ParameterSetName='BaseVHD')]
+        [Parameter(Mandatory=$True)]
         [String]$BaseVHD,
-
-        [Parameter(Mandatory=$True,ParameterSetName='BaseFriendlyName')]
-        [String]$BaseVHDFriendlyName,
-
-        [Parameter(Mandatory=$True,ParameterSetName='BaseId')]
-        [String]$BaseVHDID,
 
         [Parameter(Mandatory=$False)]
         [String]$Hostname = "LAB-$([Guid]::NewGuid().ToString().split('-')[0].ToUpper())",
@@ -128,19 +122,10 @@ Function New-LablyVM {
         Throw "Unable to read Base Image Registry. $($_.Exception.Message)"
     }
     
-    If($BaseVHDFriendlyName) {
-        Write-Verbose "Base VHD Friendly Name Defined - Searching for $BaseVHDFriendlyName"
-        $RegistryEntry = $BaseImageRegistry.BaseImages.Where{($_.FriendlyName -eq $BaseVHDFriendlyName)}[0]
-    } ElseIf($BaseVHDID) {
-        Write-Verbose "Base VHD ID Defined - Searching for $BaseVHDID"
-        $RegistryEntry = $BaseImageRegistry.BaseImages.Where{($_.Id -eq $BaseVHDID)}[0]
-    } Else {
-        Write-Verbose "No FriendlyName or ID Defined, Searching by VHD Path"
-        $RegistryEntry = $BaseImageRegistry.BaseImages.Where{($_.ImagePath -eq $BaseVHD)}[0]
-    }
+    $RegistryEntry = $BaseImageRegistry.BaseImages.Where{($_.ImagePath -eq $BaseVHD -or $_.FriendlyName -eq $BaseVHD)}[0]
 
     If(-Not($RegistryEntry)) {
-        Throw "Cannot Find Base VHD using defined parameters."
+        Throw "Cannot Find Base VHD."
     }
 
     $BaseVHD = $RegistryEntry.ImagePath
