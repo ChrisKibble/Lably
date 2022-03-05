@@ -1,0 +1,116 @@
+Function Remove-LablyVM {
+
+    [CmdLetBinding()]
+    Param(
+        [Parameter(Mandatory=$False)]    
+        [String]$Path = $PWD,
+
+        [Parameter(Mandatory=$True,ParameterSetName="VMDisplayName")]
+        [String]$VMDisplayName,
+
+        [Parameter(Mandatory=$True,ParameterSetName='VMID')]
+        [String]$VMId,
+
+        [Parameter(Mandatory=$False)]
+        [Switch]$Confirm
+    )
+
+    $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
+    Write-Verbose "Reading Lably Scaffolding File at $LablyScaffold"
+
+    If(-Not(Test-Path $LablyScaffold -ErrorAction SilentlyContinue)){
+        Throw "There is no Lably at $Path."
+    }
+
+    Try {
+        $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
+    } Catch {
+        Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
+    }
+
+    $Asset = $Scaffold.Assets | Where-Object { $_.DisplayName -eq $VMDisplayName -or $_.VMid -eq $VMID } | Select-Object -First 1
+       
+    If(-Not($Asset)) {
+        Throw "Cannot find defined VM in this Lably."
+    }
+
+    Try {
+        $VM = Get-VM -Id $Asset.VMId -ErrorAction Stop
+    } Catch {
+        Throw "Cannot Find VM. $($_.Exception.Message)"
+    }
+
+    If(-Not($Confirm)) {
+        Write-Host "You are about to delete $($VM.Name)"
+        Write-Host "This operation cannot be undone." -ForegroundColor Red
+        Write-Host ""
+        If($(Read-Host "If you're certan you'd like to continue, type DELETE and press enter") -ne "DELETE") {
+            Write-Host "Code 'DELETE' was not entered. Aborting." -ForegroundColor Yellow
+            Return
+        }
+    }
+
+    Write-Host "Stopping VM"
+    Try {
+        $VM | Stop-VM -Force -TurnOff -ErrorAction Stop -WarningAction SilentlyContinue
+    } Catch {
+        Throw "Could not stop VM. $($_.Exception.Message)"
+    }
+
+    Write-Verbose "State of $($VM.Name) is $($VM.State). Status is $($VM.Status)."
+
+    While($VM.State -ne [Microsoft.HyperV.PowerShell.VMState]::Off -and $VM.Status -ne "Operating Normally") {
+        Write-Verbose "Waiting for VM to Stop (State=$($VM.State) Status=$($VM.Status))..."
+        Start-Sleep -Seconds 1
+    }
+
+    $ActivityStart = Get-Date
+    $RunTime = New-TimeSpan -Start $ActivityStart -End (Get-Date)
+    While(@($VM | Get-VMHardDiskDrive | Select-Object -ExpandProperty Path) -like "*.avhdx" -or $RunTime.TotalMinutes -ge 1) {
+        Write-Verbose "Waiting for Disk Merging Activities to Complete ..."
+        Start-Sleep -Seconds 1
+        $RunTime = New-TimeSpan -Start $ActivityStart -End (Get-Date)
+    }
+
+    $VM | Get-VMHardDiskDrive | ForEach-Object { 
+        Write-Host "Deleting $($_.Path) ..."
+    
+        $AttemptNumber = 0
+        $MaxAttempts = 5
+
+        Do {
+            Try {
+                $FileDeleteSuccess = $False
+                $AttemptNumber++
+                Remove-Item $($_.Path) -Force -ErrorAction Stop
+                $FileDeleteSuccess = $True
+            } Catch {
+                # In edge cases, VHDx is still merging even though status doesn't seem to show that's the case. The file
+                # appears to be held in use for an extra second or so.
+                Write-Warning "Could not delete $($_.Path) (Attempt $AttemptNumber of $MaxAttempts)."
+                If($Attempt -eq $MaxAttempt) { Write-Warning $($_.Exception.Message) }
+                Start-Sleep -Seconds 5
+            }    
+        } Until ($FileDeleteSuccess -or $AttemptNumber -eq $MaxAttempts)
+    }
+
+    Write-Host "Removing VM $($VM.Name)"
+
+    Try {
+        $VM | Remove-VM -Force
+    } Catch {
+        Write-Warning "Could not delete $($VM.Name). $($_.Exception.Message)"            
+    }      
+
+    Try {
+        $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
+        $Scaffold.Assets = $Scaffold.Assets | Where-Object { $_.VMId -ne $Asset.VMid }
+        $Scaffold | ConvertTo-Json | Out-File $LablyScaffold -Force
+    } Catch {
+        Write-Warning "VM is removed but we were unable to add it to your Lably scaffoling."
+        Write-Warning $_.Exception.Message
+    }
+
+   Write-Host "Done."
+
+}
