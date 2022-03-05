@@ -72,9 +72,13 @@ Function Remove-LablyVM {
         $RunTime = New-TimeSpan -Start $ActivityStart -End (Get-Date)
     }
 
+    $VHDPaths = @()
+
     $VM | Get-VMHardDiskDrive | ForEach-Object { 
         Write-Host "Deleting $($_.Path) ..."
     
+        $VHDPaths += Split-Path $_.Path
+
         $AttemptNumber = 0
         $MaxAttempts = 5
 
@@ -102,12 +106,17 @@ Function Remove-LablyVM {
         Write-Warning "Could not delete $($VM.Name). $($_.Exception.Message)"            
     }      
 
+    ForEach($VHDPath in $VHDPaths) {
+        Write-Verbose "Clearing $VHDPath (If Empty)"
+        If(-Not (Get-ChildItem $VHDPath | Select-Object -First 1)) { Remove-Item $VHDPath -ErrorAction SilentlyContinue }
+    }
+
     Try {
         $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
         $Scaffold.Assets = $Scaffold.Assets | Where-Object { $_.VMId -ne $Asset.VMid }
         $Scaffold | ConvertTo-Json | Out-File $LablyScaffold -Force
     } Catch {
-        Write-Warning "VM is removed but we were unable to add it to your Lably scaffoling."
+        Write-Warning "VM is removed but we were unable to remove it from your Lably scaffoling."
         Write-Warning $_.Exception.Message
     }
 
