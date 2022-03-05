@@ -1,4 +1,4 @@
-$ScriptBlock = [scriptblock]::Create({
+$scriptGetBaseImages = [scriptblock]::Create({
 
     param ( $CommandName, $ParameterName, $WordToComplete, $CommandAst,$FakeBoundParameters )
  
@@ -26,4 +26,34 @@ $ScriptBlock = [scriptblock]::Create({
 
 })
 
-Register-ArgumentCompleter -CommandName New-LablyVM -ParameterName BaseVHD -ScriptBlock $ScriptBlock
+$scriptGetVMDisplayNames = [scriptblock]::Create({
+
+    param ( $CommandName, $ParameterName, $WordToComplete, $CommandAst,$FakeBoundParameters )
+ 
+    If($FakeBoundParameters.ContainsKey('Path')) {
+        $Path = $FakeBoundParameters.Path
+    } else {
+        $Path = $PWD
+    }
+
+    $ScaffoldPath = Join-Path $Path -ChildPath "scaffold.lably.json" -ErrorAction SilentlyContinue
+
+    If(-Not($ScaffoldPath)) { Return $null }
+    If(-Not(Test-Path $ScaffoldPath -ErrorAction SilentlyContinue)) { Return $null}
+
+    Try {
+        $(Get-Content .\scaffold.lably.json | ConvertFrom-Json).Assets.DisplayName | ForEach-Object {
+            If($_ -like "* *") {
+                "`"$_`""
+            } else {
+                $_
+            }
+        }
+    } Catch {
+        Return $null
+    }
+
+})
+
+Register-ArgumentCompleter -CommandName New-LablyVM -ParameterName BaseVHD -ScriptBlock $scriptGetBaseImages
+Register-ArgumentCompleter -CommandName Remove-LablyVM -ParameterName DisplayName -ScriptBlock $scriptGetVMDisplayNames
