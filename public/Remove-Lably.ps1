@@ -11,7 +11,7 @@ Function Remove-Lably {
 
     ##TODO: Remove switch if nothing else is using it (with param to skip this?)
 
-    ##TODO: This doesnt' follow the directory properly when run outside the lably path - fix this.
+    ##TODO: This doesn't follow the directory properly when run outside the lably path - fix this.
 
     ##TODO: File is often showing in use. Need to find a better way on this.
 
@@ -28,9 +28,11 @@ Function Remove-Lably {
         Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
     }
 
+
     $VHDPath = $Scaffold.Meta.VirtualDiskPath
     $KeyFile = $Scaffold.Meta.KeyFile
     $Assets = $Scaffold.Assets
+    $SwitchId = $Scaffold.Meta.SwitchId
 
     $VMsToDestroy = ForEach($Asset in $Assets) {
         Get-VM -id $Asset.VMId -ErrorAction SilentlyContinue
@@ -43,8 +45,6 @@ Function Remove-Lably {
         ForEach($VM in $VMsToDestroy) { Write-Host " - $($VM.Name) ($($VM.VmId))" }
         Write-Host ""
         Write-Host "Your current scaffold ($LablyScaffold) will also be removed."
-        Write-Host ""
-        Write-Host "Any virtual switches and BaseVHDs will not be destroyed."
         Write-Host ""
         Write-Host "This operation cannot be undone." -ForegroundColor Red
         Write-Host ""
@@ -79,6 +79,14 @@ Function Remove-Lably {
         } Catch {
             Write-Warning "Could not delete $($VM.Name). $($_.Exception.Message)"            
         }      
+    }
+
+    $SwitchName = Get-VMSwitch -Id $SwitchId | Select -ExpandProperty Name
+    If(-Not(Get-VMNetworkAdapter -All | Where-Object { $_.SwitchName -eq $SwitchName -and $_.VMName })) {
+        Write-Host "Removing Switch $SwitchName"
+        Get-VMSwitch -Id $SwitchId | Remove-VMSwitch -Force
+    } Else {
+        Write-Host "Will not remove virtual switch as it's being used by other VMs."
     }
 
     Write-Host "Deleting Scaffold ($LablyScaffold)"
