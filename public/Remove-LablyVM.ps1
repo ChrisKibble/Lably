@@ -5,8 +5,8 @@ Function Remove-LablyVM {
         [Parameter(Mandatory=$False)]    
         [String]$Path = $PWD,
 
-        [Parameter(Mandatory=$True,ParameterSetName="VMDisplayName")]
-        [String]$VMDisplayName,
+        [Parameter(Mandatory=$True,ParameterSetName="DisplayName")]
+        [String]$DisplayName,
 
         [Parameter(Mandatory=$True,ParameterSetName='VMID')]
         [String]$VMId,
@@ -28,7 +28,7 @@ Function Remove-LablyVM {
         Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
     }
 
-    $Asset = $Scaffold.Assets | Where-Object { $_.DisplayName -eq $VMDisplayName -or $_.VMid -eq $VMID } | Select-Object -First 1
+    $Asset = $Scaffold.Assets | Where-Object { $_.DisplayName -eq $DisplayName -or $_.VMid -eq $VMID } | Select-Object -First 1
        
     If(-Not($Asset)) {
         Throw "Cannot find defined VM in this Lably."
