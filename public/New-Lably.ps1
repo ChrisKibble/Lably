@@ -40,7 +40,7 @@ Function New-Lably {
 
     If($SwitchId) {
         Try {
-            $VMSwitch = Get-VMSwitch -Id $SwitchId
+            $VMSwitch = Get-VMSwitch -Id $SwitchId -ErrorAction Stop
         } Catch {
             Throw "Cannot get switch by Id '$SwitchId'. $($_.Exception.Message)"
         }
@@ -48,7 +48,7 @@ Function New-Lably {
     
     If($SwitchName) {
         Try {
-            $VMSwitch = Get-VMSwitch -Name $SwitchName
+            $VMSwitch = Get-VMSwitch -Name $SwitchName -ErrorAction Stop
         } Catch {
             Throw "Cannot get switch by Name '$SwitchName'. $($_.Exception.Message)"
         }
