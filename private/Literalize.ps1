@@ -8,10 +8,6 @@ Function Literalize {
 
     ##TODO: Should probably have an escape character.
 
-    Write-Verbose "Literalizing $InputData"
-
-    # Replace all variables with plain text
-
     $VariableList = [Regex]::New("(?msi)\[\[(\w{1,})\]\]").Matches($InputData)
 
     ForEach($V in $VariableList) {        
