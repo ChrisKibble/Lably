@@ -41,7 +41,7 @@ Function Remove-Lably {
         Write-Host ""
         Write-Host "This operation cannot be undone." -ForegroundColor Red
         Write-Host ""
-        If($(Read-Host "If you're certan you'd like to continue, type DESTROY and press enter") -ne "DESTROY") {
+        If($(Read-Host "If you're certain you'd like to continue, type DESTROY and press enter") -ne "DESTROY") {
             Write-Host "Code 'DESTROY' was not entered. Aborting." -ForegroundColor Yellow
             Return
         }

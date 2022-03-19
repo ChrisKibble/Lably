@@ -44,7 +44,7 @@ Function Remove-LablyVM {
         Write-Host "You are about to delete $($VM.Name)"
         Write-Host "This operation cannot be undone." -ForegroundColor Red
         Write-Host ""
-        If($(Read-Host "If you're certan you'd like to continue, type DELETE and press enter") -ne "DELETE") {
+        If($(Read-Host "If you're certain you'd like to continue, type DELETE and press enter") -ne "DELETE") {
             Write-Host "Code 'DELETE' was not entered. Aborting." -ForegroundColor Yellow
             Return
         }
