@@ -201,7 +201,7 @@ Function Import-Lably {
                     
                     Switch($Step.Language) {
                         'PowerShell' {
-                            Write-Verbose "Running Script Against VM"
+                            Write-Verbose "Running PowerShell Script Against VM"
                             $authUser = Literalize -InputResponse $InputResponse -InputData $Step.auth.User
                             $authPass = Literalize -InputResponse $InputResponse -InputData $Step.auth.Pass | ConvertTo-SecureString -AsPlainText -Force
 
