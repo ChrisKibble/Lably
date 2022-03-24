@@ -191,7 +191,10 @@ Function Import-Lably {
             Throw "Timeout while attempting to configure new virtual machine."
         }
 
+        Write-Host "Running Post-Build Steps (if any)"
         ForEach($Step in $Asset.PostBuild | Sort-Object Index) {
+
+            Write-Host "... Running Step '$($Step.Name)'"
 
             Switch($Step.Action) {
                 'Script' {
@@ -225,6 +228,7 @@ Function Import-Lably {
             }
             
         }
+        Write-Host "Comlpleted Running Post-Build Steps (if any)"
 
     }
 
