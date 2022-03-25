@@ -1,0 +1,105 @@
+{
+    "Meta": {
+        "Id":"68b744e1-8297-4bb5-bfd9-dbc5833edc87",
+        "Name":"Windows-Basic-Domain",
+        "Version":"1.0",
+        "Author":"Chris Kibble",
+        "Description":"Windows Domain with one site and one domain controller.",
+        "Schema":"0.1"
+    },
+    "Input": [{
+        "IPAddress":{
+            "Prompt":{
+                "en-us":"Enter a static IP address for this domain controller"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in valid IPv4 address format."
+                },
+                "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            },
+            "Secure": false
+        },
+        "SubnetMask":{
+            "Prompt":{
+                "en-us":"Enter a subnet mask for this domain controller"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in valid IPv4 address format."
+                },
+                "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            },
+            "Secure": false
+        },
+        "DomainName":{
+            "Prompt":{
+                "en-us":"Enter the fully qualified domain name for your new domain (e.g. mylab.contoso.com)"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in normal FQDN format."
+                },
+                "RegEx":"(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\\.)+[a-zA-Z]{2,63}$)"
+            },
+            "Secure": false
+        },
+        "DSRMPassword":{
+            "Prompt":{
+                "en-us":"Enter a new Directory Services Restore Mode (DSRM) password"
+            },
+            "Secure": true
+        },
+        "DHCP":{
+            "Prompt":{
+                "en-us":"Would you like your domain controller to setup DHCP (Y/N)?"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Please enter either Y or N."
+                },
+                "RegEx":"^(Y|N)$"
+            }
+        }
+
+    }],
+    "Requirements":{
+        "BaseVHD":{
+            "OSName":["Windows"],
+            "OSVersion":["10.0.*","6.3*"],
+            "OSEdition":["*Server*"]    
+        },
+        "DenyDefaultHostname":true
+    },
+    "Asset":{
+        "PostBuild":[
+            {
+                "Name":"Configure Static IP Address",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "$PrefixLength = 0; \"[[SubnetMask]]\".Split('.') | ForEach-Object { while(0 -ne $_) { $_ = ($_ -shl 1) -band [byte]::MaxValue; $PrefixLength++ } }",
+                    "New-NetIPAddress -InterfaceIndex $(Get-NetAdapter | Select -First 1).ifIndex -PrefixLength $PrefixLength -IPAddress [[IPAddress]] | Out-Null",
+                    "Set-DnsClientServerAddress -InterfaceIndex $(Get-NetAdapter | Select -First 1).ifIndex -ServerAddresses [[IPAddress]] | Out-Null"
+                ]
+            },
+            {
+                "Name":"Configure AD Forest",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "Add-WindowsFeature AD-Domain-Services -ErrorAction Stop | Out-Null",
+                    "Install-ADDSForest -Force -DomainName [[DomainName]] -InstallDNS -SafeModeAdministratorPassword $('[[DSRMPassword]]' | ConvertTo-SecureString -AsPlainText -Force)"
+                ]
+            }                
+        ]
+    },
+    "Properties":{
+        "Microsoft-ActiveDirectory-Forests":{
+            "Value":"[[DomainName]]"
+        },
+        "Microsoft-ActiveDirectory-Domains":{
+            "Value":"[[DomainName]]"
+        }
+    }
+}
