@@ -99,6 +99,69 @@ Function New-LablyVM {
         Throw "No Virtual Disk Path defined in Lably Scaffold."
     }
 
+    Try {
+        $BaseImageRegistry = Get-Content $env:UserProfile\Lably\BaseImageRegistry.json -Raw | ConvertFrom-Json
+    } Catch {
+        Throw "Unable to read Base Image Registry. $($_.Exception.Message)"
+    }
+    
+    $RegistryEntry = $BaseImageRegistry.BaseImages.Where{($_.ImagePath -eq $BaseVHD -or $_.FriendlyName -eq $BaseVHD)}[0]
+
+    If(-Not($RegistryEntry)) {
+        Throw "Cannot Find Base VHD."
+    }
+
+    $BaseVHD = $RegistryEntry.ImagePath
+
+    If(-Not(Test-Path $BaseVHD -ErrorAction SilentlyContinue)) {
+        Throw "Cannot find $BaseVHD"
+    }
+    
+    Write-Verbose "Will use BaseVHD $($BaseVHD)."
+
+    If($Template) {
+
+        Write-Host "Importing Template"
+        If($Template -like "`"*`"") {
+            # Remove Quotes
+            $Template = $Template.Substring(1,$Template.Length-1)
+        }
+        
+        # User Template over Module Template - Look at User Templates First
+        $UserTemplateFile = Join-Path $env:UserProfile -ChildPath "Lably\Templates\$Template.json"
+        $ModuleTemplateFolder = Join-Path (Split-Path $PSScriptRoot) -ChildPath "Templates"
+        $ModuleTemplateFile = Join-Path $ModuleTemplateFolder -ChildPath "$Template.json"
+
+        If(Test-Path $UserTemplateFile) {
+            $TemplateFile = $UserTemplateFile
+        } ElseIf(Test-Path $ModuleTemplateFile) {
+            $TemplateFile = $ModuleTemplateFile
+        } else {
+            Throw "Cannot find $Template"
+        }
+
+        Write-Verbose "Importing $TemplateFile"
+        $LablyTemplate = Get-LablyTemplate $TemplateFile
+
+        $HostnameDefined = If($PSBoundParameters.ContainsKey("Hostname")) { $True } Else { $False }
+
+        If(-Not(ValidateTemplate2BaseVHD -LablyTemplate $LablyTEmplate -RegistryEntry $RegistryEntry -HostnameDefined $HostnameDefined)) {
+            Throw "One or more of the requirements of this template were not met. Read the above warning messages for more information."
+        }
+
+        Return
+    }
+
+
+
+
+
+
+
+
+
+
+
     If(-Not(Test-Path $vhdRoot)) {
         Try {
             Write-Verbose "Creating $vhdRoot"
@@ -120,26 +183,7 @@ Function New-LablyVM {
         }
     }
 
-    Try {
-        $BaseImageRegistry = Get-Content $env:UserProfile\Lably\BaseImageRegistry.json -Raw | ConvertFrom-Json
-    } Catch {
-        Throw "Unable to read Base Image Registry. $($_.Exception.Message)"
-    }
-    
-    $RegistryEntry = $BaseImageRegistry.BaseImages.Where{($_.ImagePath -eq $BaseVHD -or $_.FriendlyName -eq $BaseVHD)}[0]
 
-    If(-Not($RegistryEntry)) {
-        Throw "Cannot Find Base VHD."
-    }
-
-    $BaseVHD = $RegistryEntry.ImagePath
-
-    If(-Not(Test-Path $BaseVHD -ErrorAction SilentlyContinue)) {
-        Throw "Cannot find $BaseVHD"
-    }
-    
-    Write-Verbose "Will use BaseVHD $($BaseVHD)."
-    
     If(-Not($ProductKey)) {
         Write-Verbose "No product key defined in call to this function, will use ProductKey from BaseVHD Registry."
         $ProductKey = $RegistryEntry.ProductKey
