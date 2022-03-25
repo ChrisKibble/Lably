@@ -7,13 +7,16 @@ Function New-LablyVM {
         [String]$Path = $PWD,
 
         [Parameter(Mandatory=$False)]
-        [String]$DisplayName,
+        [String]$Template,
 
-        [Parameter(Mandatory=$True)]
-        [String]$BaseVHD,
+        [Parameter(Mandatory=$False)]
+        [String]$DisplayName,
 
         [Parameter(Mandatory=$False)]
         [String]$Hostname = "LAB-$([Guid]::NewGuid().ToString().split('-')[0].ToUpper())",
+
+        [Parameter(Mandatory=$True)]
+        [String]$BaseVHD,
 
         [Parameter(Mandatory=$False)]
         [Int64]$MemorySizeInBytes = 4GB,
@@ -38,9 +41,6 @@ Function New-LablyVM {
 
         [Parameter(Mandatory=$False)]
         [String]$Locale = $(Get-WinSystemLocale).Name,
-
-        [Parameter(Mandatory=$False,DontShow=$True)]
-        [String]$TemplateGuid = "",
 
         [Parameter(Mandatory=$False)]
         [Switch]$Force

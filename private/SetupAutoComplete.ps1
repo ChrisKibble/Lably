@@ -1,3 +1,6 @@
+$ThisModulePath = Split-Path $PSScriptRoot
+$TemplatePath = Join-Path $ThisModulePath -ChildPath "Templates"
+
 $scriptGetBaseImages = [scriptblock]::Create({
 
     param ( $CommandName, $ParameterName, $WordToComplete, $CommandAst,$FakeBoundParameters )
@@ -55,5 +58,27 @@ $scriptGetVMDisplayNames = [scriptblock]::Create({
 
 })
 
+$scriptGetTemplateNames = [scriptblock]::Create({
+
+    param ( $CommandName, $ParameterName, $WordToComplete, $CommandAst, $FakeBoundParameters )
+
+    $Templates = @(Get-ChildItem -Path $Script:TemplatePath -Filter "*.json")
+    $Templates += @(Get-ChildItem -Path (Join-Path $env:USERPROFILE -ChildPath "Lably\Templates") -Filter "*.json")
+
+    $Templates = $Templates | Select-Object -ExpandProperty BaseName | Sort-Object -Unique
+
+    $Templates = $Templates | ForEach-Object {
+        If($_ -like "* *") {
+            "`"$_`""
+        } else {
+            $_
+        }
+    }
+
+    Return @($Templates)
+
+}).GetNewClosure()
+
+Register-ArgumentCompleter -CommandName New-LablyVM -ParameterName Template -ScriptBlock $scriptGetTemplateNames
 Register-ArgumentCompleter -CommandName New-LablyVM -ParameterName BaseVHD -ScriptBlock $scriptGetBaseImages
 Register-ArgumentCompleter -CommandName Remove-LablyVM -ParameterName DisplayName -ScriptBlock $scriptGetVMDisplayNames
