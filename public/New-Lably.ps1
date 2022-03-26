@@ -58,6 +58,8 @@ Function New-Lably {
             $CreateSwitch = $Name
         }
 
+        $CreateSwitch = $CreateSwitch -replace "[^A-Za-z0-9 ]",""
+
         If(Get-VMSwitch -Name $CreateSwitch -ErrorAction SilentlyContinue) {
             Throw "Virtual Adapter '$CreateSwitch' already exists."
         }
