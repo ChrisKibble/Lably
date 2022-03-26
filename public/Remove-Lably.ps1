@@ -27,6 +27,7 @@ Function Remove-Lably {
     $Assets = $Scaffold.Assets
     $SwitchId = $Scaffold.Meta.SwitchId
     $TemplatePath = Join-Path $Path -ChildPath "Template Cache"
+    $NetNAT = $Scaffold.Meta.NATName
 
     If(-Not($Confirm)) {
         Write-Host "WARNING! You are about to delete your Lably." -ForegroundColor Red
@@ -34,6 +35,7 @@ Function Remove-Lably {
         Write-Host "This will also stop and delete the following VMs and their associated disks:"
         ForEach($Asset in $Assets) { Write-Host " - $($Asset.DisplayName) ($($Asset.VmId))" }
         Write-Host ""
+        If($NetNAT) { Write-Host "Your NAT '$NetNAT' will be deleted."; Write-Host "" }
         Write-Host "Your current scaffold ($LablyScaffold) will be removed."
         If(Test-Path $TemplatePath) {
             Write-Host "Your Template Cache ($TemplatePath) will be removed."
@@ -57,6 +59,15 @@ Function Remove-Lably {
         Get-VMSwitch -Id $SwitchId | Remove-VMSwitch -Force
     } Else {
         Write-Host "Will not remove virtual switch as it's being used by other VMs."
+    }
+
+    If($NetNAT) {
+        Write-Host "Deleting NAT '$NetNAT'"
+        Try {
+            Get-NetNat -Name $NetNAT | Remove-NetNAT -Confirm:$False -ErrorAction Stop
+        } Catch {
+            Write-Warning "Could not removed NAT. $($_.Exception.Message)"
+        }
     }
 
     Write-Host "Deleting Scaffold ($LablyScaffold)"

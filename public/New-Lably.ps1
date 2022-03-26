@@ -9,9 +9,18 @@ Function New-Lably {
         [String]$Name = (Split-Path $Path -Leaf),
 
         [Parameter(Mandatory=$False,ParameterSetName='NewSwitch')]
-        [String]$NewSwitchName = "",
+        [Parameter(Mandatory=$False,ParameterSetName='NewSwitchNAT')]
+        [String]$NewSwitchName = (Split-Path $Path -Leaf),
 
-        [Parameter(Mandatory=$True,ParameterSetName='Switch')]
+        [Parameter(Mandatory=$True,ParameterSetName='NewSwitchNAT')]
+        [ValidatePattern('^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')]
+        [String]$NewSwitchNATIP,
+
+        [Parameter(Mandatory=$True,ParameterSetName='NewSwitchNAT')]
+        [ValidatePattern('^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/\d{1,2}$')]
+        [String]$NewSwitchNATRange,
+
+        [Parameter(Mandatory=$False,ParameterSetName='Switch')]
         [String]$SwitchName,
 
         [Parameter(Mandatory=$True,ParameterSetName='SwitchId')]
@@ -64,6 +73,44 @@ Function New-Lably {
         } Catch {
             Throw "Cannot create '$NewSwitchName'. $($_.Exception.Message)"
         }
+
+        If($NewSwitchNATIP) {
+            Write-Verbose "Setting up NAT for Switch"
+            $SwitchMAC = Get-VMNetworkAdapter -ManagementOS | Where-Object { $_.Name -eq $NewSwitchName } | Select-Object -ExpandProperty MacAddress
+            Write-Verbose "Virtual Switch MAC Address is $SwitchMAC"
+            If(-Not($SwitchMAC)) {
+                Write-Warning "Could not find MAC Address of Virtual Swtitch. Aborting NAT setup."
+                $VirtualAdapter = ""
+            } Else {
+                $VirtualAdapter = Get-NetAdapter | Where-Object { $($_.MacAddress -Replace '-','') -eq $SwitchMAC }
+                Write-Verbose "Virtual Adapter is '$($VirtualAdapter.Name)'"
+            }
+
+            If(-Not($VirtualAdapter)) {
+                Write-Warning "Could not find virtual adapter for MAC Address. Aborting NAT setup."
+            } Else {
+                Try {
+                    Write-Verbose "Creating New NetIPAddress Bound to $($VirtualAdapter.Name)"
+                    $PrefixLength = $($NewSwitchNATRange -split '/')[1]
+                    
+                    ## This will die with the virtual ethernet adapter when the lab is removed, so no value in storing this in scaffold.
+                    $NATIP = New-NetIPAddress -IPAddress $NewSwitchNATIP -PrefixLength $PrefixLength -ifIndex ($VirtualAdapter.IfIndex)
+                } Catch {
+                    Write-Warning "Could not create NetIPAddress. Aborting NAT Setup. $($_.Exception.Message)"
+                }
+            }
+
+            If($NATIP) {
+                Write-Verbose "Configuring New NAT Rule"
+                Try {
+                    $NewNAT = New-NetNat -Name "LablyNAT ($NewSwitchName)" -InternalIPInterfaceAddressPrefix $NewSwitchNATRange                
+                    ## TODO: Add this to the scaffold to remove when the lab is destroyed.
+                    ## TODO: Make note at lab creation to use this gateway address.
+                } Catch {
+                    Write-Warning "Unable to create new NAT rule. Aborting NAT setup. $($_.Exception.Message)"
+                }
+            }
+        }
     }
 
     If(-Not($VirtualDiskPath)) {
@@ -110,6 +157,7 @@ Function New-Lably {
             Meta = @{
                 Name = $Name
                 SwitchId = $VMSwitch.Id
+                NATName = $(If($NewNAT) { $NewNAT.Name } else { $null })
                 VirtualDiskPath = $VirtualDiskPath
                 CreatedUTC = $(Get-DateUTC)
                 ModifiedUTC = $(Get-DateUTC)
