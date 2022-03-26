@@ -79,6 +79,26 @@ $scriptGetTemplateNames = [scriptblock]::Create({
 
 }).GetNewClosure()
 
+$scriptGetSwitchName = [scriptblock]::Create({
+
+    param ( $CommandName, $ParameterName, $WordToComplete, $CommandAst, $FakeBoundParameters )
+
+    $Switches = Get-VMSwitch | Select-Object -ExpandProperty Name
+
+    $Switches = $Switches | ForEach-Object {
+        If($_ -like "* *") {
+            "`"$_`""
+        } else {
+            $_
+        }
+    }
+
+    Return @($Switches)
+
+})
+
+
 Register-ArgumentCompleter -CommandName New-LablyVM -ParameterName Template -ScriptBlock $scriptGetTemplateNames
 Register-ArgumentCompleter -CommandName New-LablyVM -ParameterName BaseVHD -ScriptBlock $scriptGetBaseImages
 Register-ArgumentCompleter -CommandName Remove-LablyVM -ParameterName DisplayName -ScriptBlock $scriptGetVMDisplayNames
+Register-ArgumentCompleter -CommandName New-Lably -ParameterName "Switch" -ScriptBlock $scriptGetSwitchName 

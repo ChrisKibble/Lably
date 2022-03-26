@@ -21,10 +21,7 @@ Function New-Lably {
         [String]$NewSwitchNATRange,
 
         [Parameter(Mandatory=$False,ParameterSetName='Switch')]
-        [String]$SwitchName,
-
-        [Parameter(Mandatory=$True,ParameterSetName='SwitchId')]
-        [String]$SwitchId,
+        [String]$Switch,
 
         [Parameter(Mandatory=$False)]
         [String]$VirtualDiskPath,
@@ -47,19 +44,11 @@ Function New-Lably {
         Throw "Cannot Create $Path. $($_.Exception.Message)"
     }
 
-    If($SwitchId) {
+    If($Switch) {
         Try {
-            $VMSwitch = Get-VMSwitch -Id $SwitchId -ErrorAction Stop
+            $VMSwitch = Get-VMSwitch -Name $Switch -ErrorAction Stop
         } Catch {
-            Throw "Cannot get switch by Id '$SwitchId'. $($_.Exception.Message)"
-        }
-    }
-    
-    If($SwitchName) {
-        Try {
-            $VMSwitch = Get-VMSwitch -Name $SwitchName -ErrorAction Stop
-        } Catch {
-            Throw "Cannot get switch by Name '$SwitchName'. $($_.Exception.Message)"
+            Throw "Cannot get switch by Name '$Switch'. $($_.Exception.Message)"
         }
     }
 
