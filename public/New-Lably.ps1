@@ -10,15 +10,15 @@ Function New-Lably {
 
         [Parameter(Mandatory=$False,ParameterSetName='NewSwitch')]
         [Parameter(Mandatory=$False,ParameterSetName='NewSwitchNAT')]
-        [String]$NewSwitchName = (Split-Path $Path -Leaf),
+        [String]$CreateSwitch = (Split-Path $Path -Leaf),
 
         [Parameter(Mandatory=$True,ParameterSetName='NewSwitchNAT')]
         [ValidatePattern('^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')]
-        [String]$NewSwitchNATIP,
+        [String]$NATIPAddress,
 
         [Parameter(Mandatory=$True,ParameterSetName='NewSwitchNAT')]
         [ValidatePattern('^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/\d{1,2}$')]
-        [String]$NewSwitchNATRange,
+        [String]$NATRangeCIDR,
 
         [Parameter(Mandatory=$False,ParameterSetName='Switch')]
         [String]$Switch,
@@ -52,25 +52,25 @@ Function New-Lably {
         }
     }
 
-    If($NewSwitchName) {
+    If($CreateSwitch) {
 
         If(-Not($PSBoundParameters.ContainsKey('NewSwitchName'))) {
-            $NewSwitchName = $Name
+            $CreateSwitch = $Name
         }
 
-        If(Get-VMSwitch -Name $NewSwitchName -ErrorAction SilentlyContinue) {
-            Throw "Virtual Adapter '$NewSwitchName' already exists."
+        If(Get-VMSwitch -Name $CreateSwitch -ErrorAction SilentlyContinue) {
+            Throw "Virtual Adapter '$CreateSwitch' already exists."
         }
         Try {
-            Write-Verbose "Creating Switch '$NewSwitchName'."
-            $VMSwitch = New-VMSwitch -Name $NewSwitchName -SwitchType Internal
+            Write-Verbose "Creating Switch '$CreateSwitch'."
+            $VMSwitch = New-VMSwitch -Name $CreateSwitch -SwitchType Internal
         } Catch {
-            Throw "Cannot create '$NewSwitchName'. $($_.Exception.Message)"
+            Throw "Cannot create '$CreateSwitch'. $($_.Exception.Message)"
         }
 
-        If($NewSwitchNATIP) {
+        If($NATIPAddress) {
             Write-Verbose "Setting up NAT for Switch"
-            $SwitchMAC = Get-VMNetworkAdapter -ManagementOS | Where-Object { $_.Name -eq $NewSwitchName } | Select-Object -ExpandProperty MacAddress
+            $SwitchMAC = Get-VMNetworkAdapter -ManagementOS | Where-Object { $_.Name -eq $CreateSwitch } | Select-Object -ExpandProperty MacAddress
             Write-Verbose "Virtual Switch MAC Address is $SwitchMAC"
             If(-Not($SwitchMAC)) {
                 Write-Warning "Could not find MAC Address of Virtual Swtitch. Aborting NAT setup."
@@ -85,10 +85,10 @@ Function New-Lably {
             } Else {
                 Try {
                     Write-Verbose "Creating New NetIPAddress Bound to $($VirtualAdapter.Name)"
-                    $PrefixLength = $($NewSwitchNATRange -split '/')[1]
+                    $PrefixLength = $($NATRangeCIDR -split '/')[1]
                     
                     ## This will die with the virtual ethernet adapter when the lab is removed, so no value in storing this in scaffold.
-                    $NATIP = New-NetIPAddress -IPAddress $NewSwitchNATIP -PrefixLength $PrefixLength -ifIndex ($VirtualAdapter.IfIndex)
+                    $NATIP = New-NetIPAddress -IPAddress $NATIPAddress -PrefixLength $PrefixLength -ifIndex ($VirtualAdapter.IfIndex)
                 } Catch {
                     Write-Warning "Could not create NetIPAddress. Aborting NAT Setup. $($_.Exception.Message)"
                 }
@@ -97,7 +97,7 @@ Function New-Lably {
             If($NATIP) {
                 Write-Verbose "Configuring New NAT Rule"
                 Try {
-                    $NewNAT = New-NetNat -Name "LablyNAT ($NewSwitchName)" -InternalIPInterfaceAddressPrefix $NewSwitchNATRange                
+                    $NewNAT = New-NetNat -Name "LablyNAT ($CreateSwitch)" -InternalIPInterfaceAddressPrefix $NATRangeCIDR                
                     ## TODO: Add this to the scaffold to remove when the lab is destroyed.
                     ## TODO: Make note at lab creation to use this gateway address.
                 } Catch {
