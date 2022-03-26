@@ -64,6 +64,11 @@ Function New-Lably {
     }
 
     If($NewSwitchName) {
+
+        If(-Not($PSBoundParameters.ContainsKey('NewSwitchName'))) {
+            $NewSwitchName = $Name
+        }
+
         If(Get-VMSwitch -Name $NewSwitchName -ErrorAction SilentlyContinue) {
             Throw "Virtual Adapter '$NewSwitchName' already exists."
         }
