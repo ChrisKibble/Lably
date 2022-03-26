@@ -2,8 +2,56 @@ Function Get-AnswersToInputQuestions {
 
     [CmdLetBinding()]
     Param(
-        [Array]$InputData
+        [Array]$InputQuestions,
+        [String]$OSLanguage = $(Get-WinSystemLocale -ErrorAction SilentlyContinue).Name
     )
+
+    $InputData = $InputQuestions[0].PSObject.Properties | ForEach-Object {
+        
+        $PromptName = $_.Name
+
+        Write-Verbose "Processing $PromptName Prompt"
+        $ThisInput = $InputQuestions.$PromptName
+        
+        $PromptList = $ThisInput.Prompt
+        $ValidateList = $ThisInput.Validate
+        $ValidateRegEx = $ThisInput.Validate.RegEx
+        $Secure = $ThisInput.Secure
+
+        If($OSLanguage -and $PromptList.$OSLanguage) {
+            Write-Verbose "   Prompt Language Matched OS Language"
+            $PromptLanguage = $OSLanguage
+        } else {
+            ## TODO: Allow user to set default language outside of the OS
+            Write-Verbose "   Prompt Language did not match OS Langauge, picking from list."
+            $PromptLanguage = $PromptList | Select-Object -First 1 | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
+        }
+
+        $PromptValue = $PromptList.$PromptLanguage
+
+        If($ValidateList) {
+            If($OSLanguage -and $ValidateList.Message.$OSLanguage) {
+                Write-Verbose "   Validation Language Matched OS Language"
+                $ValidateLanguage = $OSLanguage
+            } else {
+                ## TODO: Allow user to set default language outside of the OS
+                Write-Verbose "   Validation Language did not match OS Langauge, picking from list."
+                $ValidateLanguage = $ValidateList.Message | Select-Object -First 1 | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
+            }    
+
+            $ValidateValue = $ValidateList.Message.$ValidateLanguage
+        } else {
+            $ValidateValue = $null
+        }
+
+        [PSCustomObject]@{
+            "Name" = $PromptName
+            "ValidateRegEx" = $ValidateRegEx
+            "Prompt" = $PromptValue
+            "ValidateMesssage" = $ValidateValue
+            "Secure" = [Boolean]$Secure
+        }
+    }
 
     $InputResponse = ForEach($P in $InputData) {
 

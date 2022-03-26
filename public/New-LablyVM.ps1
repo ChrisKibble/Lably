@@ -145,22 +145,13 @@ Function New-LablyVM {
 
         $HostnameDefined = If($PSBoundParameters.ContainsKey("Hostname")) { $True } Else { $False }
 
-        If(-Not(ValidateTemplate2BaseVHD -LablyTemplate $LablyTEmplate -RegistryEntry $RegistryEntry -HostnameDefined $HostnameDefined)) {
+        If(-Not(ValidateTemplate2BaseVHD -LablyTemplate $LablyTemplate -RegistryEntry $RegistryEntry -HostnameDefined $HostnameDefined)) {
             Throw "One or more of the requirements of this template were not met. Read the above warning messages for more information."
         }
 
-        Return
+        $InputResponse = Get-AnswersToInputQuestions -InputQuestions $LablyTemplate.Input
+
     }
-
-
-
-
-
-
-
-
-
-
 
     If(-Not(Test-Path $vhdRoot)) {
         Try {
@@ -182,7 +173,6 @@ Function New-LablyVM {
             Throw "Could not remove $OSVHDPath. $($_.Exception.Message)"
         }
     }
-
 
     If(-Not($ProductKey)) {
         Write-Verbose "No product key defined in call to this function, will use ProductKey from BaseVHD Registry."
@@ -302,8 +292,78 @@ Function New-LablyVM {
         Write-Warning $_.Exception.Message
     }
 
-    Write-Host "Awesome! Your new Virtual Machine is ready to use." -ForegroundColor Green
+    If(-Not($Template)) {
+        Write-Host "Awesome! Your new Virtual Machine is ready to use." -ForegroundColor Green
+        Return $NewVM
+    }
 
-    Return $NewVM
+    Write-Host "VM Creation Complete. Starting VM to Apply Template."
+    
+    Try {
+        $NewVM | Start-VM -ErrorAction Stop
+    } Catch {
+        Throw "Could not start VM. $($_.Exception.Message)"
+    }
+
+    Try {
+        [PSCredential]$Administrator = New-Object System.Management.Automation.PSCredential("Administrator", $AdminPassword)
+    } Catch {
+        Throw "Could not create credential object to connect to new virtual machine."
+    }
+
+    $WaitStart = Get-Date
+
+    Do {
+        $TSLength = New-TimeSpan -Start $WaitStart -End (Get-Date)
+        Try {
+            Invoke-Command -VMId $NewVM.VMid -ScriptBlock { Write-Host ">>> Hello, this is $($env:username) calling out from $($env:computername). I'm online!" } -Credential $Administrator -ErrorAction Stop | Out-Null
+            $Connected = $True
+        } Catch {
+            Write-Host "...  Waiting to connect to virtual machine. Will Retry."
+            $Connected = $False
+            Start-Sleep -Seconds 10
+        }
+    } Until ($Connected -or $TSLength.Minutes -ge 5)
+    
+    If(-Not $Connected) {
+        Throw "Timeout while attempting to configure new virtual machine."
+    }
+
+    Write-Host "Running Post-Build Steps"
+    ForEach($Step in $LablyTemplate.Asset.PostBuild) {
+
+        Write-Host "... Running Step '$($Step.Name)'"
+
+        Switch($Step.Action) {
+            'Script' {
+                
+                Switch($Step.Language) {
+                    'PowerShell' {
+                        Write-Verbose "Running PowerShell Script Against VM"
+
+                        $StepScript = $Step.Script -join "`n"
+                        $StepScript = Literalize -InputResponse $InputResponse -InputData $($StepScript)
+                        $stepScriptBlock = [ScriptBlock]::Create($StepScript)
+
+                        Try {
+                            Invoke-Command -VMId $NewVM.VMId -ScriptBlock $stepScriptBlock -Credential $Administrator
+                        } Catch {
+                            Write-Warning "Unable to run Step - $($_.Exception.Message)"
+                        }
+                    }
+                    default {
+                        Write-Warning "Unknown Script Language '$($Step.Language)'"
+                    }
+                }
+            }
+            default {
+                Write-Warning "Unknown post build directive '$($Step.Action)'"
+            }
+        }
+        
+    }
+    Write-Host "Comlpleted Running Post-Build Steps"
+
+    Write-Host "Awesome! Your new Virtual Machine is ready to use." -ForegroundColor Green
 
 }

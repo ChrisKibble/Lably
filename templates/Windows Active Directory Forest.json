@@ -44,6 +44,18 @@
             },
             "Secure": false
         },
+        "NetBIOSName":{
+            "Prompt":{
+                "en-us":"Enter the NetBIOS Name for your Domain"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"The NetBIOS Name must be 16 characters or less, be alphanumeric, and start with a letter."
+                },
+                "RegEx":"(?i)^[A-Z][A-Z0-9]{1,15}$"
+            },
+            "Secure": false
+        },
         "DSRMPassword":{
             "Prompt":{
                 "en-us":"Enter a new Directory Services Restore Mode (DSRM) password"
@@ -89,7 +101,7 @@
                 "Language":"PowerShell",
                 "Script":[
                     "Add-WindowsFeature AD-Domain-Services -ErrorAction Stop | Out-Null",
-                    "Install-ADDSForest -Force -DomainName [[DomainName]] -InstallDNS -SafeModeAdministratorPassword $('[[DSRMPassword]]' | ConvertTo-SecureString -AsPlainText -Force)"
+                    "Install-ADDSForest -Force -DomainName [[DomainName]] -DomainNetBiosName [[NetBIOSName]] -InstallDNS -SafeModeAdministratorPassword $('[[DSRMPassword]]' | ConvertTo-SecureString -AsPlainText -Force)"
                 ]
             }                
         ]

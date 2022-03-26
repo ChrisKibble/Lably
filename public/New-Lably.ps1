@@ -9,7 +9,7 @@ Function New-Lably {
         [String]$Name = (Split-Path $Path -Leaf),
 
         [Parameter(Mandatory=$False,ParameterSetName='NewSwitch')]
-        [String]$NewSwitchName = (Split-Path $Path -Leaf),
+        [String]$NewSwitchName = "",
 
         [Parameter(Mandatory=$True,ParameterSetName='Switch')]
         [String]$SwitchName,
