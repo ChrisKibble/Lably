@@ -306,7 +306,7 @@ Function New-LablyVM {
     }
 
     Try {
-        [PSCredential]$Administrator = New-Object System.Management.Automation.PSCredential("Administrator", $AdminPassword)
+        [PSCredential]$BuildAdministrator = New-Object System.Management.Automation.PSCredential("$Hostname\Administrator", $AdminPassword)
     } Catch {
         Throw "Could not create credential object to connect to new virtual machine."
     }
@@ -316,7 +316,7 @@ Function New-LablyVM {
     Do {
         $TSLength = New-TimeSpan -Start $WaitStart -End (Get-Date)
         Try {
-            Invoke-Command -VMId $NewVM.VMid -ScriptBlock { Write-Host ">>> Hello, this is $($env:username) calling out from $($env:computername). I'm online!" } -Credential $Administrator -ErrorAction Stop | Out-Null
+            Invoke-Command -VMId $NewVM.VMid -ScriptBlock { Write-Host ">>> Hello, this is $($env:username) calling out from $($env:computername). I'm online!" } -Credential $BuildAdministrator -ErrorAction Stop | Out-Null
             $Connected = $True
         } Catch {
             Write-Host "...  Waiting to connect to virtual machine. Will Retry."
@@ -329,24 +329,51 @@ Function New-LablyVM {
         Throw "Timeout while attempting to configure new virtual machine."
     }
 
+    ## TODO: Administrator is often something else in other languages, let's account for that.
+
+    Write-Host "Enabling PSRemoting"
+    Invoke-Command -VMId $NewVM.VMId -ScriptBlock { Enable-PSRemoting -Force } -Credential $BuildAdministrator
+
     Write-Host "Running Post-Build Steps"
+
     ForEach($Step in $LablyTemplate.Asset.PostBuild) {
 
         Write-Host "... Running Step '$($Step.Name)'"
+
+        Try {
+            
+            If($Step.Credential.Username) {
+                $StepAdminName = Literalize -InputResponse $InputResponse -InputData $Step.Credential.Username
+            } Else {
+                $StepAdminName = $BuildAdministrator.Username
+            }
+
+            If($Step.ValidationCredential.Username) {
+                $ValidationAdminName = Literalize -InputResponse $InputResponse -InputData $Step.ValidationCredential.Username
+            } else {
+                $ValidationAdminName = $BuildAdministrator.Username
+            }
+
+            [PSCredential]$StepAdministrator = New-Object System.Management.Automation.PSCredential($StepAdminName, $AdminPassword)
+            [PSCredential]$ValidationAdministrator = New-Object System.Management.Automation.PSCredential($ValidationAdminName, $AdminPassword)
+
+        } Catch {
+            Throw "Could not create credential object to connect to new virtual machine."
+        }
 
         Switch($Step.Action) {
             'Script' {
                 
                 Switch($Step.Language) {
                     'PowerShell' {
-                        Write-Verbose "Running PowerShell Script Against VM"
+                        Write-Verbose "Running PowerShell Script Against VM as $($StepAdministrator.UserName)"
 
                         $StepScript = $Step.Script -join "`n"
                         $StepScript = Literalize -InputResponse $InputResponse -InputData $($StepScript)
                         $stepScriptBlock = [ScriptBlock]::Create($StepScript)
 
                         Try {
-                            Invoke-Command -VMId $NewVM.VMId -ScriptBlock $stepScriptBlock -Credential $Administrator
+                            Invoke-Command -VMId $NewVM.VMId -ScriptBlock $stepScriptBlock -Credential $StepAdministrator
                         } Catch {
                             Write-Warning "Unable to run Step - $($_.Exception.Message)"
                         }
@@ -355,6 +382,43 @@ Function New-LablyVM {
                         Write-Warning "Unknown Script Language '$($Step.Language)'"
                     }
                 }
+            }
+            'Reboot' {
+                Try {
+                    Write-Host "...... Rebooting Computer as $($StepAdministrator.Username)"
+                    Invoke-Command -VMId $NewVM.VMId -ScriptBlock { Restart-Computer -Force } -Credential $StepAdministrator
+                    Start-Sleep -Seconds 30
+                } Catch {
+                    Write-Warning "Unable to run Step - $($_.Exception.Message)"
+                }
+ 
+                Do {
+
+                    $WaitStart = Get-Date
+
+                    Do {
+                        $TSLength = New-TimeSpan -Start $WaitStart -End (Get-Date)
+                        Try {
+                            Invoke-Command -VMId $NewVM.VMid -ScriptBlock { Write-Host ">>> Hello, this is $($env:username) calling out from $($env:computername). I'm online!" } -Credential $ValidationAdministrator -ErrorAction Stop | Out-Null
+                            $Connected = $True
+                        } Catch {
+                            Write-Host "......  Waiting to connect to virtual machine as $($ValidationAdministrator.UserName). Will Retry."
+                            $Connected = $False
+                            Start-Sleep -Seconds 10
+                        }
+                    } Until ($Connected -or $TSLength.Minutes -ge 5)
+
+                    If(-Not($Connected)) {
+                        Do {
+                            $PromptContinue = Read-Host "It's taking a while to reconnect. Do you want to keep trying (Y/N)?"
+                        } Until ($PromptContinue -in @("Y","N"))
+                        If($PromptContinue -ne "Y") {
+                            Throw "Timeout waiting for VM to come back online."
+                        }
+                    }
+
+                } Until($Connected)
+
             }
             default {
                 Write-Warning "Unknown post build directive '$($Step.Action)'"
