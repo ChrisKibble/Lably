@@ -32,6 +32,18 @@
             },
             "Secure": false
         },
+        "Gateway":{
+            "Prompt":{
+                "en-us":"Enter a Gateway/Router IP for this Domain Controller (or 0.0.0.0 for none)"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in valid IPv4 address format."
+                },
+                "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            },
+            "Secure": false
+        },        
         "DomainName":{
             "Prompt":{
                 "en-us":"Enter the fully qualified domain name for your new domain (e.g. mylab.contoso.com)"
@@ -62,6 +74,18 @@
             },
             "Secure": true
         },
+        "DNSUpstream":{
+            "Prompt":{
+                "en-us":"Enter an Upstream DNS Server (or 0.0.0.0 for none)"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in valid IPv4 address format."
+                },
+                "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            },
+            "Secure": false
+        },
         "DHCP":{
             "Prompt":{
                 "en-us":"Would you like your domain controller to setup DHCP (Y/N)?"
@@ -72,8 +96,55 @@
                 },
                 "RegEx":"^(Y|N)$"
             }
+        },
+        "DHCPIPStart":{
+            "Prompt":{
+                "en-us":"Enter the Start IP Address for your DHCP Scope (e.g. 10.0.0.10)"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in valid IPv4 address format."
+                },
+                "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            },
+            "AskWhen":"If('[[DHCP]]' -eq 'Y') { $true } else { $false }"
+        },
+        "DHCPIPEnd":{
+            "Prompt":{
+                "en-us":"Enter the End IP Address for your DHCP Scope (e.g. 10.0.0.254)"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in valid IPv4 address format."
+                },
+                "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            },
+            "AskWhen":"If('[[DHCP]]' -eq 'Y') { $true } else { $false }"
+        },
+        "DHCPIPSubnet":{
+            "Prompt":{
+                "en-us":"Enter the Subnet Mask for your DHCP Scope (e.g. 255.255.255.0)"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in valid IPv4 address format."
+                },
+                "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            },
+            "AskWhen":"If('[[DHCP]]' -eq 'Y') { $true } else { $false }"
+        },
+        "DHCPIPGateway":{
+            "Prompt":{
+                "en-us":"Would you like your to include your gateway in the IP Scope? (Y/N)?"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Please enter either Y or N."
+                },
+                "RegEx":"^(Y|N)$"
+            },
+            "AskWhen":"If('[[Gateway]]' -ne '0.0.0.0') { $true } else { $false }"
         }
-
     }],
     "Requirements":{
         "BaseVHD":{
@@ -91,7 +162,13 @@
                 "Language":"PowerShell",
                 "Script":[
                     "$PrefixLength = 0; \"[[SubnetMask]]\".Split('.') | ForEach-Object { while(0 -ne $_) { $_ = ($_ -shl 1) -band [byte]::MaxValue; $PrefixLength++ } }",
-                    "New-NetIPAddress -InterfaceIndex $(Get-NetAdapter | Select -First 1).ifIndex -PrefixLength $PrefixLength -IPAddress [[IPAddress]] | Out-Null",
+                    "$IPSettings = @{",
+                    "     InterfaceIndex = $(Get-NetAdapter | Select -First 1).ifIndex",
+                    "     PrefixLength = $PrefixLength",
+                    "     IPAddress = '[[IPAddress]]'",
+                    "}",
+                    "If('[[Gateway]]' -ne '0.0.0.0') { $IPSettings.Add('DefaultGateway','[[Gateway]]') } ",
+                    "New-NetIPAddress @IPSettings | Out-Null",
                     "Set-DnsClientServerAddress -InterfaceIndex $(Get-NetAdapter | Select -First 1).ifIndex -ServerAddresses [[IPAddress]] | Out-Null"
                 ]
             },
@@ -101,9 +178,43 @@
                 "Language":"PowerShell",
                 "Script":[
                     "Add-WindowsFeature AD-Domain-Services -ErrorAction Stop | Out-Null",
-                    "Install-ADDSForest -Force -DomainName [[DomainName]] -DomainNetBiosName [[NetBIOSName]] -InstallDNS -SafeModeAdministratorPassword $('[[DSRMPassword]]' | ConvertTo-SecureString -AsPlainText -Force)"
+                    "Install-ADDSForest -Force -DomainName [[DomainName]] -DomainNetBiosName [[NetBIOSName]] -InstallDNS -SafeModeAdministratorPassword $('[[DSRMPassword]]' | ConvertTo-SecureString -AsPlainText -Force) -NoRebootOnCompletion"
                 ]
-            }                
+            },
+            {
+                "Name":"Install DHCP Server",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "RunWhen":"If('[[DHCP]]' -eq 'Y') { $true } else { $false }",
+                "Script":[
+                    "Add-WindowsFeature DHCP -IncludeManagementTools -ErrorAction Stop | Out-Null"
+                ]
+            },
+            {
+                "Name":"Reboot to Complete Setup",
+                "Action":"Reboot",
+                "ValidationCredential":{
+                    "Username":"[[NetBIOSName]]\\Administrator"
+                }
+            },
+            {
+                "Name":"Configure DHCP Server",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "RunWhen":"If('[[DHCP]]' -eq 'Y') { $true } else { $false }",
+                "Credential":{
+                    "Username":"[[NetBIOSName]]\\Administrator"
+                },
+                "Script":[
+                    "Set-ItemProperty -Path registry::HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\ServerManager\\Roles\\12 -Name ConfigurationState -Value 2",
+                    "Add-DhcpServerSecurityGroup",
+                    "Do { Try { Add-DhcpServerInDC -DnsName ([System.Net.Dns]::GetHostByName($env:computerName).HostName) -IPAddress [[IPAddress]]; $DHCPNotReady = $False } Catch { $DHCPNotReady = $True; Write-Host 'Waiting for DHCP...'; Start-Sleep -Seconds 10 } } Until ($DHCPNotReady -eq $False)",
+                    "Set-DhcpServerv4DnsSetting -DynamicUpdates Always -DeleteDnsRRonLeaseExpiry $True",
+                    "$DHCPScope = Add-DhcpServerv4Scope -StartRange [[DHCPIPStart]] -EndRange [[DHCPIPEnd]] -SubnetMask [[DHCPIPSubnet]] -Name '[[NetBIOSName]]' -PassThru",
+                    "If('[[DHCPIPGateway]]' -eq 'Y') { Set-DhcpServerv4OptionValue -ScopeId $DHCPScope.ScopeId -Router [[Gateway]] }",
+                    "Set-DhcpServerv4OptionValue -ScopeId $DHCPScope.ScopeId -DnsServer [[IPAddress]]"
+                ]
+            }
         ]
     },
     "Properties":{
