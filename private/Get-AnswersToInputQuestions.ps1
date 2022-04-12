@@ -16,6 +16,7 @@ Function Get-AnswersToInputQuestions {
         $PromptList = $ThisInput.Prompt
         $ValidateList = $ThisInput.Validate
         $ValidateRegEx = $ThisInput.Validate.RegEx
+        $AskWhen = $ThisInput.AskWhen
         $Secure = $ThisInput.Secure
 
         If($OSLanguage -and $PromptList.$OSLanguage) {
@@ -49,11 +50,21 @@ Function Get-AnswersToInputQuestions {
             "ValidateRegEx" = $ValidateRegEx
             "Prompt" = $PromptValue
             "ValidateMesssage" = $ValidateValue
+            "AskWhen" = $AskWhen
             "Secure" = [Boolean]$Secure
         }
     }
+    
+    $InputResponse = @()
+    
+    ForEach($P in $InputData) {
 
-    $InputResponse = ForEach($P in $InputData) {
+        If($P.AskWhen) {
+            $AskWhen = Literalize -InputResponse $InputResponse -InputData $P.AskWhen
+            $Continue = Invoke-Expression $AskWhen
+
+            If(-Not($Continue)) { Continue }
+        }
 
         Do {
 
@@ -75,7 +86,7 @@ Function Get-AnswersToInputQuestions {
                 } else {
                     $Val = Read-Host "$($P.Prompt)"
 
-                    $ValueNoError = $True            
+                    $ValueNoError = $True
  
                     If($Val -notmatch $P.ValidateRegEx) {
                         Write-Warning "Response failed validation. $($P.ValidateMesssage)"
@@ -90,7 +101,7 @@ Function Get-AnswersToInputQuestions {
         
         } Until ($ValueNoError)
 
-        [PSCustomObject]@{
+        $InputResponse += [PSCustomObject]@{
             "Name" = $P.Name
             "Val" = $Val
             "Secure" = $P.Secure

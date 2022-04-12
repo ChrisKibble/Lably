@@ -338,6 +338,15 @@ Function New-LablyVM {
 
     ForEach($Step in $LablyTemplate.Asset.PostBuild) {
 
+        If($Step.RunWhen) {
+            $RunWhen = Literalize -InputResponse $InputResponse -InputData $Step.RunWhen
+            $Continue = Invoke-Expression $RunWhen
+            If(-Not($Continue)) { 
+                Write-Verbose "Skipping Step $($Step.Name) as RunWhen Evaluated False"
+                Continue
+            }
+        }
+
         Write-Host "... Running Step '$($Step.Name)'"
 
         Try {
@@ -366,7 +375,7 @@ Function New-LablyVM {
                 
                 Switch($Step.Language) {
                     'PowerShell' {
-                        Write-Verbose "Running PowerShell Script Against VM as $($StepAdministrator.UserName)"
+                        Write-Output "Running PowerShell Script Against VM as $($StepAdministrator.UserName)"
 
                         $StepScript = $Step.Script -join "`n"
                         $StepScript = Literalize -InputResponse $InputResponse -InputData $($StepScript)
@@ -426,6 +435,7 @@ Function New-LablyVM {
         }
         
     }
+ 
     Write-Host "Comlpleted Running Post-Build Steps"
 
     Write-Host "Awesome! Your new Virtual Machine is ready to use." -ForegroundColor Green
