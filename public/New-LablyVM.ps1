@@ -46,12 +46,9 @@ Function New-LablyVM {
         [Switch]$Force
     )
 
-    Write-Host "Starting Process to Create New Virtual Machine ..."
-
     $VMGUID = [GUID]::NewGuid().Guid
 
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
-    Write-Verbose "Reading Lably Scaffolding File at $LablyScaffold"
 
     If(-Not(Test-Path $LablyScaffold -ErrorAction SilentlyContinue)){
         Throw "There is no Lably at $Path."
@@ -75,7 +72,6 @@ Function New-LablyVM {
 
     Try {
         $SwitchName = $(Get-VMSwitch -Id $SwitchId | Select-Object -First 1).Name
-        Write-Verbose "Using Switch $SwitchName"    
     } Catch {
         Throw "Unable to get name of switch $SwitchId."
     }
@@ -93,7 +89,6 @@ Function New-LablyVM {
     }
 
     $vhdRoot = Join-Path $Scaffold.Meta.VirtualDiskPath -ChildPath $VMGUID
-    Write-Verbose "Using $vhdRoot as the VHD Root for this VM"
 
     If(-Not($VHDRoot)) {
         Throw "No Virtual Disk Path defined in Lably Scaffold."
@@ -117,11 +112,8 @@ Function New-LablyVM {
         Throw "Cannot find $BaseVHD"
     }
     
-    Write-Verbose "Will use BaseVHD $($BaseVHD)."
-
     If($Template) {
 
-        Write-Host "Importing Template"
         If($Template -like "`"*`"") {
             # Remove Quotes
             $Template = $Template.Substring(1,$Template.Length-1)
@@ -140,8 +132,11 @@ Function New-LablyVM {
             Throw "Cannot find $Template"
         }
 
-        Write-Verbose "Importing $TemplateFile"
         $LablyTemplate = Get-LablyTemplate $TemplateFile
+
+        Write-Host ""
+        Write-Host "Building: $($LablyTemplate.Meta.Name) v$($LablyTemplate.Meta.Version) by $($LablyTemplate.Meta.Author)." -ForegroundColor DarkGreen
+        Write-Host ""
 
         $HostnameDefined = If($PSBoundParameters.ContainsKey("Hostname")) { $True } Else { $False }
 
@@ -155,7 +150,6 @@ Function New-LablyVM {
 
     If(-Not(Test-Path $vhdRoot)) {
         Try {
-            Write-Verbose "Creating $vhdRoot"
             New-Item -ItemType Directory -Path $vhdRoot -ErrorAction Stop | Out-Null
         } Catch {
             Throw "Cannot create $vhdRoot. $($_.Exception.Message)"
@@ -167,7 +161,6 @@ Function New-LablyVM {
 
     If($(Test-Path $OSVHDPath) -and $Force) {
         Try {
-            Write-Verbose "Removing $OSVHDPath"
             Remove-Item $OSVHDPath -Force -ErrorAction Stop
         } Catch {
             Throw "Could not remove $OSVHDPath. $($_.Exception.Message)"
@@ -175,44 +168,52 @@ Function New-LablyVM {
     }
 
     If(-Not($ProductKey)) {
-        Write-Verbose "No product key defined in call to this function, will use ProductKey from BaseVHD Registry."
         $ProductKey = $RegistryEntry.ProductKey
     }
 
-    Write-Host "Creating New VHD for VM ..."
+    Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
+    Write-Host "Creating New VHD for VM." -NoNewline
 
     Try {
-        Write-Verbose "Creating $OSVHDPath"
         $VHD = New-VHD -Differencing -Path $OSVHDPath -ParentPath $BaseVHD -ErrorAction Stop
+        Write-Host " Success." -ForegroundColor Green
     } Catch {
+        Write-Host " Failed." -ForegroundColor Red
         Throw "Cannot create $OSVHDPath. $($_.Exception.Message)"
     }    
 
-    Write-Host "Creating Operating System on VM ..."
+    Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
+    Write-Host "Mounting Operating System VHD." -NoNewline
 
     Try {
-        Write-Verbose "Mounting New VHD"
         $vhdMount = Mount-VHD -Path $VHD.Path -Passthru -ErrorAction Stop
+        Write-Host " Success." -ForegroundColor Green
     } Catch {
+        Write-Host " Failed." -ForegroundColor Red
         Remove-Item $VHD.Path -ErrorAction SilentlyContinue
         Throw "Could not mount $($VHD.Path). $($_.Exception.Message)"
     }
 
+    Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
+    Write-Host "Getting Local Disk Information from VHD." -NoNewline
+
     Try {
-        Write-Verbose "Getting Drive Letter for New VHD"
         $VHDDriveLetter = $(Get-Partition -DiskNumber $VHDMount.DiskNumber | Where-Object { $_.Type -eq "Basic" -and $_.DriveLetter })[0].DriveLetter
         [String]$VHDDriveLetter += ":"
-        Write-Verbose "Drive Letter for New VHD is $VHDDriveLetter"
+        Write-Host " Success." -ForegroundColor Green
     } Catch {
+        Write-Host " Failed." -ForegroundColor Red
         Dismount-Vhd -Path $VHD.Path -ErrorAction SilentlyContinue
         Remove-Item $VHD.Path -ErrorAction SilentlyContinue
         Throw "Could not get drive letter from $($VHD.Path). $($_.Exception.Message)"
     }
 
+    Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
+    Write-Host "Creating Unattended Install for Guest Operating System." -NoNewline
+
     Try {
         $unattendPath = Join-Path $VHDDriveLetter -ChildPath "Windows\Panther"
         If(-Not(Test-Path $unattendPath)) {
-            Write-Verbose "Creating $unattendPath"
             New-Item -ItemType Directory -Path $unattendPath -ErrorAction Stop | Out-Null
         }
         
@@ -231,46 +232,65 @@ Function New-LablyVM {
 
         $xmlUnattend = Update-Unattend @xmlArgs
 
-        Write-Verbose "Writing Unattend File to $unattendFile"
-
         $xmlUnattend.Save($unattendFile)
 
+        Write-Host " Success." -ForegroundColor Green
+        
     } Catch {
+        Write-Host " Failed." -ForegroundColor Red
         Dismount-Vhd -Path $VHD.Path -ErrorAction SilentlyContinue
         Remove-Item $VHD.Path -ErrorAction SilentlyContinue
         Throw "Could not setup Unattend on VHD. $($_.Exception.Message)"
     }
 
+    Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
+    Write-Host "Dismounting VHD and passing control to Hyper-V." -NoNewline
+
     Try {
-        Write-Verbose "Dismounting VHD"
         Dismount-Vhd -Path $VHD.Path -ErrorAction Stop
+        Write-Host " Success." -ForegroundColor Green
     } Catch {
+        Write-Host " Warning!" -ForegroundColor Yellow
         Write-Warning "Could not dismount $($VHD.Path), you'll need to manually dismount or reboot before using. $($_.Exception.Message)"
     }
 
-    Write-Host "Setting up VM in Hyper-V."
+    Write-Host "[Hyper-V] " -ForegroundColor Magenta -NoNewline
+    Write-Host "Setting up VM in Hyper-V." -NoNewline
 
     Try {
-        Write-Verbose "Creating New VM $DisplayName"
         $NewVM = New-VM -Name $DisplayName -MemoryStartupBytes $MemorySizeInBytes -VHDPath $VHD.Path -Generation 2 -SwitchName $SwitchName -ErrorAction Stop
+        Write-Host " Success." -ForegroundColor Green
     } Catch {
+        Write-Host " Failed." -ForegroundColor Red
         Remove-Item $VHD.Path -ErrorAction SilentlyContinue
         Throw "Could not create $DisplayName. $($_.Exception.Message)"
     }
 
+    Write-Host "[Hyper-V] " -ForegroundColor Magenta -NoNewline
+    ## TODO: Update this display info accounting for min/max memory
+    Write-Host "Configuring VM  Memory." -NoNewline
+
     Try {
-        Write-Verbose "Configuring VM Memory"
         Set-VMMemory -VMName $DisplayName -MinimumBytes $MemoryMinimumInBytes -MaximumBytes $MemoryMaximumInBytes -ErrorAction Stop
+        Write-Host " Success." -ForegroundColor Green
     } Catch {
+        Write-Host " Warning!" -ForegroundColor Yellow
         Write-Warning "Unable to change VM CPU Settings. $($_.Exception.Message)"        
     }
 
+    Write-Host "[Hyper-V] " -ForegroundColor Magenta -NoNewline
+    Write-Host "Configuring VM with $CPUCount Virtual CPUs." -NoNewline
+
     Try {
-        Write-Verbose "Configuring VM CPU"
-        Set-VMProcessor -VMName $DisplayName -Count $CPUCount -ErrorAction Stop
+        Set-VMProcessor -VMName $DisplayName -Count $CPUCount -ErrorAction Stop -Verbose
+        Write-Host " Success." -ForegroundColor Green
     } Catch {
+        Write-Host " Warning!" -ForegroundColor Yellow
         Write-Warning "Unable to change VM CPU Settings. $($_.Exception.Message)"        
     }
+
+    Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
+    Write-Host "Updating Lably Scaffold." -NoNewline
 
     Try {
         $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
@@ -287,7 +307,9 @@ Function New-LablyVM {
             }
         )
         $Scaffold | ConvertTo-Json | Out-File $LablyScaffold -Force
+        Write-Host " Success." -ForegroundColor Green
     } Catch {
+        Write-Host " Warning!" -ForegroundColor Yellow
         Write-Warning "VM is online but we were unable to add it to your Lably scaffoling."
         Write-Warning $_.Exception.Message
     }
@@ -297,8 +319,10 @@ Function New-LablyVM {
         Return $NewVM
     }
 
-    Write-Host "VM Creation Complete. Starting VM to Apply Template."
-    
+    Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
+    Write-Host "VM Creation Complete. Starting VM to Apply Template." -ForegroundColor Green
+    Write-Host ""
+
     Try {
         $NewVM | Start-VM -ErrorAction Stop
     } Catch {
@@ -313,13 +337,18 @@ Function New-LablyVM {
 
     $WaitStart = Get-Date
 
+    Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
+    Write-Host "Waiting for VM to be Operational. Will test every 10 seconds up to 5 minutes."
+
     Do {
         $TSLength = New-TimeSpan -Start $WaitStart -End (Get-Date)
         Try {
-            Invoke-Command -VMId $NewVM.VMid -ScriptBlock { Write-Host ">>> Hello, this is $($env:username) calling out from $($env:computername). I'm online!" } -Credential $BuildAdministrator -ErrorAction Stop | Out-Null
+            Invoke-Command -VMId $NewVM.VMid -ScriptBlock { 
+                Write-Host "[VM:$($env:computername)] " -ForegroundColor Magenta -NoNewline
+                Write-Host "Hello, this is $($env:username) calling out from $($env:computername). I'm online!" 
+            } -Credential $BuildAdministrator -ErrorAction Stop | Out-Null
             $Connected = $True
         } Catch {
-            Write-Host "...  Waiting to connect to virtual machine. Will Retry."
             $Connected = $False
             Start-Sleep -Seconds 10
         }
@@ -331,10 +360,18 @@ Function New-LablyVM {
 
     ## TODO: Administrator is often something else in other languages, let's account for that.
 
-    Write-Host "Enabling PSRemoting"
-    Invoke-Command -VMId $NewVM.VMId -ScriptBlock { Enable-PSRemoting -Force } -Credential $BuildAdministrator
+    Write-Host "[VM] " -ForegroundColor Magenta -NoNewline
+    Write-Host "Enabling PSRemoting (You can disable this later if desired)." -NoNewline
+    
+    Try {
+        Invoke-Command -VMId $NewVM.VMId -ScriptBlock { Enable-PSRemoting -Force | Out-Null } -Credential $BuildAdministrator
+        Write-Host " Success!" -ForegroundColor Green
+    } Catch {
+        Throw "Failed to enable PSRemoting. $($_.Exception.Message)"
+    }
 
-    Write-Host "Running Post-Build Steps"
+    Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
+    Write-Host "Starting Post Build Steps from Template"
 
     ForEach($Step in $LablyTemplate.Asset.PostBuild) {
 
@@ -342,12 +379,12 @@ Function New-LablyVM {
             $RunWhen = Literalize -InputResponse $InputResponse -InputData $Step.RunWhen
             $Continue = Invoke-Expression $RunWhen
             If(-Not($Continue)) { 
-                Write-Verbose "Skipping Step $($Step.Name) as RunWhen Evaluated False"
                 Continue
             }
         }
 
-        Write-Host "... Running Step '$($Step.Name)'"
+        Write-Host "[VM] " -ForegroundColor Magenta -NoNewline
+        Write-Host "Executing Step '$($Step.Name)' - " -NoNewline
 
         Try {
             
@@ -375,7 +412,7 @@ Function New-LablyVM {
                 
                 Switch($Step.Language) {
                     'PowerShell' {
-                        Write-Output "Running PowerShell Script Against VM as $($StepAdministrator.UserName)"
+                        Write-Host "Running PowerShell Script on VM as $($StepAdministrator.UserName)"
 
                         $StepScript = $Step.Script -join "`n"
                         $StepScript = Literalize -InputResponse $InputResponse -InputData $($StepScript)
@@ -394,7 +431,7 @@ Function New-LablyVM {
             }
             'Reboot' {
                 Try {
-                    Write-Host "...... Rebooting Computer as $($StepAdministrator.Username)"
+                    Write-Host "Rebooting Computer as $($StepAdministrator.Username)"
                     Invoke-Command -VMId $NewVM.VMId -ScriptBlock { Restart-Computer -Force } -Credential $StepAdministrator
                     Start-Sleep -Seconds 30
                 } Catch {
@@ -404,14 +441,18 @@ Function New-LablyVM {
                 Do {
 
                     $WaitStart = Get-Date
-
+                    Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
+                    Write-Host "Waiting for VM to be Operational. Will test every 10 seconds up to 5 minutes."
+                
                     Do {
                         $TSLength = New-TimeSpan -Start $WaitStart -End (Get-Date)
                         Try {
-                            Invoke-Command -VMId $NewVM.VMid -ScriptBlock { Write-Host ">>> Hello, this is $($env:username) calling out from $($env:computername). I'm online!" } -Credential $ValidationAdministrator -ErrorAction Stop | Out-Null
+                            Invoke-Command -VMId $NewVM.VMid -ScriptBlock { 
+                                Write-Host "[VM:$($env:computername)] " -ForegroundColor Magenta -NoNewline
+                                Write-Host "Hello, this is $($env:username) calling out from $($env:computername). I'm online!" 
+                            } -Credential $ValidationAdministrator -ErrorAction Stop | Out-Null
                             $Connected = $True
                         } Catch {
-                            Write-Host "......  Waiting to connect to virtual machine as $($ValidationAdministrator.UserName). Will Retry."
                             $Connected = $False
                             Start-Sleep -Seconds 10
                         }
@@ -436,8 +477,11 @@ Function New-LablyVM {
         
     }
  
+    Write-Host "[Lably] " -ForegroundColor Magenta -NoNewLine
     Write-Host "Comlpleted Running Post-Build Steps"
 
     Write-Host "Awesome! Your new Virtual Machine is ready to use." -ForegroundColor Green
+
+    Return $NewVM
 
 }

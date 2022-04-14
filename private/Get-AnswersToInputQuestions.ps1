@@ -56,7 +56,8 @@ Function Get-AnswersToInputQuestions {
     }
     
     $InputResponse = @()
-    
+
+    $QNumber = 0
     ForEach($P in $InputData) {
 
         If($P.AskWhen) {
@@ -66,12 +67,15 @@ Function Get-AnswersToInputQuestions {
             If(-Not($Continue)) { Continue }
         }
 
+        $QNumber++
+
         Do {
 
             Try {
                        
                 Write-Verbose "   Prompting for '$($P.Prompt)'"
                 
+                Write-Host "($QNumber) " -ForegroundColor Yellow -NoNewline
                 If($P.Secure -eq $True) {
                     Do {
                         $SecureVal = Read-Host "$($P.Prompt)" -AsSecureString
@@ -82,6 +86,7 @@ Function Get-AnswersToInputQuestions {
                         If(-Not($Val -ceq $ValConfirm)) {
                             Write-Host "Passwords do not match. Try again." -ForegroundColor Red
                         }
+                        Write-Host ""
                     } Until($Val -ceq $ValConfirm)
                 } else {
                     $Val = Read-Host "$($P.Prompt)"
@@ -90,6 +95,7 @@ Function Get-AnswersToInputQuestions {
  
                     If($Val -notmatch $P.ValidateRegEx) {
                         Write-Warning "Response failed validation. $($P.ValidateMesssage)"
+                        Write-Host ""
                         $ValueNoError = $False
                     }
 
@@ -109,6 +115,7 @@ Function Get-AnswersToInputQuestions {
 
     }
 
+    Write-Host ""
     Return $InputResponse
 
 }
