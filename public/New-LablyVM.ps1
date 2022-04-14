@@ -271,7 +271,7 @@ Function New-LablyVM {
     Write-Host "Configuring VM  Memory." -NoNewline
 
     Try {
-        Set-VMMemory -VMName $DisplayName -MinimumBytes $MemoryMinimumInBytes -MaximumBytes $MemoryMaximumInBytes -ErrorAction Stop
+        Set-VMMemory -VM $NewVM -MinimumBytes $MemoryMinimumInBytes -MaximumBytes $MemoryMaximumInBytes -ErrorAction Stop
         Write-Host " Success." -ForegroundColor Green
     } Catch {
         Write-Host " Warning!" -ForegroundColor Yellow
@@ -282,7 +282,7 @@ Function New-LablyVM {
     Write-Host "Configuring VM with $CPUCount Virtual CPUs." -NoNewline
 
     Try {
-        Set-VMProcessor -VMName $DisplayName -Count $CPUCount -ErrorAction Stop -Verbose
+        Set-VMProcessor -VM $NewVM -Count $CPUCount -ErrorAction Stop
         Write-Host " Success." -ForegroundColor Green
     } Catch {
         Write-Host " Warning!" -ForegroundColor Yellow
