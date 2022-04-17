@@ -8,3 +8,14 @@
 - All user to set VHDx Size in `New-LablyBaseVHD`.
 - Support for non-Windows OS.
 - When using a non English OS, the `Administrator` account might be spelled some other way, account for this in `New-LablyVM`.
+- Test for Hyper-V support and installation before any lab creation.
+- Setup inline help for all public modules.
+- Accept answers to template questions as hash table.
+- Accept answers to template questions as answer file (json?).
+- Save answers to questions in scaffold.
+- Cache templates in Lably scaffold path.
+- Rebuild labs based on answers defined and cached template(s).
+- Servicing of BaseVHDs (when not being used by VMs).
+- Ability to provide ISOs or Binaries to templates for post-build installs (SQL, SCCM, etc.)
+- Create Credits markdown file.
+- Lably friendly output with Get-LablyISODetails, New-LablyBaseVHD, Register-LablyBaseVHD, Remove-Lably, Remove-LablyVM, Start-Lably, and Stop-Lably.
