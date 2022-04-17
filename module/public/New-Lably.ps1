@@ -54,15 +54,12 @@ Function New-Lably {
 
     If($CreateSwitch) {
 
-        If(-Not($PSBoundParameters.ContainsKey('NewSwitchName'))) {
-            $CreateSwitch = $Name
-        }
-
         $CreateSwitch = $CreateSwitch -replace "[^A-Za-z0-9 ]",""
 
         If(Get-VMSwitch -Name $CreateSwitch -ErrorAction SilentlyContinue) {
             Throw "Virtual Adapter '$CreateSwitch' already exists."
         }
+        
         Try {
             Write-Verbose "Creating Switch '$CreateSwitch'."
             $VMSwitch = New-VMSwitch -Name $CreateSwitch -SwitchType Internal
@@ -119,7 +116,7 @@ Function New-Lably {
                 New-Item -ItemType Directory -Path $KeyFilePath -ErrorAction Stop | Out-Null
             }
         } Catch {
-            Throw "Could not create key file path. $($_.Exception.Message)"
+            Write-Warning "Could not create key file path. $($_.Exception.Message). Please manually create this folder."
         }
 
         Try {
@@ -161,7 +158,7 @@ Function New-Lably {
             Write-Verbose "Creating Virtual Disk Path $VirtualDiskPath"
             New-Item -ItemType Directory -Path $VirtualDiskPath -ErrorAction Stop | Out-Null
         } Catch {
-            Throw "Could not create $VirtualDiskPath. $($_.Exception.Message)"
+            Write-Warning "Could not create $VirtualDiskPath. $($_.Exception.Message). Please manually create this folder."
         }
     }
 
