@@ -116,6 +116,7 @@
                 "Action":"Script",
                 "Language":"PowerShell",
                 "Script":[
+                    "$WarningPreference = 'SilentlyContinue'",
                     "$DomainPassword = ConvertTo-SecureString \"[[DomainUserPass]]\" -AsPlainText -Force",
                     "$DomainCred = New-Object System.Management.Automation.PSCredential(\"[[DomainUserName]]\", $DomainPassword)",
                     "Add-Computer -DomainName [[DomainName]] -DomainCred $DomainCred"
