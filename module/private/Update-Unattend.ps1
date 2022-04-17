@@ -162,9 +162,5 @@ $xmlData = [xml]@"
         }
     }
 
-    # TODO - Remove This
-    Write-Verbose "Saving Copy of XML at $env:temp\unattend.xml"
-    $xmlData.Save("$env:temp\unattend.xml")
-
     Return $xmlData
 }
