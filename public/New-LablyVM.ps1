@@ -267,8 +267,7 @@ Function New-LablyVM {
     }
 
     Write-Host "[Hyper-V] " -ForegroundColor Magenta -NoNewline
-    ## TODO: Update this display info accounting for min/max memory
-    Write-Host "Configuring VM  Memory." -NoNewline
+    Write-Host "Configuring VM Memory with Min=$([Math]::Round($MemoryMinimumInBytes/1GB,2))GB, Max=$([Math]::Round($MemoryMaximumInBytes/1GB,2))GB, Startup=$([Math]::Round($MemorySizeInBytes/1GB,2))GB,." -NoNewline
 
     Try {
         Set-VMMemory -VM $NewVM -MinimumBytes $MemoryMinimumInBytes -MaximumBytes $MemoryMaximumInBytes -ErrorAction Stop
@@ -297,7 +296,7 @@ Function New-LablyVM {
         If(-Not($Scaffold.Assets)) {
             Add-Member -InputObject $Scaffold -MemberType NoteProperty -Name Assets -Value @() -ErrorAction SilentlyContinue
         }
-        $Scaffold.Assets += @(
+        [Array]$Scaffold.Assets += @(
             [PSCustomObject]@{
                 DisplayName = $DisplayName
                 TemplateGuid = $TemplateGuid
@@ -361,10 +360,13 @@ Function New-LablyVM {
     ## TODO: Administrator is often something else in other languages, let's account for that.
 
     Write-Host "[VM] " -ForegroundColor Magenta -NoNewline
-    Write-Host "Enabling PSRemoting (You can disable this later if desired)." -NoNewline
+    Write-Host "Setting Network Type of Private and Enabling PSRemoting (You can change this later if desired)." -NoNewline
     
     Try {
-        Invoke-Command -VMId $NewVM.VMId -ScriptBlock { Enable-PSRemoting -Force | Out-Null } -Credential $BuildAdministrator
+        Invoke-Command -VMId $NewVM.VMId -ScriptBlock { 
+            Get-NetConnectionProfile | Set-NetConnectionProfile -NetworkCategory Private
+            Enable-PSRemoting -Force | Out-Null 
+        } -Credential $BuildAdministrator
         Write-Host " Success!" -ForegroundColor Green
     } Catch {
         Throw "Failed to enable PSRemoting. $($_.Exception.Message)"
