@@ -19,3 +19,16 @@
 - Ability to provide ISOs or Binaries to templates for post-build installs (SQL, SCCM, etc.)
 - Create Credits markdown file.
 - Lably friendly output with Get-LablyISODetails, New-LablyBaseVHD, Register-LablyBaseVHD, Remove-Lably, Remove-LablyVM, Start-Lably, and Stop-Lably.
+- Note somewhere to never modify an in-use Base VHD
+- Command to get information on the current Lably (or at a -Path)
+- Define lab-wide admin password in Scaffold so not to prompt users on new VMs (optional)
+- Single function for "Waiting for VM to be operational" instead of calling the same code twice, and both should allow user to keep waiting after timeout.
+- Customize timeout for VM timeout (global preferences?) for slower hosts.
+- We need a Get-LablyVM that we can pipe to Remove-LablyVM
+- Stop Lably VMs in Parallel (some defined count)?
+- Need a contributing MD file in repository
+- Need a licenseing MD file in repository
+- Customize generic hostname prefix in Lably scaffold
+- Need a better solution than waiting 15 seconds on new VM builds before configuring network
+- Ability to build a new VM in a Lably by cloning the answers to an existing VM in a Scaffold.
+- Apply template to VMs already built
