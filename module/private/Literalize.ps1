@@ -6,8 +6,6 @@ Function Literalize {
         [String]$InputData
     )
 
-    ##TODO: Should probably have an escape character.
-
     $VariableList = [Regex]::New("(?msi)\[\[(\w{1,})\]\]").Matches($InputData)
 
     ForEach($V in $VariableList) {        

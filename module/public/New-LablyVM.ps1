@@ -357,8 +357,6 @@ Function New-LablyVM {
         Throw "Timeout while attempting to configure new virtual machine."
     }
 
-    ## TODO: Administrator is often something else in other languages, let's account for that.
-
     Write-Host "[VM] " -ForegroundColor Magenta -NoNewline
     Write-Host "Setting Network Type of Private and Enabling PSRemoting (You can change this later if desired)." -NoNewline
     

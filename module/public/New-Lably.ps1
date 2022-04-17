@@ -100,8 +100,6 @@ Function New-Lably {
                 Write-Verbose "Configuring New NAT Rule"
                 Try {
                     $NewNAT = New-NetNat -Name "LablyNAT ($CreateSwitch)" -InternalIPInterfaceAddressPrefix $NATRangeCIDR                
-                    ## TODO: Add this to the scaffold to remove when the lab is destroyed.
-                    ## TODO: Make note at lab creation to use this gateway address.
                 } Catch {
                     Write-Warning "Unable to create new NAT rule. Aborting NAT setup. $($_.Exception.Message)"
                 }

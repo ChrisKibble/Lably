@@ -23,7 +23,6 @@ Function Get-AnswersToInputQuestions {
             Write-Verbose "   Prompt Language Matched OS Language"
             $PromptLanguage = $OSLanguage
         } else {
-            ## TODO: Allow user to set default language outside of the OS
             Write-Verbose "   Prompt Language did not match OS Langauge, picking from list."
             $PromptLanguage = $PromptList | Select-Object -First 1 | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
         }
@@ -35,7 +34,6 @@ Function Get-AnswersToInputQuestions {
                 Write-Verbose "   Validation Language Matched OS Language"
                 $ValidateLanguage = $OSLanguage
             } else {
-                ## TODO: Allow user to set default language outside of the OS
                 Write-Verbose "   Validation Language did not match OS Langauge, picking from list."
                 $ValidateLanguage = $ValidateList.Message | Select-Object -First 1 | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
             }    
