@@ -90,9 +90,9 @@ Function New-Lably {
                     $PrefixLength = $($NATRangeCIDR -split '/')[1]
                     
                     ## This will die with the virtual ethernet adapter when the lab is removed, so no value in storing this in scaffold.
-                    $NATIP = New-NetIPAddress -IPAddress $NATIPAddress -PrefixLength $PrefixLength -ifIndex ($VirtualAdapter.IfIndex)
+                    $NATIP = New-NetIPAddress -IPAddress $NATIPAddress -PrefixLength $PrefixLength -ifIndex ($VirtualAdapter.IfIndex) -ErrorAction Stop
                 } Catch {
-                    Write-Warning "Could not create NetIPAddress. Aborting NAT Setup. $($_.Exception.Message)"
+                    Throw "Could not create NetIPAddress. Aborting NAT Setup. $($_.Exception.Message)"
                 }
             }
 
@@ -109,15 +109,6 @@ Function New-Lably {
 
     If(-Not($VirtualDiskPath)) {
         $VirtualDiskPath = Join-Path $Path -ChildPath "Virtual Disks"
-    }
-
-    If(-Not(Test-Path $VirtualDiskPath -ErrorAction SilentlyContinue)) {
-        Try {
-            Write-Verbose "Creating Virtual Disk Path $VirtualDiskPath"
-            New-Item -ItemType Directory -Path $VirtualDiskPath -ErrorAction Stop | Out-Null
-        } Catch {
-            Throw "Could not create $VirtualDiskPath. $($_.Exception.Message)"
-        }
     }
 
     If($SecretKeyFile) {
@@ -163,6 +154,15 @@ Function New-Lably {
         } | ConvertTo-Json | Out-File $ScaffoldFile -Force
     } Catch {
         Throw "Could not create Lably $Name. $($_.Exception.Message)"
+    }
+
+    If(-Not(Test-Path $VirtualDiskPath -ErrorAction SilentlyContinue)) {
+        Try {
+            Write-Verbose "Creating Virtual Disk Path $VirtualDiskPath"
+            New-Item -ItemType Directory -Path $VirtualDiskPath -ErrorAction Stop | Out-Null
+        } Catch {
+            Throw "Could not create $VirtualDiskPath. $($_.Exception.Message)"
+        }
     }
 
     Write-Host "Congratulations! Your Lably '$Name'." -ForegroundColor Green
