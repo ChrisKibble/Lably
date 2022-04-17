@@ -151,6 +151,8 @@ The following 60 second video demos what this process looks like.
 
 [![](media/youtubelink.jpg)](https://www.youtube.com/watch?v=JdrN63L6PBc)
 
+Note: Templates require that the guest Operating System be running either Windows 10 or Windows Server 2016 (or greater).
+
 ### Step 7: Starting and Stopping your Lab
 
 Although you can manually start and stop the VMs in your lab using Hyper-V or PowerShell, if you'd like to bring up or shut down your entire lab at once, you can use the `Start-Lably` and `Stop-Lably` commands.
