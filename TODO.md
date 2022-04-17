@@ -32,3 +32,4 @@
 - Need a better solution than waiting 15 seconds on new VM builds before configuring network
 - Ability to build a new VM in a Lably by cloning the answers to an existing VM in a Scaffold.
 - Apply template to VMs already built
+- Support for Win7/Srv2012
