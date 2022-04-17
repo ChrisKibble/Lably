@@ -177,8 +177,19 @@
                 "Action":"Script",
                 "Language":"PowerShell",
                 "Script":[
+                    "$WarningPreference = 'SilentlyContinue'",
                     "Add-WindowsFeature AD-Domain-Services -ErrorAction Stop | Out-Null",
-                    "Install-ADDSForest -Force -DomainName [[DomainName]] -DomainNetBiosName [[NetBIOSName]] -InstallDNS -SafeModeAdministratorPassword $('[[DSRMPassword]]' | ConvertTo-SecureString -AsPlainText -Force) -NoRebootOnCompletion"
+                    "Install-ADDSForest -Force -DomainName [[DomainName]] -DomainNetBiosName [[NetBIOSName]] -InstallDNS -SafeModeAdministratorPassword $('[[DSRMPassword]]' | ConvertTo-SecureString -AsPlainText -Force) -NoRebootOnCompletion | Out-Null"
+                ]
+            },
+            
+            {
+                "Name":"Install Remote Server Administration Tools",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "$WarningPreference = 'SilentlyContinue'",
+                    "Get-WindowsFeature -Name RSAT* | Where { $_.InstallState -eq \"Available\" } | Install-WindowsFeature | Out-Null"
                 ]
             },
             {
@@ -198,11 +209,30 @@
                 }
             },
             {
+                "Name":"Wait for Active Directory Services to Start",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "Do {",
+                    "   Try {",
+                    "       get-adrootdse -ErrorAction Stop | Out-Null",
+                    "       $Success = $True",
+                    "   } Catch {",
+                    "       $Success = $False",
+                    "       Start-Sleep -Seconds 5",
+                    "   }",
+                    "} Until ($Success)"                
+                ],
+                "Credential":{
+                    "Username":"[[NetBIOSName]]\\Administrator"
+                }
+            }, 
+            {
                 "Name":"Rename Site",
                 "Action":"Script",
                 "Language":"PowerShell",
                 "Script":[
-                    "Get-ADObject -SearchBase ((Get-ADRootDSE).ConfigurationNamingContext) -Filter \"objectClass -eq 'site' -and name -eq 'Default-First-Site-Name'\" | Rename-ADObject -NewName '[[NetBIOSName]]-Site'"
+                    "Get-ADObject -SearchBase ((Get-ADRootDSE).ConfigurationNamingContext) -Filter \"objectClass -eq 'site' -and name -eq 'Default-First-Site-Name'\" -ErrorAction Stop | Rename-ADObject -NewName '[[NetBIOSName]]-Site' -ErrorAction Stop"
                 ],
                 "Credential":{
                     "Username":"[[NetBIOSName]]\\Administrator"
@@ -219,7 +249,7 @@
                 "Script":[
                     "Set-ItemProperty -Path registry::HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\ServerManager\\Roles\\12 -Name ConfigurationState -Value 2",
                     "Add-DhcpServerSecurityGroup",
-                    "Do { Try { Add-DhcpServerInDC -DnsName ([System.Net.Dns]::GetHostByName($env:computerName).HostName) -IPAddress [[IPAddress]]; $DHCPNotReady = $False } Catch { $DHCPNotReady = $True; Write-Host 'Waiting for DHCP...'; Start-Sleep -Seconds 10 } } Until ($DHCPNotReady -eq $False)",
+                    "Do { Try { Add-DhcpServerInDC -DnsName ([System.Net.Dns]::GetHostByName($env:computerName).HostName) -IPAddress [[IPAddress]]; $DHCPNotReady = $False } Catch { $DHCPNotReady = $True; Start-Sleep -Seconds 10 } } Until ($DHCPNotReady -eq $False)",
                     "Set-DhcpServerv4DnsSetting -DynamicUpdates Always -DeleteDnsRRonLeaseExpiry $True",
                     "$DHCPScope = Add-DhcpServerv4Scope -StartRange [[DHCPIPStart]] -EndRange [[DHCPIPEnd]] -SubnetMask [[DHCPIPSubnet]] -Name '[[NetBIOSName]]' -PassThru",
                     "If('[[DHCPIPGateway]]' -eq 'Y') { Set-DhcpServerv4OptionValue -ScopeId $DHCPScope.ScopeId -Router [[Gateway]] }",
