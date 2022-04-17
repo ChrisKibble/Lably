@@ -362,6 +362,7 @@ Function New-LablyVM {
     
     Try {
         Invoke-Command -VMId $NewVM.VMId -ScriptBlock { 
+            Start-Sleep -Seconds 15
             Get-NetConnectionProfile | Set-NetConnectionProfile -NetworkCategory Private
             Enable-PSRemoting -Force | Out-Null 
         } -Credential $BuildAdministrator
