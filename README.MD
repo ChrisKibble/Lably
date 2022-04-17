@@ -177,7 +177,7 @@ You'll be notified with assets will be deleted and be required to enter a phrase
 
 **Q: Where does Lably store data?**
 
-A: Lably stores your Base VHD registry and secret keys in `%USERPROFILE%\Lably`.  Lably will also read custom templates from `%USERPROFILE%\Lably\Templates`.
+A: Lably stores your Base VHD registry and secret keys in `%USERPROFILE%\Lably`.  Lably will also read custom templates from `%USERPROFILE%\Lably\Templates`. Data for each Lably you build is stored in the directory for that lab.
 
 **Q: What's the deal with product keys?**
 
