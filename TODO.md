@@ -33,3 +33,6 @@
 - Ability to build a new VM in a Lably by cloning the answers to an existing VM in a Scaffold.
 - Apply template to VMs already built
 - Support for Win7/Srv2012
+- Fix: New-LablyVM fails in existing scaffold if user is not admin with wrong error message.
+- Function that validates a scaffold by checking the VM display names, NAT info, and switch against Hyper-V
+- Document secure strings, keys, etc.
