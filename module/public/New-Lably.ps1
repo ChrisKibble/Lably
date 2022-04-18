@@ -68,6 +68,11 @@ Function New-Lably {
         }
 
         If($NATIPAddress) {
+
+            If(Get-NetIPAddress -IPAddress $NATIPAddress) {
+                Throw "NAT IP Address $NATIPAddress Already Exists on System. This must be unique."
+            }
+
             Write-Verbose "Setting up NAT for Switch"
             $SwitchMAC = Get-VMNetworkAdapter -ManagementOS | Where-Object { $_.Name -eq $CreateSwitch } | Select-Object -ExpandProperty MacAddress
             Write-Verbose "Virtual Switch MAC Address is $SwitchMAC"
@@ -82,7 +87,7 @@ Function New-Lably {
             If(-Not($VirtualAdapter)) {
                 Write-Warning "Could not find virtual adapter for MAC Address. Aborting NAT setup."
             } Else {
-                Try {
+                Try {                  
                     Write-Verbose "Creating New NetIPAddress Bound to $($VirtualAdapter.Name)"
                     $PrefixLength = $($NATRangeCIDR -split '/')[1]
                     
