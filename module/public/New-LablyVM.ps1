@@ -311,12 +311,24 @@ Function New-LablyVM {
             Add-Member -InputObject $Scaffold -MemberType NoteProperty -Name Assets -Value @() -ErrorAction SilentlyContinue
         }
         
+        $AdminPasswordAsBTSR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($AdminPassword)
+        $AdminPasswordAsString = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($AdminPasswordAsBTSR)
+
+        If($SecretType -eq "PowerShell") {
+            $SecureAdminPassword = $AdminPasswordAsString | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString
+        } ElseIf ($SecretType -eq "KeyFile") {
+            $SecureAdminPassword = $AdminPasswordAsString | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString -Key $SecretsKey
+        } Else {
+            Throw "Unable to encrypt secrets, SecretType is not defined."
+        }
+        
         $ThisAsset = [PSCustomObject]@{
             DisplayName = $DisplayName
+            CreatedUTC = $(Get-DateUTC)
             TemplateGuid = $TemplateGuid
             BaseVHD = $BaseVHD
             VMId = $NewVM.VMId
-            CreatedUTC = $(Get-DateUTC)
+            AdminPassword = $SecureAdminPassword
         }
 
         If($InputResponse) {
