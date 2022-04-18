@@ -1,17 +1,18 @@
 # TODO List
 
+## Fixes
+- When using a non English OS, the `Administrator` account might be spelled some other way, account for this in `New-LablyVM`.
+
+## Enhancements
 - In `Get-AnswersToInputQuestions` we use the OS langauge and then fall back to the first entry. Allow user to define language to be asked questions in.
 - We need an escape character for `[[VARIABLES]]`.
 - Validate the Incoming Index number in `New-LablyBaseVHD`.
-- All user to set VHDx Size in `New-LablyBaseVHD`.
+- Allow user to set VHDx Size in `New-LablyBaseVHD`.
 - Support for non-Windows OS.
-- When using a non English OS, the `Administrator` account might be spelled some other way, account for this in `New-LablyVM`.
 - Test for Hyper-V support and installation before any lab creation.
 - Setup inline help for all public modules.
 - Accept answers to template questions as hash table.
 - Accept answers to template questions as answer file (json?).
-- Save answers to questions in scaffold.
-- Cache templates in Lably scaffold path.
 - Rebuild labs based on answers defined and cached template(s).
 - Servicing of BaseVHDs (when not being used by VMs).
 - Ability to provide ISOs or Binaries to templates for post-build installs (SQL, SCCM, etc.)
@@ -33,8 +34,10 @@
 - Support for Win7/Srv2012
 - Fix: New-LablyVM fails in existing scaffold if user is not admin with wrong error message.
 - Function that validates a scaffold by checking the VM display names, NAT info, and switch against Hyper-V
-- Document secure strings, keys, etc.
 - Cmdlet to validate base registry
 - Cmdlet to remove item from base registry
 - Cmdlet to read/display base registry
 - Cmdlet to find virtual switches that aren't assigned to VMs (part of lab validation?)
+
+## Documentation
+- Document secure strings, keys, etc.
