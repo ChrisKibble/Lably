@@ -60,6 +60,19 @@ Function New-LablyVM {
         Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
     }
 
+    If($Scaffold.Secrets.SecretType -eq "PowerShell") {
+        $SecretType = "PowerShell"
+    } ElseIf($Scaffold.Secrets.SecretType -eq "KeyFile") {
+        $SecretType = "KeyFile"
+        Try {
+            $SecretsKey = Get-Content $Scaffold.secrets.KeyFile
+        } Catch {
+            Throw "Unable to read Secrets key file."
+        }
+    } Else {
+        Throw "Invalid secrets type in Scaffold File."
+    }
+
     $SwitchId = $Scaffold.Meta.SwitchId
 
     If(-Not($SwitchId)) {
@@ -293,19 +306,38 @@ Function New-LablyVM {
 
     Try {
         $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
+        
         If(-Not($Scaffold.Assets)) {
             Add-Member -InputObject $Scaffold -MemberType NoteProperty -Name Assets -Value @() -ErrorAction SilentlyContinue
         }
-        [Array]$Scaffold.Assets += @(
-            [PSCustomObject]@{
-                DisplayName = $DisplayName
-                TemplateGuid = $TemplateGuid
-                BaseVHD = $BaseVHD
-                VMId = $NewVM.VMId
-                CreatedUTC = $(Get-DateUTC)
+        
+        $ThisAsset = [PSCustomObject]@{
+            DisplayName = $DisplayName
+            TemplateGuid = $TemplateGuid
+            BaseVHD = $BaseVHD
+            VMId = $NewVM.VMId
+            CreatedUTC = $(Get-DateUTC)
+        }
+
+        If($InputResponse) {
+            $ScaffoldResponse = $InputResponse | ConvertTo-Json -Depth 100 | ConvertFrom-Json
+            
+            ForEach($SecureProperty in $ScaffoldResponse | Where-Object { $_.Secure -eq $True }) {
+                If($SecretType -eq "PowerShell") {
+                    $SecureProperty.Val = $SecureProperty.Val | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString
+                } ElseIf ($SecretType -eq "KeyFile") {
+                    $SecureProperty.Val = $SecureProperty.Val | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString -Key $SecretsKey
+                } Else {
+                    Throw "Unable to encrypt secrets, SecretType is not defined."
+                }
             }
-        )
-        $Scaffold | ConvertTo-Json | Out-File $LablyScaffold -Force
+
+            Add-Member -InputObject $ThisAsset -MemberType NoteProperty -Name InputResponse -Value $ScaffoldResponse
+        }
+        
+        [Array]$Scaffold.Assets += @($ThisAsset)
+
+        $Scaffold | ConvertTo-Json -Depth 4 | Out-File $LablyScaffold -Force
         Write-Host " Success." -ForegroundColor Green
     } Catch {
         Write-Host " Warning!" -ForegroundColor Yellow
