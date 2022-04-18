@@ -39,3 +39,4 @@
 - Cmdlet to validate base registry
 - Cmdlet to remove item from base registry
 - Cmdlet to read/display base registry
+- Cmdlet to find virtual switches that aren't assigned to VMs (part of lab validation?)
