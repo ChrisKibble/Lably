@@ -349,7 +349,7 @@ Function New-LablyVM {
         
         [Array]$Scaffold.Assets += @($ThisAsset)
 
-        $Scaffold | ConvertTo-Json -Depth 4 | Out-File $LablyScaffold -Force
+        $Scaffold | ConvertTo-Json -Depth 10 | Out-File $LablyScaffold -Force
         Write-Host " Success." -ForegroundColor Green
     } Catch {
         Write-Host " Warning!" -ForegroundColor Yellow

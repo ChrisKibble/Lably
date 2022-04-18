@@ -117,7 +117,7 @@ Function Remove-LablyVM {
     Try {
         $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
         $Scaffold.Assets = $Scaffold.Assets | Where-Object { $_.VMId -ne $Asset.VMid }
-        $Scaffold | ConvertTo-Json | Out-File $LablyScaffold -Force
+        $Scaffold | ConvertTo-Json -Depth 10 | Out-File $LablyScaffold -Force
     } Catch {
         Write-Warning "VM is removed but we were unable to remove it from your Lably scaffoling."
         Write-Warning $_.Exception.Message
