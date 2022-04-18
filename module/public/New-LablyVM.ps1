@@ -149,6 +149,9 @@ Function New-LablyVM {
 
         Write-Host ""
         Write-Host "Building: $($LablyTemplate.Meta.Name) v$($LablyTemplate.Meta.Version) by $($LablyTemplate.Meta.Author)." -ForegroundColor DarkGreen
+        If($Scaffold.Meta.NATIPCIDR) {
+            Write-Host "Lab IP Range: $($Scaffold.Meta.NATIPCIDR)" -ForegroundColor DarkGreen
+        }
         Write-Host ""
 
         $HostnameDefined = If($PSBoundParameters.ContainsKey("Hostname")) { $True } Else { $False }

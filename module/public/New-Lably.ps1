@@ -69,7 +69,7 @@ Function New-Lably {
 
         If($NATIPAddress) {
 
-            If(Get-NetIPAddress -IPAddress $NATIPAddress) {
+            If(Get-NetIPAddress -IPAddress $NATIPAddress -ErrorAction SilentlyContinue) {
                 Throw "NAT IP Address $NATIPAddress Already Exists on System. This must be unique."
             }
 
@@ -90,8 +90,6 @@ Function New-Lably {
                 Try {                  
                     Write-Verbose "Creating New NetIPAddress Bound to $($VirtualAdapter.Name)"
                     $PrefixLength = $($NATRangeCIDR -split '/')[1]
-                    
-                    ## This will die with the virtual ethernet adapter when the lab is removed, so no value in storing this in scaffold.
                     $NATIP = New-NetIPAddress -IPAddress $NATIPAddress -PrefixLength $PrefixLength -ifIndex ($VirtualAdapter.IfIndex) -ErrorAction Stop
                 } Catch {
                     Throw "Could not create NetIPAddress. Aborting NAT Setup. $($_.Exception.Message)"
@@ -145,6 +143,7 @@ Function New-Lably {
                 Name = $Name
                 SwitchId = $VMSwitch.Id
                 NATName = $(If($NewNAT) { $NewNAT.Name } else { $null })
+                NATIPCIDR = $NATRangeCIDR
                 VirtualDiskPath = $VirtualDiskPath
                 CreatedUTC = $(Get-DateUTC)
                 ModifiedUTC = $(Get-DateUTC)
