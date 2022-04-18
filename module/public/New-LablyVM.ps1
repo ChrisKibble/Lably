@@ -326,7 +326,7 @@ Function New-LablyVM {
             DisplayName = $DisplayName
             CreatedUTC = $(Get-DateUTC)
             TemplateGuid = $TemplateGuid
-            BaseVHD = $BaseVHD
+            BaseVHD = $RegistryEntry.Id
             VMId = $NewVM.VMId
             AdminPassword = $SecureAdminPassword
         }
