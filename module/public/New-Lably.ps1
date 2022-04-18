@@ -162,6 +162,17 @@ Function New-Lably {
         }
     }
 
+    $TemplateCachePath = Join-Path $Path -ChildPath "Template Cache"
+
+    If(-Not(Test-Path $TemplateCachePath -ErrorAction SilentlyContinue)) {
+        Try {
+            Write-Verbose "Creating Template Cache Path $TemplateCachePath"
+            New-Item -ItemType Directory -Path $TemplateCachePath -ErrorAction Stop | Out-Null
+        } Catch {
+            Write-Warning "Could not create $TemplateCachePath. $($_.Exception.Message). Please manually create this folder."
+        }
+    }
+
     Write-Host "Congratulations! Your Lably '$Name'." -ForegroundColor Green
     If($SecretKeyFile) {
         Write-Host "Warning! Your key files are stored in $($KeyFilePath)." -ForegroundColor Yellow

@@ -325,7 +325,7 @@ Function New-LablyVM {
         $ThisAsset = [PSCustomObject]@{
             DisplayName = $DisplayName
             CreatedUTC = $(Get-DateUTC)
-            TemplateGuid = $TemplateGuid
+            TemplateGuid = $LablyTemplate.Meta.Id
             BaseVHD = $RegistryEntry.Id
             VMId = $NewVM.VMId
             AdminPassword = $SecureAdminPassword
@@ -355,6 +355,16 @@ Function New-LablyVM {
         Write-Host " Warning!" -ForegroundColor Yellow
         Write-Warning "VM is online but we were unable to add it to your Lably scaffoling."
         Write-Warning $_.Exception.Message
+    }
+
+    If($Template) {
+        $TemplatePath = Join-Path $Path -ChildPath "Template Cache"
+        $TemplateCacheFile = Join-Path $TemplatePath -ChildPath "$($LablyTemplate.Meta.Id).json"
+        Try {
+            Copy-Item -Path $TemplateFile -Destination $TemplateCacheFile -Force -ErrorAction Stop
+        } Catch {
+            Write-Warning "Unable to cache template. $($_.Exception.Message)"
+        }
     }
 
     If(-Not($Template)) {

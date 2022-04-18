@@ -36,10 +36,8 @@ Function Remove-Lably {
         ForEach($Asset in $Assets) { Write-Host " - $($Asset.DisplayName) ($($Asset.VmId))" }
         Write-Host ""
         If($NetNAT) { Write-Host "Your NAT '$NetNAT' will be deleted."; Write-Host "" }
+        Write-Host "Your Template Cache ($TemplatePath) will be removed."
         Write-Host "Your current scaffold ($LablyScaffold) will be removed."
-        If(Test-Path $TemplatePath) {
-            Write-Host "Your Template Cache ($TemplatePath) will be removed."
-        }
         Write-Host ""
         Write-Host "This operation cannot be undone." -ForegroundColor Red
         Write-Host ""
@@ -54,6 +52,7 @@ Function Remove-Lably {
     }
 
     $SwitchName = Get-VMSwitch -Id $SwitchId | Select-Object -ExpandProperty Name
+
     If(-Not(Get-VMNetworkAdapter -All | Where-Object { $_.SwitchName -eq $SwitchName -and $_.VMName })) {
         Write-Host "Removing Switch $SwitchName"
         Get-VMSwitch -Id $SwitchId | Remove-VMSwitch -Force
@@ -70,7 +69,29 @@ Function Remove-Lably {
         }
     }
 
+    Write-Host "Clearing Cached Templates from $TemplatePath"
+    
+    ForEach($CachedTemplate in (Get-ChildItem -Path $TemplatePath -Filter *.json -ErrorAction SilentlyContinue)) {
+        Try {
+            Remove-Item $CachedTemplate
+        } Catch {
+            Write-Warning "Could not delete $CachedTemplate. $($_.Exception.Message)"
+        }
+    }
+
+    If(-Not (Get-ChildItem $TemplatePath -ErrorAction SilentlyContinue | Select-Object -First 1)) { 
+        Write-Host "Removing $TemplatePath"
+        Try {
+            Remove-Item $TemplatePath -ErrorAction SilentlyContinue
+        } Catch {
+            Write-Warning "Could not remove $TemplatePath. You may need to manually delete this folder."
+        }       
+    } Else {
+        Write-Host "There are files/folders left over in $TemplatePath. Will not remove."
+    }
+
     Write-Host "Deleting Scaffold ($LablyScaffold)"
+
     Try {
         Remove-Item $LablyScaffold -Force
     } Catch {
