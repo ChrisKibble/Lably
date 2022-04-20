@@ -8,6 +8,9 @@ Function New-LablyBaseVHD {
         [Parameter(Mandatory=$True,Position=1)]
         [String]$VHD,
 
+        [Parameter(Mandatory=$False)]
+        [Int64]$VHDSizeInBytes = 127GB,
+
         [Parameter(Mandatory=$False,ParameterSetName='OSByIndex')]
         [Int]$Index = 1,
 
@@ -71,7 +74,7 @@ Function New-LablyBaseVHD {
 
     Try {
         Write-Verbose "Creating $VHD"
-        $DiskFile = New-VHD -Path $VHD -SizeBytes 127GB -Dynamic -ErrorAction Stop
+        $DiskFile = New-VHD -Path $VHD -SizeBytes $VHDSizeInBytes -Dynamic -ErrorAction Stop
     } Catch {
         Dismount-DiskImage -ImagePath $ISO -ErrorAction SilentlyContinue | Out-Null
         Throw "Unable to Create VHD. $($_.Exception.Message)"

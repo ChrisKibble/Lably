@@ -6,7 +6,6 @@
 ## Enhancements
 - In `Get-AnswersToInputQuestions` we use the OS langauge and then fall back to the first entry. Allow user to define language to be asked questions in.
 - We need an escape character for `[[VARIABLES]]`.
-- Allow user to set VHDx Size in `New-LablyBaseVHD`.
 - Support for non-Windows OS.
 - Test for Hyper-V support and installation before any lab creation.
 - Setup inline help for all public modules.
