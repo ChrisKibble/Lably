@@ -3,10 +3,7 @@ Function Start-Lably {
     [CmdLetBinding()]
     Param(
         [Parameter(Mandatory=$False)]
-        [String]$Path = $PWD,
-        
-        [Parameter(Mandatory=$False)]
-        [Int]$DelaySeconds = 0
+        [String]$Path = $PWD
     )
 
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
