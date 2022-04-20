@@ -1,5 +1,45 @@
 Function Remove-LablyVM {
 
+    <#
+    
+    .SYNOPSIS
+
+    Remove a VM from Lably and from Hyper-V.
+
+    .DESCRIPTION
+
+    This function is used to remove a VM from Lably and from Hyper-V.
+
+    .PARAMETER DisplayName
+
+    Display Name of the VM to be removed. Either this or the VMID parameter is required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.
+
+    .PARAMETER VMID
+
+    Lably ID of the VM to be removed. Either this or the DisplayName parameter is required.
+
+    .PARAMETER Confirm
+
+    Optional Switch to bypass confirming that you want to delete the Virtual Machine.
+
+    .INPUTS
+
+    None. You cannot pipe objects to Remove-LablyVM.
+
+    .OUTPUTS
+
+    None. The function will either complete successfully or throw an error.
+    
+    .EXAMPLE
+
+    Remove-LablyVM -DisplayName "[Chris' Lab] LABDC01"
+
+    .EXAMPLE
+
+    Remove-LablyVM -VMID 717b54e6-a50a-480e-8a3f-9f21ab2e08e9
+
+    #>
+
     [CmdLetBinding(DefaultParameterSetName='DisplayName')]
     Param(
         [Parameter(Mandatory=$False)]    
