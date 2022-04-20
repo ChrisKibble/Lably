@@ -31,7 +31,6 @@
 - Fix: New-LablyVM fails in existing scaffold if user is not admin with wrong error message.
 - Function that validates a scaffold by checking the VM display names, NAT info, and switch against Hyper-V
 - Cmdlet to validate base registry
-- Cmdlet to remove item from base registry
 - Cmdlet to read/display base registry
 - Cmdlet to find virtual switches that aren't assigned to VMs (part of lab validation?)
 

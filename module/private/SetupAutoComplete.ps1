@@ -1,7 +1,7 @@
 $ThisModulePath = Split-Path $PSScriptRoot
 $TemplatePath = Join-Path $ThisModulePath -ChildPath "Templates"
 
-$scriptGetBaseImages = [scriptblock]::Create({
+$scriptGetBaseImagesFriendlyName = [scriptblock]::Create({
 
     param ( $CommandName, $ParameterName, $WordToComplete, $CommandAst,$FakeBoundParameters )
  
@@ -27,6 +27,44 @@ $scriptGetBaseImages = [scriptblock]::Create({
 
     Return @($BaseList)
 
+})
+
+$scriptGetBaseImagesID = [scriptblock]::Create({
+    param ( $CommandName, $ParameterName, $WordToComplete, $CommandAst,$FakeBoundParameters )
+ 
+    $BaseRegistry = "$env:userprofile\lably\BaseImageRegistry.json"
+
+    If(-Not(Test-Path -Path $BaseRegistry -ErrorAction SilentlyContinue)) {
+        Return $null
+    }
+
+    $Registry = Get-Content $BaseRegistry | ConvertFrom-Json
+
+    $BaseList = ForEach($Image in $Registry.BaseImages) { $Image.Id }
+
+    Return @($BaseList)
+})
+
+$scriptGetBaseImagesVHD = [scriptblock]::Create({
+    param ( $CommandName, $ParameterName, $WordToComplete, $CommandAst,$FakeBoundParameters )
+ 
+    $BaseRegistry = "$env:userprofile\lably\BaseImageRegistry.json"
+
+    If(-Not(Test-Path -Path $BaseRegistry -ErrorAction SilentlyContinue)) {
+        Return $null
+    }
+
+    $Registry = Get-Content $BaseRegistry | ConvertFrom-Json
+
+    $BaseList = ForEach($Image in $Registry.BaseImages) {
+        $Entry = $Image.ImagePath
+        If($Entry -like "* *") {
+            $Entry = "`"$Entry`""
+        }
+        $Entry
+    }
+
+    Return @($BaseList)
 })
 
 $scriptGetVMDisplayNames = [scriptblock]::Create({
@@ -97,8 +135,13 @@ $scriptGetSwitchName = [scriptblock]::Create({
 
 })
 
+Register-ArgumentCompleter -CommandName New-Lably -ParameterName "Switch" -ScriptBlock $scriptGetSwitchName 
 
 Register-ArgumentCompleter -CommandName New-LablyVM -ParameterName Template -ScriptBlock $scriptGetTemplateNames
-Register-ArgumentCompleter -CommandName New-LablyVM -ParameterName BaseVHD -ScriptBlock $scriptGetBaseImages
+Register-ArgumentCompleter -CommandName New-LablyVM -ParameterName BaseVHD -ScriptBlock $scriptGetBaseImagesFriendlyName
 Register-ArgumentCompleter -CommandName Remove-LablyVM -ParameterName DisplayName -ScriptBlock $scriptGetVMDisplayNames
-Register-ArgumentCompleter -CommandName New-Lably -ParameterName "Switch" -ScriptBlock $scriptGetSwitchName 
+
+Register-ArgumentCompleter -CommandName Unregister-LablyBaseVHD -ParameterName FriendlyName -ScriptBlock $scriptGetBaseImagesFriendlyName
+Register-ArgumentCompleter -CommandName Unregister-LablyBaseVHD -ParameterName ID -ScriptBlock $scriptGetBaseImagesId
+Register-ArgumentCompleter -CommandName Unregister-LablyBaseVHD -ParameterName VHD -ScriptBlock $scriptGetBaseImagesVHD
+
