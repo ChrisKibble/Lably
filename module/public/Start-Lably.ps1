@@ -1,5 +1,33 @@
 Function Start-Lably {
 
+    <#
+    
+    .SYNOPSIS
+
+    Starts all of the Virtual Machines that are members of the defined lably.
+
+    .DESCRIPTION
+
+    This function is used to start all of the Virtual Machines that are members of the defined lably.
+
+    .PARAMETER Path
+    
+    Optional parameter to define where the lably is stored. If this parameter is not defined, it will default to the path from which the function was called.
+
+    .INPUTS
+
+    None. You cannot pipe objects to start-Lably.
+
+    .OUTPUTS
+
+    None. The function will either complete successfully or throw an error.
+    
+    .EXAMPLE
+
+    Start-Lably
+
+    #>
+
     [CmdLetBinding()]
     Param(
         [Parameter(Mandatory=$False)]
