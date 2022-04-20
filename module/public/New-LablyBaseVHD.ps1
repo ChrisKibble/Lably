@@ -48,6 +48,18 @@ Function New-LablyBaseVHD {
         Throw "Unable to find \Source\Install.wim in ISO $ISO"
     }
 
+    Try {
+        $DiskImages = Get-WindowsImage -ImagePath $WIM
+        $ImageIndexes = $DiskImages | Select-Object -ExpandProperty ImageIndex
+        If($Index -notin $ImageIndexes) {
+            Dismount-DiskImage -ImagePath $ISO -ErrorAction SilentlyContinue | Out-Null
+            Throw "Image Index #$Index is not in the range of valid indexes in WIM."    
+        }
+    } Catch {
+        Dismount-DiskImage -ImagePath $ISO -ErrorAction SilentlyContinue | Out-Null
+        Throw "Unable get Windows Images from $WIM. $($_.Exception.Message)"
+    }
+
     If(Test-Path $VHD) {
         Try {
             Remove-Item $VHD -Force
