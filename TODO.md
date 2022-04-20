@@ -33,6 +33,7 @@
 - Cmdlet to validate base registry
 - Cmdlet to read/display base registry
 - Cmdlet to find virtual switches that aren't assigned to VMs (part of lab validation?)
+- Setup Get-LablyISODetail to accept a Get-ChildItem or Get-Item as pipeline input.
 
 ## Documentation
 - Document secure strings, keys, etc.
