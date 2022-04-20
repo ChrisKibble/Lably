@@ -166,7 +166,7 @@ Function Register-LablyBaseVHD {
 
     $RegistryObject.BaseImages = $BaseImages
 
-    Add-Member -InputObject $RegistryObject.Meta -MemberType NoteProperty -Name "ModifedDateUTC" -Value $(Get-DateUTC) -Force
+    Add-Member -InputObject $RegistryObject.Meta -MemberType NoteProperty -Name "ModifiedDateUTC" -Value $(Get-DateUTC) -Force
 
     Try {
         Write-Verbose "Exporting Registry Data to $ImageRegistry"
