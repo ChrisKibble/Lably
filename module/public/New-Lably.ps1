@@ -1,5 +1,77 @@
 Function New-Lably {
 
+        <#
+    
+    .SYNOPSIS
+
+    Creates a new empty lab in the current directory or defined path.
+
+    .DESCRIPTION
+
+    This function is used to create a new Lably (lab or lab scaffold) that will be used to store the meta data for this specific lab. Function will create a scaffold.lably.json in the defined path that other Lably functions will use to store the metadata.
+
+    .PARAMETER Path
+    
+    Optional parameter to define where the lably will be created. The scaffold, template cache, and (optionally) virtual disks folders will be created within this folder. If this parameter is not defined, it will default to the path from which the function was called.
+
+    .PARAMETER Name
+
+    Optional name of the Lably. Used as a description when using and describing the lab, as well as the default prefix for the display name of VMs created in Hyper-V. If this parameter is not defined, it will default to the name of the folder it's being created it.
+
+    .PARAMETER CreateSwitch
+
+    Name of switch to be created in Hyper-V for this lab. Either CreateSwitch or SwitchName are required. If neither parameter is defined, it will default creating a new switch using the name of the folder it's being created it.
+
+    .PARAMETER Switch
+
+    Name of exiting Hyper-V switch to be used for this lab. Either CreateSwitch or SwitchName are required. If neither parameter is defined, it will default creating a new switch using the name of the folder it's being created it.
+
+    .PARAMETER NatIPAddress
+
+    Optional parameter to be used when using CreateSwitch to define the IP Address to create for this network to use to access the host's network.
+
+    .PARAMETER NatIPCIDRRange
+
+    Optional parameter to be used to define the CIDR range of the VMs that will use the switch. Required if NatIPAddress is defined.
+
+    .PARAMETER VirtualDiskPath
+
+    Optional parameter to define the folder in which new differencing disks for this lab will be created when New-LablyVM is called. Defaults to a 'Virtual Disks' subfolder of the 'Path' parameter.
+
+    .PARAMETER SecretKeyFile
+
+    Switch used to indicate that instead of using the computer/user accounts to encrypt secrets that an AES key file should be created. When using keyfiles, ensure that appropriate NTFS permissions are set on your Lably folder to ensure that keys cannot be read by other users.
+
+    .INPUTS
+
+    None. You cannot pipe objects to New-Lably.
+
+    .OUTPUTS
+
+    None. The function will either complete successfully or throw an error.
+    
+    .EXAMPLE
+
+    New-Lably -Name "Chris' Lab"
+
+    .EXAMPLE
+
+    New-Lably -Name "Chris' Lab" -CreateSwitch "Test Switch #1"
+
+    .EXAMPLE
+
+    New-Lably -Name "Chris' Lab" -CreateSwitch "Test Switch #2" -NATIPAddress 10.0.0.1 -NATIPCIDRRange 10.0.0.0/24
+
+    .EXAMPLE
+
+    New-Lably -Name "Chris' Lab" -Switch "Existing Switch #3"
+
+    .EXAMPLE
+
+    New-Lably -Name "Chris' Lab" -VirtualDiskPath "D:\LabVMs" -SecretKeyFile
+
+    #>
+
     [CmdLetBinding(DefaultParameterSetName='NewSwitch')]
     Param(
         [Parameter(Mandatory=$False)]
