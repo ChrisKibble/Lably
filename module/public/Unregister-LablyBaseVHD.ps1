@@ -48,7 +48,7 @@ Function Unregister-LablyBaseVHD {
     }
 
     Write-Host "BaseVHD has been unregistered."
-    Write-Host "The VHD  has not been deleted, you can manually delete the following file if no longer in use:"
+    Write-Host "The VHD has not been deleted, you can manually delete the following file if no longer in use:"
     Write-Host $Entry.ImagePath
 
 }
