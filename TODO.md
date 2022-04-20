@@ -23,8 +23,6 @@
 - Customize timeout for VM timeout (global preferences?) for slower hosts.
 - We need a Get-LablyVM that we can pipe to Remove-LablyVM
 - Stop Lably VMs in Parallel (some defined count)?
-- Need a contributing MD file in repository
-- Need a licenseing MD file in repository
 - Customize generic hostname prefix in Lably scaffold
 - Need a better solution than waiting 15 seconds on new VM builds before configuring network
 - Ability to build a new VM in a Lably by cloning the answers to an existing VM in a Scaffold.
