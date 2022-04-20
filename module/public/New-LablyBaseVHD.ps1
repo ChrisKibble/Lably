@@ -11,11 +11,8 @@ Function New-LablyBaseVHD {
         [Parameter(Mandatory=$False)]
         [Int64]$VHDSizeInBytes = 127GB,
 
-        [Parameter(Mandatory=$False,ParameterSetName='OSByIndex')]
+        [Parameter(Mandatory=$False)]
         [Int]$Index = 1,
-
-        [Parameter(Mandatory=$False,ParameterSetName='OSByEdition')]
-        [String]$OSEdition,
 
         [Parameter(Mandatory=$False)]
         [Switch]$Force
