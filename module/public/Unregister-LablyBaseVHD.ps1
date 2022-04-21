@@ -56,6 +56,8 @@ Function Unregister-LablyBaseVHD {
         [String]$FriendlyName
     )    
 
+    ValidateModuleRun -RequiresAdministrator
+
     $imageRegistryDirectory = Join-Path $env:USERPROFILE -ChildPath "Lably"
     $imageRegistry = Join-Path $imageRegistryDirectory -ChildPath "BaseImageRegistry.json"
 

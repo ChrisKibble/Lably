@@ -62,6 +62,8 @@ Function Register-LablyBaseVHD {
         [Switch]$NoProductKey
     )    
 
+    ValidateModuleRun -RequiresAdministrator
+
     If(-Not($NoProductKey) -and $ProductKey -eq "") {
         Write-Host "You are encouraged to include a Product Key when registering. You may use KMS Client Keys from Here:" -ForegroundColor Yellow
         Write-Host "https://docs.microsoft.com/windows-server/get-started/kms-client-activation-keys" -ForegroundColor Yellow

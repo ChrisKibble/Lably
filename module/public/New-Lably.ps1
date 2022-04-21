@@ -103,6 +103,8 @@ Function New-Lably {
 
     )
 
+    ValidateModuleRun -RequiresAdministrator
+
     If(Get-ChildItem -Path $Path -ErrorAction SilentlyContinue) {
         Throw "Cannot create lably in $Path as it contains other files/folders. A Lably should be created in clean folders."
     }

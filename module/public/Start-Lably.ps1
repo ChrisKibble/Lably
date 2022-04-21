@@ -31,8 +31,10 @@ Function Start-Lably {
     [CmdLetBinding()]
     Param(
         [Parameter(Mandatory=$False)]
-        [String]$Path = $PWD
+        [String]$Path = $PWD,
     )
+
+    ValidateModuleRun -RequiresAdministrator
 
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
     Write-Verbose "Reading Lably Scaffolding File at $LablyScaffold"

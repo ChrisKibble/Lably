@@ -135,6 +135,8 @@ Function New-LablyVM {
         [Switch]$Force
     )
 
+    ValidateModuleRun -RequiresAdministrator
+
     $VMGUID = [GUID]::NewGuid().Guid
 
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"

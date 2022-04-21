@@ -49,6 +49,8 @@ Function Remove-Lably {
         [Switch]$Confirm
     )
 
+    ValidateModuleRun -RequiresAdministrator
+
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
     Write-Verbose "Reading Lably Scaffolding File at $LablyScaffold"
 
