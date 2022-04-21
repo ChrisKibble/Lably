@@ -24,7 +24,7 @@ Function New-LablyVM {
 
     .PARAMETER Hostname
 
-    Optional Hostname for the VM. Defaults to 'LAB-' folled by a random string of 8 random alphanumeric characters. Some templates may require that a hostname be defined.
+    Optional Hostname for the VM. Defaults to 'LAB-' followed by a random string of 8 random alphanumeric characters. Some templates may require that a hostname be defined.
 
     .PARAMETER BaseVHD
 
@@ -40,7 +40,7 @@ Function New-LablyVM {
 
     .PARAMETER MemoryMinimumInBytes
 
-    Optional Mimimum Memory that should be assigned to the VM. Defaults to 512MB. Although this parameter takes the value in bytes, PowerShell will calculate this value for you if you use MB or GB in after a value (e.g. 512MB or 2GB).
+    Optional Minimum Memory that should be assigned to the VM. Defaults to 512MB. Although this parameter takes the value in bytes, PowerShell will calculate this value for you if you use MB or GB in after a value (e.g. 512MB or 2GB).
 
     .PARAMETER MemoryMaximumInBytes
 
@@ -625,7 +625,7 @@ Function New-LablyVM {
     }
  
     Write-Host "[Lably] " -ForegroundColor Magenta -NoNewLine
-    Write-Host "Comlpleted Running Post-Build Steps"
+    Write-Host "Completed Running Post-Build Steps"
 
     Write-Host "Awesome! Your new Virtual Machine is ready to use." -ForegroundColor Green
 

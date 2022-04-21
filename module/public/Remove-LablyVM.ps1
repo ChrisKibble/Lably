@@ -10,6 +10,10 @@ Function Remove-LablyVM {
 
     This function is used to remove a VM from Lably and from Hyper-V.
 
+    .PARAMETER Path
+    
+    Optional parameter to define where the lably that this VM is a member of is stored. If this parameter is not defined, it will default to the path from which the function was called.
+
     .PARAMETER DisplayName
 
     Display Name of the VM to be removed. Either this or the VMID parameter is required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.
