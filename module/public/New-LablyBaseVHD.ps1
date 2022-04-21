@@ -1,5 +1,49 @@
 Function New-LablyBaseVHD {
 
+    <#
+    
+    .SYNOPSIS
+
+    Creates a new Base VHD file for use in creating new VMs.
+
+    .DESCRIPTION
+
+    This function is used to creates a new Base VHD file for use in creating new VMs. It is not tied to any specific lab, any lab can use any of the Base VHDs. Once the VHD is created, the Register-LablyBaseVHD should be used to add it to the image registry.
+
+    .PARAMETER ISO
+    
+    Full or relative path to the ISO that has the Operating System installer on it.
+
+    .PARAMETER VHD
+
+    Full or relative path to where the Base VHD should be created.
+
+    .PARAMETER VHDSizeInBytes
+
+    Optional size of the Base VHD. As the VHD expands to fit the content and doesn't use the full space unless necessary, there is unlikely to be a value in setting this parameter. Defaults to 127GB.
+
+    .PARAMETER Index
+
+    Index number of the Operating System to create the Base VHD for. Default to 1. If you're unsure of the Index Number, use Get-LablyISODetails to identify it.
+
+    .PARAMETER Force
+
+    Switch that defines that the VHD should be overwritten if the file exists.
+
+    .INPUTS
+
+    None. You cannot pipe objects to New-LablyBaseVHD.
+
+    .OUTPUTS
+
+    None. The function will either complete successfully or throw an error.
+    
+    .EXAMPLE
+
+    New-LablyBaseVHD -ISO C:\ISOs\Windows10-Enterprise.iso -Index 4 -VHD C:\VHDRepo\Win10Ent.vhdx
+
+    #>
+
     [CmdLetBinding(DefaultParameterSetName='OSByIndex')]
     Param(
         [Parameter(Mandatory=$True,Position=0)]

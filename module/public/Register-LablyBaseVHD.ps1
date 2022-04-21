@@ -1,4 +1,49 @@
 Function Register-LablyBaseVHD {
+
+    <#
+    
+    .SYNOPSIS
+
+    Registers a Base VHD in the Lably Base Image Registry.
+
+    .DESCRIPTION
+
+    This function is used to register a Base VHD in the Lably Base Image Registry that is stored in the Lably subfolder of your user profile. The Base Image Registry is used when creating new VMs.
+
+    .PARAMETER VHD
+    
+    Full or relative path to the Base VHD. This can be created with New-LablyBaseVHD or manually.
+
+    .PARAMETER PartitionNumber
+    
+    Optionly partition number on the VHD where the OS resides. This will be detected automatically, but may need to be defined if you've manually created a BaseVHD without using the Lably module.
+
+    .PARAMETER FriendlyName
+    
+    Optionaly friendly name for the Base VHD that you can use later to easily identify the purpose of the VHD.
+
+    .PARAMETER ProductKey
+    
+    The product key to use when building the VM. Required if you do not specify the -NoProductKey switch.
+
+    .PARAMETER NoProductKey
+    
+    Switch used to define that you do not want to embed a product key when building VMs with this VHD. Not that some Operating Systems will not build without a product key defined.
+
+    .INPUTS
+
+    None. You cannot pipe objects to Registery-LablyBaseVHD.
+
+    .OUTPUTS
+
+    None. The function will either complete successfully or throw an error.
+    
+    .EXAMPLE
+
+    Register-LablyBaseVHD -VHD C:\BaseVHDs\Windows10-Ent.vhdx -FriendlyName "Windows 10 Enterprise (April 2022)" -ProductKey "XYXY8-TFTF4-N0K3Y-J994X-FAKEX"
+
+    #>
+
     [CmdLetBinding(DefaultParameterSetName='ProductKey')]
     Param(
         [Parameter(Mandatory=$True)]

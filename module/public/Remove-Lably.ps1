@@ -1,5 +1,45 @@
 Function Remove-Lably {
 
+    <#
+   
+    .SYNOPSIS
+
+    Remove an existing lab in the current directory or defined path.
+
+    .DESCRIPTION
+
+    This function is used to remove a Lably from the current directory or defined path. It will also remove the VMs from Hyper-V and cleanup everything associated with the lab.
+
+    .PARAMETER Path
+    
+    Optional parameter to define where the lably is stored. If this parameter is not defined, it will default to the path from which the function was called.
+
+    .PARAMETER Name
+
+    Optional name of the Lably. Used as a description when using and describing the lab, as well as the default prefix for the display name of VMs created in Hyper-V. If this parameter is not defined, it will default to the name of the folder it's being created it.
+
+    .PARAMETER Confirm
+
+    Optional Switch to bypass confirming that you want to delete the Lab and associated data.
+
+    .INPUTS
+
+    None. You cannot pipe objects to New-Lably.
+
+    .OUTPUTS
+
+    None. The function will either complete successfully or throw an error.
+    
+    .EXAMPLE
+
+    Remove-Lably
+
+    .EXAMPLE
+
+    Remove-Lably -Path C:\Labs\Windows10-Lab
+
+    #>
+
     [CmdLetBinding()]
     Param(
         [Parameter(Mandatory=$False)]    

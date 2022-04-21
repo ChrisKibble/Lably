@@ -1,5 +1,40 @@
 Function Get-LablyISODetails {
 
+    <#
+    
+    .SYNOPSIS
+
+    Gets the details from the WIM inside of a supplied ISO.
+
+    .DESCRIPTION
+
+    Gets the details from the WIM inside of a supplied ISO. Takes the path of the ISO as a parameter.
+
+    .PARAMETER ISO
+    
+    Full or relative path to the ISO file to get details on.
+    
+    .INPUTS
+
+    None. You cannot pipe objects to Get-LablyISODetails.
+
+    .OUTPUTS
+
+    System.Collections.Generic.List`1[[Microsoft.Dism.Commands.WimImageInfoObject,
+    Microsoft.Dism.PowerShell, Version=10.0.0.0, Culture=neutral, PublicKeyToken=null]]
+    System.Collections.Generic.List`1[[Microsoft.Dism.Commands.ImageInfoObject, Microsoft.Dism.PowerShell,
+    Version=10.0.0.0, Culture=neutral, PublicKeyToken=null]]
+    System.Collections.Generic.List`1[[Microsoft.Dism.Commands.BasicImageInfoObject,
+    Microsoft.Dism.PowerShell, Version=10.0.0.0, Culture=neutral, PublicKeyToken=null]]
+    System.Collections.Generic.List`1[[Microsoft.Dism.Commands.MountedImageInfoObject,
+    Microsoft.Dism.PowerShell, Version=10.0.0.0, Culture=neutral, PublicKeyToken=null]]
+    
+    .EXAMPLE
+
+    Get-LablyISODetais -ISO C:\ISOs\Windows10-Enterprise.iso
+
+    #>
+
     [CmdLetBinding()]
     Param(
         [String]$ISO

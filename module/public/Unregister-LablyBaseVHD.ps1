@@ -1,4 +1,49 @@
 Function Unregister-LablyBaseVHD {
+
+    <#
+    
+    .SYNOPSIS
+
+    Unregisters a Base VHD from the Lably Base Image Registry.
+
+    .DESCRIPTION
+
+    This function is used to unregister a Base VHD from the Lably Base Image Registry that is stored in the Lably subfolder of your user profile. The Base Image Registry is used when creating new VMs.
+
+    .PARAMETER VHD
+    
+    Full path to the Base VHD. Either VHD, ID, or FriendlyName are required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.
+
+    .PARAMETER ID
+    
+    Registry ID of the Base VHD. Either VHD, ID, or FriendlyName are required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.
+
+    .PARAMETER FriendlyName
+    
+    Friendly name for the Base VHD. Either VHD, ID, or FriendlyName are required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.
+
+    .INPUTS
+
+    None. You cannot pipe objects to Registery-LablyBaseVHD.
+
+    .OUTPUTS
+
+    None. The function will either complete successfully or throw an error.
+    
+    .EXAMPLE
+
+    Unregister-LablyBaseVHD -VHD C:\BaseVHDs\Windows10-Ent.vhdx
+
+    .EXAMPLE
+
+    Unregister-LablyBaseVHD -ID "491e26d4-b6da-4828-b6ee-318536646f75"
+
+    .EXAMPLE
+
+    Unregister-LablyBaseVHD -FriendlyName "Windows 10 Enterprise (April 2022)"
+
+    #>
+
     [CmdLetBinding(DefaultParameterSetName='VHD')]
     Param(
         [Parameter(Mandatory=$True,ParameterSetName='VHD')]

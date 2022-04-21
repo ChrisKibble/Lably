@@ -1,4 +1,93 @@
 Function New-LablyVM {
+    
+    <#
+    
+    .SYNOPSIS
+
+    Creates a new VM in Hyper-V using a Base VHD.
+
+    .DESCRIPTION
+
+    This function is used to create a new Hyper-V VM that will use a differencing disk based on a registered Base VHD.
+
+    .PARAMETER Path
+    
+    Optional parameter to define where the lably that this VM will join is stored. If this parameter is not defined, it will default to the path from which the function was called.
+
+    .PARAMETER Template
+
+    Optional template to be used. Templates will be loaded from the "Templates" subfolder of the module and custom ones can be installed into the Lably\Templates folder of the user profile. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.
+
+    .PARAMETER DisplayName
+
+    Optional DisplayName to be used in Hyper-V. Defaults to the hostname of the VM prefixed by the name of the Lably (e.g., [Chris' Lab] LABDC01).
+
+    .PARAMETER Hostname
+
+    Optional Hostname for the VM. Defaults to 'LAB-' followed by a random string of 8 random alphanumeric characters. Some templates may require that a hostname be defined.
+
+    .PARAMETER BaseVHD
+
+    The path or friendly name of the BaseVHD that should be used to create this VM. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.
+
+    .PARAMETER AdminPassword
+
+    SecureString input of the AdminPassword that should be used to login to the VM. This parameter will not take plain text, see examples for assistance creating secure strings.
+
+    .PARAMETER MemorySizeInBytes
+
+    Optional Memory that should be assigned to the VM. Defaults to 4GB. Although this parameter takes the value in bytes, PowerShell will calculate this value for you if you use MB or GB in after a value (e.g. 512MB or 2GB).
+
+    .PARAMETER MemoryMinimumInBytes
+
+    Optional Minimum Memory that should be assigned to the VM. Defaults to 512MB. Although this parameter takes the value in bytes, PowerShell will calculate this value for you if you use MB or GB in after a value (e.g. 512MB or 2GB).
+
+    .PARAMETER MemoryMaximumInBytes
+
+    Optional Maximum Memory that should be assigned to the VM. Defaults to the same value supplied to MemorySizeInBytes. Although this parameter takes the value in bytes, PowerShell will calculate this value for you if you use MB or GB in after a value (e.g. 512MB or 2GB).
+
+    .PARAMETER CPUCount
+
+    Optional number of virtual CPUs to assign to the VM. Defaults to 1/4th of the total number of logical processors that the host has.
+
+    .PARAMETER ProductKey
+
+    Optional product key that should be used when building the VM. The product key is typically stored in the Base VHD, so this parameter is only necessary if you didn't include one in the Base VHD or if you'd like to use a different one for this VM.
+
+    .PARAMETER TimeZone
+
+    Optional TimeZone ID to use when building this VM. Defaults to the timezone of the host.
+
+    .PARAMETER Locale
+
+    Optional Windows Locale ID to use when building this VM. Defaults to the Locale ID of the host.
+
+    .PARAMETER Force
+
+    Switch that defines that the VHD should be overwritten if it already exists.
+
+    .INPUTS
+
+    None. You cannot pipe objects to New-LablyVM.
+
+    .OUTPUTS
+
+    None. The function will either complete successfully or throw an error.
+    
+    .EXAMPLE
+
+    New-LablyVM -BaseVHD C:\BaseVHDs\Windows10-Ent.vhdx -AdminPassword $("S3cur3P@s5w0rd" | ConvertTo-SecureString -AsPlainText -Force)
+
+    .EXAMPLE
+
+    New-LablyVM -BaseVHD C:\BaseVHDs\WindowsServer2022.vhdx -Template "Windows Active Directory Forest" -Hostname LABDC01 -MemorySizeInBytes 4GB -MemoryMinimumInBytes 512MB -MemoryMaximumInBytes 4GB -CPUCount 2
+
+    .EXAMPLE
+
+    $AdminPassword = "MySuperPassword###1" | ConvertTo-SecureString -AsPlainText -Force
+    New-LablyVM -BaseVHD C:\BaseVHDs\Windows10-Ent.vhdx -MemorySizeInBytes 4GB -Timezone "Eastern Standard Time" -Locale "en-us" -AdminPassword $AdminPassword
+
+    #>
 
     [CmdLetBinding()]
     Param(
@@ -18,6 +107,9 @@ Function New-LablyVM {
         [Parameter(Mandatory=$True)]
         [String]$BaseVHD,
 
+        [Parameter(Mandatory=$True)]
+        [SecureString]$AdminPassword,
+
         [Parameter(Mandatory=$False)]
         [Int64]$MemorySizeInBytes = 4GB,
 
@@ -35,9 +127,6 @@ Function New-LablyVM {
 
         [Parameter(Mandatory=$False)]
         [String]$Timezone = $(Get-Timezone).Id,
-
-        [Parameter(Mandatory=$True)]
-        [SecureString]$AdminPassword,
 
         [Parameter(Mandatory=$False)]
         [String]$Locale = $(Get-WinSystemLocale).Name,
@@ -536,7 +625,7 @@ Function New-LablyVM {
     }
  
     Write-Host "[Lably] " -ForegroundColor Magenta -NoNewLine
-    Write-Host "Comlpleted Running Post-Build Steps"
+    Write-Host "Completed Running Post-Build Steps"
 
     Write-Host "Awesome! Your new Virtual Machine is ready to use." -ForegroundColor Green
 
