@@ -149,7 +149,7 @@ Function New-Lably {
             $SwitchMAC = Get-VMNetworkAdapter -ManagementOS | Where-Object { $_.Name -eq $CreateSwitch } | Select-Object -ExpandProperty MacAddress
             Write-Verbose "Virtual Switch MAC Address is $SwitchMAC"
             If(-Not($SwitchMAC)) {
-                Write-Warning "Could not find MAC Address of Virtual Swtitch. Aborting NAT setup."
+                Write-Warning "Could not find MAC Address of Virtual Switch. Aborting NAT setup."
                 $VirtualAdapter = ""
             } Else {
                 $VirtualAdapter = Get-NetAdapter | Where-Object { $($_.MacAddress -Replace '-','') -eq $SwitchMAC }

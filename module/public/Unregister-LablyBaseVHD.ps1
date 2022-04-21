@@ -24,7 +24,7 @@ Function Unregister-LablyBaseVHD {
 
     .INPUTS
 
-    None. You cannot pipe objects to Registery-LablyBaseVHD.
+    None. You cannot pipe objects to Register-LablyBaseVHD.
 
     .OUTPUTS
 

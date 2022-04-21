@@ -16,11 +16,11 @@ Function Register-LablyBaseVHD {
 
     .PARAMETER PartitionNumber
     
-    Optionly partition number on the VHD where the OS resides. This will be detected automatically, but may need to be defined if you've manually created a BaseVHD without using the Lably module.
+    Optional partition number on the VHD where the OS resides. This will be detected automatically, but may need to be defined if you've manually created a BaseVHD without using the Lably module.
 
     .PARAMETER FriendlyName
     
-    Optionaly friendly name for the Base VHD that you can use later to easily identify the purpose of the VHD.
+    Optional friendly name for the Base VHD that you can use later to easily identify the purpose of the VHD.
 
     .PARAMETER ProductKey
     
@@ -32,7 +32,7 @@ Function Register-LablyBaseVHD {
 
     .INPUTS
 
-    None. You cannot pipe objects to Registery-LablyBaseVHD.
+    None. You cannot pipe objects to Register-LablyBaseVHD.
 
     .OUTPUTS
 
