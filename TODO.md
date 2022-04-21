@@ -8,7 +8,6 @@
 - We need an escape character for `[[VARIABLES]]`.
 - Support for non-Windows OS.
 - Test for Hyper-V support and installation before any lab creation.
-- Setup inline help for all public modules.
 - Accept answers to template questions as hash table.
 - Accept answers to template questions as answer file (json?).
 - Rebuild labs based on answers defined and cached template(s).
