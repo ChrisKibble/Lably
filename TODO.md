@@ -4,7 +4,7 @@
 - When using a non English OS, the `Administrator` account might be spelled some other way, account for this in `New-LablyVM`.
 
 ## Enhancements
-- In `Get-AnswersToInputQuestions` we use the OS langauge and then fall back to the first entry. Allow user to define language to be asked questions in.
+- In `Get-AnswersToInputQuestions` we use the OS language and then fall back to the first entry. Allow user to define language to be asked questions in.
 - We need an escape character for `[[VARIABLES]]`.
 - Support for non-Windows OS.
 - Test for Hyper-V support and installation before any lab creation.

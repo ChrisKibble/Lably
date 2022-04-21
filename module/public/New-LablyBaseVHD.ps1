@@ -142,7 +142,7 @@ Function New-LablyBaseVHD {
     }
 
     Try {
-        Write-Verbose "Initalizing VHD (Disk Number $($vhdDisk.DiskNumber))"
+        Write-Verbose "Initializing VHD (Disk Number $($vhdDisk.DiskNumber))"
         Initialize-Disk -Number $vhdDisk.DiskNumber -PartitionStyle GPT -Passthru -ErrorAction Stop | Out-Null
     } Catch {
         Dismount-Vhd -Path $VHD -ErrorAction SilentlyContinue
