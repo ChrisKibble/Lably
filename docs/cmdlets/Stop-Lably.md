@@ -1,0 +1,88 @@
+---
+external help file: Lably-help.xml
+Module Name: Lably
+online version:
+schema: 2.0.0
+---
+
+# Stop-Lably
+
+## SYNOPSIS
+Starts all of the Virtual Machines that are members of the defined lably.
+
+## SYNTAX
+
+```
+Stop-Lably [[-Path] <String>] [-Force] [-TurnOff] [<CommonParameters>]
+```
+
+## DESCRIPTION
+This function is used to start all of the Virtual Machines that are members of the defined lably.
+
+## EXAMPLES
+
+### EXAMPLE 1
+```
+Stop-Lably
+```
+
+## PARAMETERS
+
+### -Path
+Optional parameter to define where the lably is stored.
+If this parameter is not defined, it will default to the path from which the function was called.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 1
+Default value: $PWD
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Force
+Switch that tells Hyper-V to force the shutdown of the VMs, even when the OS identifies processes that prevent shutdown.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -TurnOff
+{{ Fill TurnOff Description }}
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### CommonParameters
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
+
+## INPUTS
+
+### None. You cannot pipe objects to Stop-Lably.
+## OUTPUTS
+
+### None. The function will either complete successfully or throw an error.
+## NOTES
+
+## RELATED LINKS
