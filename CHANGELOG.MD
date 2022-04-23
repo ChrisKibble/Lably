@@ -1,5 +1,11 @@
 # Change Log
 
+## Beta v0.2 -> vNext
+
+### Fixes
+
+- Public modules will now validate admin permissions (when required) and that necessary Hyper-V modules are installed
+
 ## Beta v0.1 -> Beta v0.2:
 
 ### Fixes
