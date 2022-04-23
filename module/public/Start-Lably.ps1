@@ -31,7 +31,7 @@ Function Start-Lably {
     [CmdLetBinding()]
     Param(
         [Parameter(Mandatory=$False)]
-        [String]$Path = $PWD,
+        [String]$Path = $PWD
     )
 
     ValidateModuleRun -RequiresAdministrator
