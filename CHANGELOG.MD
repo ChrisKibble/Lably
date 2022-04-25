@@ -5,6 +5,7 @@
 ### Fixes
 
 - Public modules will now validate admin permissions (when required) and that necessary Hyper-V modules are installed
+- Fixed issue where passing the `-Switch` parameter to New-LablyVM would still try and create a new Switch instead of using existing
 
 ### Other Changes & Enhancements
 
