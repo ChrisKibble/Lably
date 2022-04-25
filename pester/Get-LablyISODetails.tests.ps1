@@ -1,5 +1,6 @@
 BeforeAll {
-    Import-Module ..\Module\Lably.psd1 -Force
+    $LablyModule = Join-Path $PSScriptRoot -ChildPath "..\Module\Lably.psd1"
+    Import-Module $LablyModule -Force
     If(-Not($env:LablyISO)) {
         Write-Host "ERROR: You must define a LablyISO environment variable for the Get-LablyISODetails Test" -ForegroundColor Red
     }
