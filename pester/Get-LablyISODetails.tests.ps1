@@ -7,14 +7,29 @@ BeforeAll {
 }
 
 Describe "Get-LablyISODetails" {
-    It "Should return expected properties" {
+
+    BeforeAll {
         $ISODetails = Get-LablyISODetails -ISO $env:LablyISO | Select-Object -First 1
         $ModuleProperties = $ISODetails.PSObject.members | Where-Object { $_.MemberType -eq "Property" } | Select-Object -ExpandProperty Name
+    }
 
+    It "ISO Details Should Contain ImagePath" {
         $ModuleProperties | Should -Contain "ImagePath"
+    }
+    
+    It "ISO Details Should Contain ImageName" {
         $ModuleProperties | Should -Contain "ImageName"
-        $ModuleProperties | Should -Contain "ImageIndex"
+    }
+
+    It "ISO Details Should Contain ImageIndex" {
         $ModuleProperties | Should -Contain "ImageDescription"
+    }
+
+    It "ISO Details Should Contain ImageDescription" {
+        $ModuleProperties | Should -Contain "ImageDescription"
+    }
+
+    It "ISO Details Should Contain ImageSize" {
         $ModuleProperties | Should -Contain "ImageSize"        
     }
 }
