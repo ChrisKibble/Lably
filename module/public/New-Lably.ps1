@@ -119,14 +119,15 @@ Function New-Lably {
     }
 
     If($Switch) {
+        Write-Host "Should use switch $switch"
         Try {
-            $VMSwitch = Get-VMSwitch -Name $Switch -ErrorAction Stop
+            $VMSwitch = Get-VMSwitch -Name $Switch -ErrorAction SilentlyContinue
         } Catch {
             Throw "Cannot get switch by Name '$Switch'. $($_.Exception.Message)"
         }
     }
 
-    If($CreateSwitch) {
+    If($PSBoundParameters.ContainsKey('HostName')) {
 
         $CreateSwitch = $CreateSwitch -replace "[^A-Za-z0-9 ]",""
 
