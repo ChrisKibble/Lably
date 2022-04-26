@@ -41,7 +41,6 @@ Describe "New-Lably" {
         Write-Host $TmpFolder
         
         $TestSwitch = New-VMSwitch -Name ((Split-Path $tmpFolder -Leaf) -replace "\.","") -SwitchType Internal
-        Write-Output "Using Switch $($TestSwitch.Name)"
 
         New-Lably -Path $TmpFolder -Name "Pester Test" -Switch $TestSwitch.Name
         $jsonFile = Join-Path $tmpFolder -ChildPath "scaffold.lably.json"
