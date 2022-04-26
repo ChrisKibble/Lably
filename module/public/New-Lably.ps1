@@ -121,13 +121,13 @@ Function New-Lably {
     If($Switch) {
         Write-Host "Should use switch $switch"
         Try {
-            $VMSwitch = Get-VMSwitch -Name $Switch -ErrorAction SilentlyContinue
+            $VMSwitch = Get-VMSwitch -Name $Switch -ErrorAction Stop
         } Catch {
             Throw "Cannot get switch by Name '$Switch'. $($_.Exception.Message)"
         }
     }
 
-    If($PSBoundParameters.ContainsKey('HostName')) {
+    If(-Not($Switch)) {
 
         $CreateSwitch = $CreateSwitch -replace "[^A-Za-z0-9 ]",""
 
@@ -217,6 +217,7 @@ Function New-Lably {
             Meta = @{
                 Name = $Name
                 SwitchId = $VMSwitch.Id
+                SwitchCreated = $(If($Switch) { $false } else { $true })
                 NATName = $(If($NewNAT) { $NewNAT.Name } else { $null })
                 NATIPCIDR = $NATRangeCIDR
                 VirtualDiskPath = $VirtualDiskPath
