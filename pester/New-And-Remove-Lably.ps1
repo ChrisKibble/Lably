@@ -55,6 +55,8 @@ Describe "New-Lably" {
         Remove-Lably -Path $tmpFolder -Confirm:$True
 
         $(Get-VMSwitch -Id $vmSwitchId -ErrorAction SilentlyContinue).Count | Should -Be 1 
+
+        Get-VMSwitch -Id $vmSwitchId | Remove-VMSwitch -Force
     }
 
 
