@@ -32,7 +32,7 @@ Function Test-LablyBaseVHDRegistry {
 
     #>
 
-    [CmdLetBinding(DefaultParameterSetName='VHD')]
+    [CmdLetBinding()]
     Param(
         [Parameter(Mandatory=$False)]
         [Switch]$Fix
