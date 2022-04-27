@@ -16,7 +16,7 @@ Function Test-LablyBaseVHDRegistry {
 
     .INPUTS
 
-    None. You cannot pipe objects to Register-LablyBaseVHD.
+    None. You cannot pipe objects to Test-LablyBaseVHDRegistry.
 
     .OUTPUTS
 
