@@ -174,7 +174,7 @@ Function New-Lably {
             If($NATIP) {
                 Write-Verbose "Configuring New NAT Rule"
                 Try {
-                    $NewNAT = New-NetNat -Name "LablyNAT ($CreateSwitch)" -InternalIPInterfaceAddressPrefix $NATRangeCIDR                
+                    $NewNAT = New-NetNat -Name "LablyNAT ($CreateSwitch)" -InternalIPInterfaceAddressPrefix $NATRangeCIDR -ErrorAction Stop                
                 } Catch {
                     Write-Warning "Unable to create new NAT rule. Aborting NAT setup. $($_.Exception.Message)"
                 }
