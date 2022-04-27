@@ -7,7 +7,6 @@ Describe "New-Lably" {
 
     It "Build New Lably with Name Only" {
         $tmpFolder = "$($Env:temp)\tmp$([convert]::ToString((get-random 65535),16).PadLeft(4,'0')).tmp"
-        Write-Host $TmpFolder
         
         New-Lably -Path $TmpFolder -Name "Pester Test"
         $jsonFile = Join-Path $tmpFolder -ChildPath "scaffold.lably.json"
@@ -38,7 +37,6 @@ Describe "New-Lably" {
 
     It "Build New Lably with Existing Switch" {
         $tmpFolder = "$($Env:temp)\tmp$([convert]::ToString((get-random 65535),16).PadLeft(4,'0')).tmp"
-        Write-Host $TmpFolder
         
         $TestSwitch = New-VMSwitch -Name ((Split-Path $tmpFolder -Leaf) -replace "\.","") -SwitchType Internal
 
@@ -59,5 +57,38 @@ Describe "New-Lably" {
         Get-VMSwitch -Id $vmSwitchId | Remove-VMSwitch -Force
     }
 
+    It "Build New Lably with NAT" {
+
+        # Need to find a test IP to use
+        $ipList = Get-NetIPAddress | Select-Object -ExpandProperty IPv4Address
+
+        ForEach($i in (0..254)) {
+            $NetworkIPAddress = "169.254.$i.1"
+            If(-Not($NetworkIPAddress -in $ipList)) {
+                Break
+            }
+            If($i -eq 254) {
+                Throw "Cannot find an IP Address to test with."
+            }
+        }
+
+        $tmpFolder = "$($Env:temp)\tmp$([convert]::ToString((get-random 65535),16).PadLeft(4,'0')).tmp"
+
+        New-Lably -Path $TmpFolder -Name "Pester Test" -NATIPAddress $NetworkIPAddress -NATRangeCIDR 1.1.1.0/24
+        $jsonFile = Join-Path $tmpFolder -ChildPath "scaffold.lably.json"
+
+        $jsonData = Get-Content $jsonFile | ConvertFrom-Json
+
+        $jsonData.Meta.NATIPCIDR | Should -Be "1.1.1.0/24"
+
+        @(Get-NetIPAddress -IPAddress $NetworkIPAddress -ErrorAction SilentlyContinue).Count | Should -Be 1
+        @(Get-NetNat | Where-Object { $_.InternalIPInterfaceAddressPrefix -eq "1.1.1.0/24" }).Count | Should -Be 1
+
+        Remove-Lably -Path $tmpFolder -Confirm:$True
+
+        @(Get-NetIPAddress -IPAddress $NetworkIPAddress -ErrorAction SilentlyContinue).Count | Should -Be 0
+        @(Get-NetNat | Where-Object { $_.InternalIPInterfaceAddressPrefix -eq "1.1.1.0/24" }).Count | Should -Be 0
+
+    }
 
 }
