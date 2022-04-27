@@ -10,7 +10,7 @@ Describe "Get-LablyISODetails" {
 
     BeforeAll {
         $ISODetails = Get-LablyISODetails -ISO $env:LablyISO | Select-Object -First 1
-        $ModuleProperties = $ISODetails.PSObject.members | Where-Object { $_.MemberType -eq "Property" } | Select-Object -ExpandProperty Name
+        $script:ModuleProperties = $ISODetails.PSObject.members | Where-Object { $_.MemberType -eq "Property" } | Select-Object -ExpandProperty Name
     }
 
     It "ISO Details Should Contain ImagePath" {
