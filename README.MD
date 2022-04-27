@@ -30,7 +30,7 @@ Many ISOs from Microsoft will contain a number of different OS installations. To
 Run the following command:
 
 ```ps
-Get-LablyISODetails -ISO C:\ISOs\en-us_windows_server_2022_x64_dvd_620d7eac.iso`
+Get-LablyISODetails -ISO C:\ISOs\en-us_windows_server_2022_x64_dvd_620d7eac.iso
 ```
 
 You'll see output similar to the following:
