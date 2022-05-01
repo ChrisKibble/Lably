@@ -61,8 +61,6 @@ Function Test-LablyBaseVHDRegistry {
         Throw "Cannot Test Base VHDs while they are mounted."
     }
 
-    #### Need to handle when DISM returns blanks (wrong data passed in)
-
     ForEach($VHD in $RegistryObject.BaseImages) {
         Write-Host "Testing $($VHD.ImagePath)"
         If(-Not(Test-Path $VHD.ImagePath)) {
@@ -94,7 +92,11 @@ Function Test-LablyBaseVHDRegistry {
 
                 $imageVersion = [regex]::New("(?smi)Image Version: (\d{1,}.\d{1,}.\d{1,}.\d{1,})").Match($dismOutput.StdOut).Groups[1].Value
                 $imageEdition = [regex]::New("(?smi)Current Edition : (.*?)$").Match($dismOutput.StdOut).Groups[1].Value.ToString().Trim()
-            
+
+                If(-Not($imageVersion) -or -Not($imageEdition)) {
+                    Throw "Cannot find image information from DISM Output Stream. $($dismOutput.stdOut) $($dismOutput.stdErr)"
+                }
+
                 $RegistryValid = $True
 
                 If($vhd.OSName -ne "Windows") {
