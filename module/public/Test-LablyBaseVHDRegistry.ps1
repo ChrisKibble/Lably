@@ -65,7 +65,7 @@ Function Test-LablyBaseVHDRegistry {
         Write-Host "Testing $($VHD.ImagePath)"
         If(-Not(Test-Path $VHD.ImagePath)) {
             Write-Host "  Failed (File Doesn't Exist)" -ForegroundColor Red
-            Write-Host "  You can manually resolve, or remove this item with:"
+            Write-Host "  Remove this VHD from your registry with:"
             Write-Host "  Unregister-LablyBaseVHD -Id $($VHD.Id)"
         } Else {
             Try {
