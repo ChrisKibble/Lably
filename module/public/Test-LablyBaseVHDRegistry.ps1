@@ -61,6 +61,8 @@ Function Test-LablyBaseVHDRegistry {
         Throw "Cannot Test Base VHDs while they are mounted."
     }
 
+    #### Need to handle when DISM returns blanks (wrong data passed in)
+
     ForEach($VHD in $RegistryObject.BaseImages) {
         Write-Host "Testing $($VHD.ImagePath)"
         If(-Not(Test-Path $VHD.ImagePath)) {
@@ -71,57 +73,79 @@ Function Test-LablyBaseVHDRegistry {
             Try {
                 $mnt = Mount-VHD -Path $VHD.ImagePath -Passthru -ReadOnly -ErrorAction Stop
                 $vhdDisk = $mnt | Get-Disk -ErrorAction Stop
-                $vhdBasicPartition = Get-Partition $vhdDisk.DiskNumber -ErrorAction Stop | Where-Object { $_.Type -eq "Basic" -and $_.DriveLetter -ne "" }
-                If(@($vhdBasicPartition).Count -gt 1) {
-                    Write-Host " too many partitions." -ForegroundColor Yellow
-                } else {
-                    $VHDOSDriveLetter = $vhdBasicPartition.DriveLetter
-                    $dismOutput = Start-ProcessGetStreams -FilePath $env:windir\system32\dism.exe -ArgumentList @("/Image:$VHDOSDriveLetter`:","/Get-CurrentEdition")
-
-                    $imageVersion = [regex]::New("(?smi)Image Version: (\d{1,}.\d{1,}.\d{1,}.\d{1,})").Match($dismOutput.StdOut).Groups[1].Value
-                    $imageEdition = [regex]::New("(?smi)Current Edition : (.*?)$").Match($dismOutput.StdOut).Groups[1].Value.ToString().Trim()
                 
-                    $RegistryValid = $True
+                $VHDOSPartition = $VHD.OSPartition
 
-                    If($vhd.OSName -ne "Windows") {
-                        Write-Host "   OS in Registry is $($VHD.OSVersion) but OS is Windows." -NoNewline
-                        If(-Not($Fix)) {
-                            Write-Host " Use -Fix Parameter to Resolve Automatically."
-                            $RegistryValid = $False
-                        } Else {
-                            Write-Host " Updating Registry."
-                            $VHD.OSName = "Windows"
-                        }
+                If(-Not($VHDOSPartition)) {
+                    # This property wasn't added until after BETA 0.2
+                    $MissingOSPartition = $True
+                    $vhdBasicPartition = Get-Partition $vhdDisk.DiskNumber -ErrorAction Stop | Where-Object { $_.Type -eq "Basic" -and $_.DriveLetter -ne "" }
+                    If(@($vhdBasicPartition).Count -gt 1) {
+                        Write-Host "Warning: No OS Partition Defined and more than one exists. Assuming first is OS Disk."
+                        $vhdBasicPartition = $vhdBasicPartition | Select-Object -First 1
                     }
-
-                    If($imageVersion -ne $vhd.OSVersion) {
-                        Write-Host "   Image Version in Registry is $($VHD.OSVersion) but OS is $ImageVersion." -NoNewline
-                        If(-Not($Fix)) {
-                            Write-Host " Use -Fix Parameter to Resolve Automatically."
-                            $RegistryValid = $False
-                        } Else {
-                            Write-Host " Updating Registry."
-                            $VHD.OSVersion = $ImageVersion
-                        }
-                    }
-
-                    If($imageEdition -ne $vhd.OSEdition) {
-                        Write-Host "   Image Edition in Registry is $($VHD.OSEdition) but OS is $ImageEdition." -NoNewline
-                        If(-Not($Fix)) {
-                            Write-Host " Use -Fix Parameter to Resolve Automatically."
-                            $RegistryValid = $False
-                        } Else {
-                            Write-Host " Updating Registry."
-                            $VHD.OSEdition = $imageEdition
-                        }
-                    }
-
-                    If($RegistryValid) {
-                        $VHD.LastValidated = $(Get-DateUTC)
-                    }
-
-                    Dismount-VHD -Path $VHD.ImagePath -ErrorAction SilentlyContinue    
+                    $VHDOSPartition = $vhdBasicPartition.Guid
+                } else {
+                    $MissingOSPartition = $False
                 }
+
+                $VHDOSDriveLetter = Get-Partition $vhdDisk.DiskNumber -ErrorAction Stop | Where-Object { $_.Guid -eq $VHDOSPartition } | Select-Object -ExpandProperty DriveLetter
+                $dismOutput = Start-ProcessGetStreams -FilePath $env:windir\system32\dism.exe -ArgumentList @("/Image:$VHDOSDriveLetter`:","/Get-CurrentEdition")
+
+                $imageVersion = [regex]::New("(?smi)Image Version: (\d{1,}.\d{1,}.\d{1,}.\d{1,})").Match($dismOutput.StdOut).Groups[1].Value
+                $imageEdition = [regex]::New("(?smi)Current Edition : (.*?)$").Match($dismOutput.StdOut).Groups[1].Value.ToString().Trim()
+            
+                $RegistryValid = $True
+
+                If($vhd.OSName -ne "Windows") {
+                    Write-Host "   OS in Registry is $($VHD.OSVersion) but OS is Windows." -NoNewline
+                    If(-Not($Fix)) {
+                        Write-Host " Use -Fix Parameter to Resolve Automatically."
+                        $RegistryValid = $False
+                    } Else {
+                        Write-Host " Updating Registry."
+                        $VHD.OSName = "Windows"
+                    }
+                }
+
+                If($imageVersion -ne $vhd.OSVersion) {
+                    Write-Host "   Image Version in Registry is $($VHD.OSVersion) but OS is $ImageVersion." -NoNewline
+                    If(-Not($Fix)) {
+                        Write-Host " Use -Fix Parameter to Resolve Automatically."
+                        $RegistryValid = $False
+                    } Else {
+                        Write-Host " Updating Registry."
+                        $VHD.OSVersion = $ImageVersion
+                    }
+                }
+
+                If($imageEdition -ne $vhd.OSEdition) {
+                    Write-Host "   Image Edition in Registry is $($VHD.OSEdition) but OS is $ImageEdition." -NoNewline
+                    If(-Not($Fix)) {
+                        Write-Host " Use -Fix Parameter to Resolve Automatically."
+                        $RegistryValid = $False
+                    } Else {
+                        Write-Host " Updating Registry."
+                        $VHD.OSEdition = $imageEdition
+                    }
+                }
+
+                If($MissingOSPartition) {
+                    Write-Host "   Registry is missing OS Partition GUID." -NoNewline
+                    If(-Not($Fix)) {
+                        Write-Host " Use -Fix Parameter to Resolve Automatically."
+                        $RegistryValid = $False
+                    } Else {
+                        Write-Host " Updating Registry."
+                        Add-Member -InputObject $VHD -MemberType NoteProperty -Name "OSPartition" -Value $VHDOSPartition
+                    }
+                }
+
+                If($RegistryValid) {
+                    $VHD.LastValidated = $(Get-DateUTC)
+                }
+
+                Dismount-VHD -Path $VHD.ImagePath -ErrorAction SilentlyContinue    
             } Catch {
                 Write-Host "  Failed. $($_.Exception.Message)" -ForegroundColor Red
                 Write-Host "  You can manually resolve, or remove this item with:"

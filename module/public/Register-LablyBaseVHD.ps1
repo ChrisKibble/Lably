@@ -119,6 +119,7 @@ Function Register-LablyBaseVHD {
     }
 
     $VHDOSDriveLetter = $vhdBasicPartition[0].DriveLetter
+    $VHDOSParition = $vhdBasicPartition[0].Guid
 
     Try {
         Write-Verbose "Getting Windows Image Information from $VHDOSDriveLetter"
@@ -205,6 +206,7 @@ Function Register-LablyBaseVHD {
             "OSName" = "Windows"
             "OSVersion" = $imageVersion
             "OSEdition" = $imageEdition
+            "OSPartition" = $VHDOSParition
             "DateAdded" = $(Get-DateUTC)
             "LastValidated" = $(Get-DateUTC)
             "ProductKey" = $ProductKey
