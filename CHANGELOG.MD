@@ -7,6 +7,7 @@
 - Public modules will now validate admin permissions (when required) and that necessary Hyper-V modules are installed
 - Fixed issue where passing the `-Switch` parameter to New-LablyVM would still try and create a new Switch instead of using existing
 - Fixed issue where, when using an existing switch, it could get removed if no other VMs are using it when Lably is deleted
+- Fixed issue with cached templates not being removed properly in `Remove-Lably`
 - If New NAT Address cannot be created when setting up Lably, proper warning is now thrown
 - Fixed Start/Stop Lably functions (somewhere along the way they stopped converting from JSON)
 - Minor Fixes to Spelling, Grammar, and Spacing

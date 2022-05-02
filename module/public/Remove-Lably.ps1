@@ -121,7 +121,7 @@ Function Remove-Lably {
     
     ForEach($CachedTemplate in (Get-ChildItem -Path $TemplatePath -Filter *.json -ErrorAction SilentlyContinue)) {
         Try {
-            Remove-Item $CachedTemplate
+            Remove-Item $CachedTemplate.FullName -ErrorAction Stop
         } Catch {
             Write-Warning "Could not delete $CachedTemplate. $($_.Exception.Message)"
         }
