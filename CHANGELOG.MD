@@ -1,5 +1,14 @@
 # Change Log
 
+## Beta v0.2 -> vNet
+
+### Fixes
+
+- Minor Fixes to Spelling, Grammar, and Spacing
+
+### Other Changes & Enhancements
+
+
 ## Beta v0.2 -> v0.3
 
 ### Fixes
