@@ -4,6 +4,14 @@
 
 Lably is still in Beta. While it's unlikely to cause any issues, problems occuring are not out of the realm of possibility. Please make sure to backup any critical VM data and remember that this is for home labs and not for production use.
 
+## Installing Lably
+
+You can install Lably from a PowerShell command line by executing:
+
+```ps
+Install-Module -Name Lably
+```
+
 ## What is Lably?
 
 The Lably module assists IT professionals with quickly creating a home lab without having to re-create common environments over and over again. It leverages Hyper-V on a Windows host (client or server) to build quickly build VMs based off user-created  BaseVHDs. These VMs are stored in "Lablys" that keep their own metadata so they can be started up and shut down independently. 
