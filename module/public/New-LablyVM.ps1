@@ -447,7 +447,7 @@ Function New-LablyVM {
         Write-Host " Success." -ForegroundColor Green
     } Catch {
         Write-Host " Warning!" -ForegroundColor Yellow
-        Write-Warning "VM is online but we were unable to add it to your Lably scaffoling."
+        Write-Warning "VM is online but we were unable to add it to your Lably Scaffold."
         Write-Warning $_.Exception.Message
     }
 
