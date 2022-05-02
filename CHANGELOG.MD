@@ -19,6 +19,7 @@
 - New Function `Test-LablyBaseVHDRegistry` to check (and optionally fix) the Base VHD Registry
 - New Function `Get-LablyBaseVHDRegistry` to list the contents of the Base VHD Registry
 - New Function `Set-LablyBaseVHD` to set VHD path, FriendlyName, and OS Details in Base VHD Registry
+- Improved process that waits for network in VM to become available
 
 ## Beta v0.1 -> Beta v0.2:
 
