@@ -60,7 +60,7 @@ Function Test-Lably {
         Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
     }
 
-    $Scaffold.Secrets | Out-Host
+    $FixApplied = $False
 
     Write-Host "Verifying Switch." -NoNewline
     If($Scaffold.Meta.SwitchId) {
@@ -124,6 +124,39 @@ Function Test-Lably {
         }
     }
 
-    ## Next up, verify assets
+    ForEach($Asset in $Scaffold.Assets) {
+        Write-Host "Verifying '$($Asset.DisplayName)'"
+        Try {
+            Write-Host "   Checking Hyper-V for VM." -NoNewLine
+            $VM = Get-VM -Id $Asset.VMId
+            Write-Host " Success." -ForegroundColor Green
+            Write-Host "   Checking Display Name." -NoNewline
+            If($VM.Name -ne $Asset.DisplayName) {
+                If(-Not($Fix)) {
+                    Write-Host " Display Name: $($VM.Name)." -NoNewline
+                    Write-Host " Failed." -ForegroundColor Red
+                } Else {
+                    Write-Host " Display Name: $($VM.Name)." -NoNewline
+                    $Asset.DisplayName = $VM.Name
+                    $FixApplied = $True
+                    Write-Host " Fixed." -ForegroundColor Yellow                    
+                }
+            } Else {
+                Write-Host " Success." -ForegroundColor Green
+            }
+        } Catch {
+            Write-Host " Error: $($_.Exception.Message)" -NoNewline
+            Write-Host " Failed." -ForegroundColor Red
+        }
+    }
 
+    If($Fix -and $FixApplied) {
+        Try {
+            Write-Host "Updating Scaffold"
+            $Scaffold | ConvertTo-Json -Depth 100 | Out-File $LablyScaffold -Force
+        } Catch {
+            Write-Warning "Unable to Update Lably Scaffold."
+            Write-Warning $_.Exception.Message
+        }    
+    }
 }
