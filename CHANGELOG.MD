@@ -9,10 +9,12 @@
 - Fixed issue where, when using an existing switch, it could get removed if no other VMs are using it when Lably is deleted
 - If New NAT Address cannot be created when setting up Lably, proper warning is now thrown
 - Fixed Start/Stop Lably functions (somewhere along the way they stopped converting from JSON)
+- Minor Fixes to Spelling, Grammar, and Spacing
 
 ### Other Changes & Enhancements
 
 - Added template documentation
+- New Function `Test-Lably` to check (and optionally fix) your Lably Scaffold
 - New Function `Test-LablyBaseVHDRegistry` to check (and optionally fix) the Base VHD Registry
 - New Function `Get-LablyBaseVHDRegistry` to list the contents of the Base VHD Registry
 - New Function `Set-LablyBaseVHD` to set VHD path, FriendlyName, and OS Details in Base VHD Registry
