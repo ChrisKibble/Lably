@@ -504,19 +504,22 @@ Function New-LablyVM {
     If(-Not $Connected) {
         Throw "Timeout while attempting to configure new virtual machine."
     }
-
-    Write-Host "[VM] " -ForegroundColor Magenta -NoNewline
-    Write-Host "Setting Network Type of Private and Enabling PSRemoting (You can change this later if desired)." -NoNewline
     
     Try {
-        Invoke-Command -VMId $NewVM.VMId -ScriptBlock { 
-            Start-Sleep -Seconds 15
-            Get-NetConnectionProfile | Set-NetConnectionProfile -NetworkCategory Private
-            Enable-PSRemoting -Force | Out-Null 
-        } -Credential $BuildAdministrator
+        Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
+        Write-Host "Waiting for VM Network to be Available. Will try every 15 seconds."
+        Invoke-Command -VMId $NewVM.VMId -ScriptBlock {
+            While (Get-NetConnectionProfile | Where-Object { $_.Name -eq "Identifying..." }) {
+                Start-Sleep -Seconds 15
+            }
+            Write-Host "[VM] " -ForegroundColor Magenta -NoNewline
+            Write-Host "Setting Network Type of Private and Enabling PSRemoting (You can change this later if desired)." -NoNewLine
+            Get-NetConnectionProfile | Set-NetConnectionProfile -NetworkCategory Private -ErrorAction Stop
+            Enable-PSRemoting -Force -ErrorAction Stop | Out-Null 
+        } -Credential $BuildAdministrator -ErrorAction Stop
         Write-Host " Success!" -ForegroundColor Green
     } Catch {
-        Throw "Failed to enable PSRemoting. $($_.Exception.Message)"
+        Throw $_.Exception.Message
     }
 
     Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
