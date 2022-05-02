@@ -1,6 +1,6 @@
 # Change Log
 
-## Beta v0.2 -> vNext
+## Beta v0.2 -> v0.3
 
 ### Fixes
 
