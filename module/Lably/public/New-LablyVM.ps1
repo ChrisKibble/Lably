@@ -98,6 +98,9 @@ Function New-LablyVM {
         [Parameter(Mandatory=$False)]
         [String]$Template,
 
+        [Parameter(Mandatory=$False,ParameterSetName="TemplateAnswers")]
+        [HashTable]$TemplateAnswers = @{},
+
         [Parameter(Mandatory=$False)]
         [String]$DisplayName,
 
@@ -251,7 +254,7 @@ Function New-LablyVM {
             Throw "One or more of the requirements of this template were not met. Read the above warning messages for more information."
         }
 
-        $InputResponse = Get-AnswersToInputQuestions -InputQuestions $LablyTemplate.Input
+        $InputResponse = Get-AnswersToInputQuestions -InputQuestions $LablyTemplate.Input -TemplateAnswers $TemplateAnswers
 
     }
 

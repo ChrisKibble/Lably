@@ -3,7 +3,8 @@ Function Get-AnswersToInputQuestions {
     [CmdLetBinding()]
     Param(
         [Array]$InputQuestions,
-        [String]$OSLanguage = $(Get-WinSystemLocale -ErrorAction SilentlyContinue).Name
+        [String]$OSLanguage = $(Get-WinSystemLocale -ErrorAction SilentlyContinue).Name,
+        [HashTable]$TemplateAnswers = @{}
     )
 
     $InputData = $InputQuestions[0].PSObject.Properties | ForEach-Object {
@@ -65,6 +66,24 @@ Function Get-AnswersToInputQuestions {
             If(-Not($Continue)) { Continue }
         }
 
+        ## Handle Answer Template
+        If($TemplateAnswers[$P.Name]) {
+            # This question is answered in the template.
+            $InitialAnswer = $TemplateAnswers[$P.Name]
+            If($P.Secure) {
+                Try {
+                    $InitialAnswer = $InitialAnswer | ConvertTo-SecureString -ErrorAction Stop
+                    # If this works, it's already an encrypted string
+                } Catch {
+                    # Else, we need to convert the plain text string first.
+                    $InitialAnswer = $InitialAnswer | ConvertTo-SecureString -AsPlainText -Force
+                }
+            }
+                                
+        } Else {
+            $InitialAnswer = $null
+        }
+        
         $QNumber++
 
         Do {
@@ -72,22 +91,36 @@ Function Get-AnswersToInputQuestions {
             Try {
                        
                 Write-Verbose "   Prompting for '$($P.Prompt)'"
-                
+
                 Write-Host "($QNumber) " -ForegroundColor Yellow -NoNewline
+
                 If($P.Secure -eq $True) {
-                    Do {
-                        $SecureVal = Read-Host "$($P.Prompt)" -AsSecureString
-                        $Val = [System.Net.NetworkCredential]::new("", $SecureVal).Password   
-                        Write-Host "[Confirmation] " -ForegroundColor Yellow -NoNewLine
-                        $SecureValConfirm = Read-Host "$($P.Prompt)" -AsSecureString
-                        $ValConfirm = [System.Net.NetworkCredential]::new("", $SecureValConfirm).Password
-                        If(-Not($Val -ceq $ValConfirm)) {
-                            Write-Host "Passwords do not match. Try again." -ForegroundColor Red
-                        }
-                        Write-Host ""
-                    } Until($Val -ceq $ValConfirm)
+                    If($InitialAnswer) {
+                        Write-Host "$($P.Prompt): ********"
+                        $SecureVal = $InitialAnswer
+                        $ValConfirm = $InitialAnswer
+                        $InitialAnswer = $null
+                    } Else {
+                        Do {
+                            $SecureVal = Read-Host "$($P.Prompt)" -AsSecureString
+                            $Val = [System.Net.NetworkCredential]::new("", $SecureVal).Password   
+                            Write-Host "[Confirmation] " -ForegroundColor Yellow -NoNewLine
+                            $SecureValConfirm = Read-Host "$($P.Prompt)" -AsSecureString
+                            $ValConfirm = [System.Net.NetworkCredential]::new("", $SecureValConfirm).Password
+                            If(-Not($Val -ceq $ValConfirm)) {
+                                Write-Host "Passwords do not match. Try again." -ForegroundColor Red
+                            }
+                            Write-Host ""    
+                        } Until($Val -ceq $ValConfirm)
+                    } 
                 } else {
-                    $Val = Read-Host "$($P.Prompt)"
+                    If($InitialAnswer) {
+                        Write-Host "$($P.Prompt): $InitialAnswer"
+                        $val = $InitialAnswer
+                        $InitialAnswer = $null
+                    } Else {
+                        $Val = Read-Host "$($P.Prompt)"
+                    }
 
                     $ValueNoError = $True
  
