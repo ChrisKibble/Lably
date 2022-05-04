@@ -426,8 +426,9 @@ Function New-LablyVM {
         }
 
         If($InputResponse) {
-            $ScaffoldResponse = $InputResponse | ConvertTo-Json -Depth 100 | ConvertFrom-Json
             
+            $ScaffoldResponse = $InputResponse | ConvertTo-Json -Depth 100 | ConvertFrom-Json
+
             ForEach($SecureProperty in $ScaffoldResponse | Where-Object { $_.Secure -eq $True }) {
                 If($SecretType -eq "PowerShell") {
                     $SecureProperty.Val = $SecureProperty.Val | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString
@@ -438,7 +439,7 @@ Function New-LablyVM {
                 }
             }
 
-            Add-Member -InputObject $ThisAsset -MemberType NoteProperty -Name InputResponse -Value $ScaffoldResponse
+            Add-Member -InputObject $ThisAsset -MemberType NoteProperty -Name InputResponse -Value $ScaffoldResponse.PSObject.BaseObject
         }
         
         [Array]$Scaffold.Assets += @($ThisAsset)
