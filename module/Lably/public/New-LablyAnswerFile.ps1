@@ -14,10 +14,6 @@ Function New-LablyAnswerFile {
 
     Template to be used. Templates will be loaded from the "Templates" subfolder of the module and custom ones can be installed into the Lably\Templates folder of the user profile. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.
 
-    .PARAMETER IncludeHelpMessages
-
-    Optional switch that will include a copy of the prompt questions and validation messages to help identify the purpose of the question.
-
     .INPUTS
 
     None. You cannot pipe objects to New-LablyAnswerFile.
@@ -29,10 +25,6 @@ Function New-LablyAnswerFile {
     .EXAMPLE
 
     New-LablyAnswerFile -Template "My Template Name" | Out-File c:\AnswerFiles\TemplateAnswerFile.json
-
-    .EXAMPLE
-
-    New-LablyAnswerFile -Template "My Template Name" -IncludeHelpMessages | Out-File c:\AnswerFiles\TemplateAnswerFile.json
 
     #>
 
@@ -60,37 +52,15 @@ Function New-LablyAnswerFile {
 
     $LablyTemplate = Get-LablyTemplate $TemplateFile
 
-    $AnswerFile = [PSCustomObject]@{
-        Meta = @{
-            About = "This is a Lably AnswerFile."
-            Schema = "0.1"
-        }
-    }
+    $PromptList = @{}
 
-    $AnswerFile = ForEach($TemplatePrompt in ($LablyTemplate.Input | Get-Member -Type Properties)) {
+    ForEach($TemplatePrompt in ($LablyTemplate.Input | Get-Member -Type Properties)) {
         $PromptName = $TemplatePrompt.Name
-        $PromptQuestions = $LablyTemplate.Input.$PromptName.Prompt
-        $ValidationMessages = $LablyTemplate.Input.$PromptName.Validate.Message
-        $ValidationRegEx = $LablyTemplate.Input.$PromptName.Validate.RegEx
-            
-        $Help = @{
-            Prompts = $PromptQuestions
-            ValidationRegEx = $ValidationRegEx
-            ValidationMessages = $ValidationMessages
-        }
 
-        $PromptObject = [PSCustomObject]@{
-            PromptName = $PromptName
-            Answer = $null
-        }
+        $PromptList.Add($PromptName, $null)
 
-        If($IncludeHelpMessages) {
-            Add-Member -InputObject $PromptObject -MemberType NoteProperty -Name Help -Value $Help
-        }
-
-        $PromptObject
     }
-    
-    $AnswerFile | ConvertTo-Json -Depth 10
+ 
+    $PromptList | ConvertTo-Json
 
 }
