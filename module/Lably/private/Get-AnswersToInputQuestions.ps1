@@ -59,6 +59,8 @@ Function Get-AnswersToInputQuestions {
     $QNumber = 0
     ForEach($P in $InputData) {
 
+        $InitialAnswer = $null
+
         If($P.AskWhen) {
             $AskWhen = Literalize -InputResponse $InputResponse -InputData $P.AskWhen
             $Continue = Invoke-Expression $AskWhen
@@ -70,6 +72,7 @@ Function Get-AnswersToInputQuestions {
         If($TemplateAnswers[$P.Name]) {
             # This question is answered in the template.
             $InitialAnswer = $TemplateAnswers[$P.Name]
+
             If($P.Secure) {
                 Try {
                     $InitialAnswer = $InitialAnswer | ConvertTo-SecureString -ErrorAction Stop
@@ -79,11 +82,8 @@ Function Get-AnswersToInputQuestions {
                     $InitialAnswer = $InitialAnswer | ConvertTo-SecureString -AsPlainText -Force
                 }
             }
-                                
-        } Else {
-            $InitialAnswer = $null
         }
-        
+
         $QNumber++
 
         Do {
@@ -97,8 +97,7 @@ Function Get-AnswersToInputQuestions {
                 If($P.Secure -eq $True) {
                     If($InitialAnswer) {
                         Write-Host "$($P.Prompt): ********"
-                        $SecureVal = $InitialAnswer
-                        $ValConfirm = $InitialAnswer
+                        $Val = $InitialAnswer
                         $InitialAnswer = $null
                     } Else {
                         Do {
