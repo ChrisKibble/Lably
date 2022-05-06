@@ -149,3 +149,4 @@ Register-ArgumentCompleter -CommandName Set-LablyBaseVHD -ParameterName Friendly
 Register-ArgumentCompleter -CommandName Set-LablyBaseVHD -ParameterName ID -ScriptBlock $scriptGetBaseImagesId
 Register-ArgumentCompleter -CommandName Set-LablyBaseVHD -ParameterName VHD -ScriptBlock $scriptGetBaseImagesVHD
 
+Register-ArgumentCompleter -CommandName New-LablyAnswerFile -ParameterName Template -ScriptBlock $scriptGetTemplateNames

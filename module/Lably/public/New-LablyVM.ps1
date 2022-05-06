@@ -89,7 +89,7 @@ Function New-LablyVM {
 
     #>
 
-    [CmdLetBinding()]
+    [CmdLetBinding(DefaultParameterSetName='TemplateAnswers')]
     Param(
 
         [Parameter(Mandatory=$False)]
@@ -97,6 +97,12 @@ Function New-LablyVM {
 
         [Parameter(Mandatory=$False)]
         [String]$Template,
+
+        [Parameter(Mandatory=$False,ParameterSetName="TemplateAnswers")]
+        [HashTable]$TemplateAnswers = @{},
+
+        [Parameter(Mandatory=$False,ParameterSetName="TemplateAnswerFile")]
+        [String]$TemplateAnswerFile = "",
 
         [Parameter(Mandatory=$False)]
         [String]$DisplayName,
@@ -251,7 +257,21 @@ Function New-LablyVM {
             Throw "One or more of the requirements of this template were not met. Read the above warning messages for more information."
         }
 
-        $InputResponse = Get-AnswersToInputQuestions -InputQuestions $LablyTemplate.Input
+        If($TemplateAnswerFile) {
+            Try {
+                $AnswerData = Get-Content $TemplateAnswerFile -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop
+            } Catch {
+                Throw "Could not read Template Answer File. $($_.Exception.Message)"
+            }
+
+            $TemplateAnswers = @{}
+            ForEach($AnswerProperty in $AnswerData.PSObject.Properties) {
+                $TemplateAnswers.Add($AnswerProperty.Name,$AnswerProperty.value)
+            }
+
+        }
+
+        $InputResponse = Get-AnswersToInputQuestions -InputQuestions $LablyTemplate.Input -TemplateAnswers $TemplateAnswers
 
     }
 
