@@ -89,7 +89,7 @@ Function New-LablyVM {
 
     #>
 
-    [CmdLetBinding()]
+    [CmdLetBinding(DefaultParameterSetName='TemplateAnswers')]
     Param(
 
         [Parameter(Mandatory=$False)]
