@@ -52,13 +52,11 @@ Function New-LablyAnswerFile {
 
     $LablyTemplate = Get-LablyTemplate $TemplateFile
 
-    $PromptList = @{}
+    $PromptList = [Ordered]@{}
 
-    ForEach($TemplatePrompt in ($LablyTemplate.Input | Get-Member -Type Properties)) {
-        $PromptName = $TemplatePrompt.Name
-
+    ForEach($TemplatePrompt in ($LablyTemplate.input[0].psobject.properties.name)) {
+        $PromptName = $TemplatePrompt
         $PromptList.Add($PromptName, $null)
-
     }
  
     $PromptList | ConvertTo-Json
