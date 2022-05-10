@@ -8,8 +8,7 @@
 - Minor Fixes to Spelling, Grammar, and Spacing
 
 ### Other Changes & Enhancements
-
-N/A
+- New `ExpandVariables` property in templates to stop [[VARIABLES]] from expanding, documented in template docs files.
 
 ## Beta v0.2 -> v0.3
 

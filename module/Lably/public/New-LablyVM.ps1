@@ -582,13 +582,21 @@ Function New-LablyVM {
 
         Switch($Step.Action) {
             'Script' {
-                
+
+                If($Step | Get-Member ExpandVariables -ErrorAction SilentlyContinue) {
+                    $ExpandVariables = $Step.ExpandVariables
+                } Else {
+                    $ExpandVariables = $true
+                }
+        
                 Switch($Step.Language) {
                     'PowerShell' {
                         Write-Host "Running PowerShell Script on VM as $($StepAdministrator.UserName)"
 
                         $StepScript = $Step.Script -join "`n"
-                        $StepScript = Literalize -InputResponse $InputResponse -InputData $($StepScript)
+                        If($ExpandVariables) {
+                            $StepScript = Literalize -InputResponse $InputResponse -InputData $($StepScript)
+                        }
                         $stepScriptBlock = [ScriptBlock]::Create($StepScript)
 
                         Try {
