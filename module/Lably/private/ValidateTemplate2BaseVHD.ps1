@@ -12,23 +12,25 @@ Function ValidateTemplate2BaseVHD {
     
     $AllRequirementsValid = $True
 
-    ForEach($BaseVHDRequirement in $LablyTemplate.Requirements.BaseVHD | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) {
+    If($LablyTemplate.Requirements.BaseVHD) {
+        ForEach($BaseVHDRequirement in $LablyTemplate.Requirements.BaseVHD | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name) {
         
-        Write-Verbose "... Validating $BaseVHDRequirement"
-        $ValidatedRequirement = $False
-
-        ForEach($Req in $LablyTemplate.Requirements.BaseVHD.$BaseVHDRequirement) {
-            If($RegistryEntry.$BaseVHDRequirement -like "$Req") {
-                Write-Verbose "...... $($RegistryEntry.$BaseVHDRequirement) is like $($Req)."
-                $ValidatedRequirement = $True
+            Write-Verbose "... Validating $BaseVHDRequirement"
+            $ValidatedRequirement = $False
+    
+            ForEach($Req in $LablyTemplate.Requirements.BaseVHD.$BaseVHDRequirement) {
+                If($RegistryEntry.$BaseVHDRequirement -like "$Req") {
+                    Write-Verbose "...... $($RegistryEntry.$BaseVHDRequirement) is like $($Req)."
+                    $ValidatedRequirement = $True
+                }
             }
-        }
-
-        If(-Not($ValidatedRequirement)) {
-            $AllRequirementsValid = $False
-            Write-Warning "Template Requires BaseVHD $BaseVHDRequirement one of: [$($LablyTemplate.Requirements.BaseVHD.$BaseVHDRequirement -join ",")]"
-        }
-
+    
+            If(-Not($ValidatedRequirement)) {
+                $AllRequirementsValid = $False
+                Write-Warning "Template Requires BaseVHD $BaseVHDRequirement one of: [$($LablyTemplate.Requirements.BaseVHD.$BaseVHDRequirement -join ",")]"
+            }
+    
+        }    
     }
 
     If($LablyTemplate.Requirements.DenyDefaultHostname -and $HostnameDefined -eq $False) {
