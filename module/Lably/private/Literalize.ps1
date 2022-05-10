@@ -6,7 +6,7 @@ Function Literalize {
         [String]$InputData
     )
 
-    $VariableList = [Regex]::New("(?msi)[^`]\[\[(\w{1,})\]\]").Matches($InputData)
+    $VariableList = [Regex]::New("(?msi)\[\[(\w{1,})\]\]").Matches($InputData)
 
     ForEach($V in $VariableList) {        
         $SearchString = $V.Groups[0].Value
