@@ -89,7 +89,7 @@ Function New-LablyVM {
 
     #>
 
-    [CmdLetBinding()]
+    [CmdLetBinding(DefaultParameterSetName='TemplateAnswers')]
     Param(
 
         [Parameter(Mandatory=$False)]
@@ -97,6 +97,12 @@ Function New-LablyVM {
 
         [Parameter(Mandatory=$False)]
         [String]$Template,
+
+        [Parameter(Mandatory=$False,ParameterSetName="TemplateAnswers")]
+        [HashTable]$TemplateAnswers = @{},
+
+        [Parameter(Mandatory=$False,ParameterSetName="TemplateAnswerFile")]
+        [String]$TemplateAnswerFile = "",
 
         [Parameter(Mandatory=$False)]
         [String]$DisplayName,
@@ -251,7 +257,21 @@ Function New-LablyVM {
             Throw "One or more of the requirements of this template were not met. Read the above warning messages for more information."
         }
 
-        $InputResponse = Get-AnswersToInputQuestions -InputQuestions $LablyTemplate.Input
+        If($TemplateAnswerFile) {
+            Try {
+                $AnswerData = Get-Content $TemplateAnswerFile -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop
+            } Catch {
+                Throw "Could not read Template Answer File. $($_.Exception.Message)"
+            }
+
+            $TemplateAnswers = @{}
+            ForEach($AnswerProperty in $AnswerData.PSObject.Properties) {
+                $TemplateAnswers.Add($AnswerProperty.Name,$AnswerProperty.value)
+            }
+
+        }
+
+        $InputResponse = Get-AnswersToInputQuestions -InputQuestions $LablyTemplate.Input -TemplateAnswers $TemplateAnswers
 
     }
 
@@ -426,8 +446,9 @@ Function New-LablyVM {
         }
 
         If($InputResponse) {
-            $ScaffoldResponse = $InputResponse | ConvertTo-Json -Depth 100 | ConvertFrom-Json
             
+            $ScaffoldResponse = $InputResponse | ConvertTo-Json -Depth 100 | ConvertFrom-Json
+
             ForEach($SecureProperty in $ScaffoldResponse | Where-Object { $_.Secure -eq $True }) {
                 If($SecretType -eq "PowerShell") {
                     $SecureProperty.Val = $SecureProperty.Val | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString
@@ -438,7 +459,7 @@ Function New-LablyVM {
                 }
             }
 
-            Add-Member -InputObject $ThisAsset -MemberType NoteProperty -Name InputResponse -Value $ScaffoldResponse
+            Add-Member -InputObject $ThisAsset -MemberType NoteProperty -Name InputResponse -Value $ScaffoldResponse.PSObject.BaseObject
         }
         
         [Array]$Scaffold.Assets += @($ThisAsset)
@@ -447,7 +468,7 @@ Function New-LablyVM {
         Write-Host " Success." -ForegroundColor Green
     } Catch {
         Write-Host " Warning!" -ForegroundColor Yellow
-        Write-Warning "VM is online but we were unable to add it to your Lably scaffoling."
+        Write-Warning "VM is online but we were unable to add it to your Lably Scaffold."
         Write-Warning $_.Exception.Message
     }
 
@@ -504,19 +525,22 @@ Function New-LablyVM {
     If(-Not $Connected) {
         Throw "Timeout while attempting to configure new virtual machine."
     }
-
-    Write-Host "[VM] " -ForegroundColor Magenta -NoNewline
-    Write-Host "Setting Network Type of Private and Enabling PSRemoting (You can change this later if desired)." -NoNewline
     
     Try {
-        Invoke-Command -VMId $NewVM.VMId -ScriptBlock { 
-            Start-Sleep -Seconds 15
-            Get-NetConnectionProfile | Set-NetConnectionProfile -NetworkCategory Private
-            Enable-PSRemoting -Force | Out-Null 
-        } -Credential $BuildAdministrator
+        Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
+        Write-Host "Waiting for VM Network to be Available. Will try every 15 seconds."
+        Invoke-Command -VMId $NewVM.VMId -ScriptBlock {
+            While (Get-NetConnectionProfile | Where-Object { $_.Name -eq "Identifying..." }) {
+                Start-Sleep -Seconds 15
+            }
+            Write-Host "[VM] " -ForegroundColor Magenta -NoNewline
+            Write-Host "Setting Network Type of Private and Enabling PSRemoting (You can change this later if desired)." -NoNewLine
+            Get-NetConnectionProfile | Set-NetConnectionProfile -NetworkCategory Private -ErrorAction Stop
+            Enable-PSRemoting -Force -ErrorAction Stop | Out-Null 
+        } -Credential $BuildAdministrator -ErrorAction Stop
         Write-Host " Success!" -ForegroundColor Green
     } Catch {
-        Throw "Failed to enable PSRemoting. $($_.Exception.Message)"
+        Throw $_.Exception.Message
     }
 
     Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline

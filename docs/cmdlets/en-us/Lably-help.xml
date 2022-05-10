@@ -1,0 +1,2669 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<helpItems schema="maml" xmlns="http://msh">
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>Get-LablyBaseVHDRegistry</command:name>
+      <command:verb>Get</command:verb>
+      <command:noun>LablyBaseVHDRegistry</command:noun>
+      <maml:description>
+        <maml:para>Gets list of Lably Base VHDs from Registry</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>This function is used to display the Base VHDs currently stored in the Base VHD Registry.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Get-LablyBaseVHDRegistry</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Meta</maml:name>
+          <maml:description>
+            <maml:para>Switch to get the meta data from the registry instead of the Base VHDs.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>Meta</maml:name>
+        <maml:description>
+          <maml:para>Switch to get the meta data from the registry instead of the Base VHDs.</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. You cannot pipe objects to Get-LablyBaseVHDRegistry.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>Array of Base VHDs from Registry.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-LablyBaseVHDRegistry</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Get-LablyBaseVHDRegistry -Meta</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>Get-LablyISODetails</command:name>
+      <command:verb>Get</command:verb>
+      <command:noun>LablyISODetails</command:noun>
+      <maml:description>
+        <maml:para>Gets the details from the WIM inside of a supplied ISO.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>Gets the details from the WIM inside of a supplied ISO. Takes the path of the ISO as a parameter.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Get-LablyISODetails</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+          <maml:name>ISO</maml:name>
+          <maml:description>
+            <maml:para>Full or relative path to the ISO file to get details on.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>ISO</maml:name>
+        <maml:description>
+          <maml:para>Full or relative path to the ISO file to get details on.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. You cannot pipe objects to Get-LablyISODetails.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>System.Collections.Generic.List`1[[Microsoft.Dism.Commands.WimImageInfoObject,</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>Microsoft.Dism.PowerShell, Version=10.0.0.0, Culture=neutral, PublicKeyToken=null]]</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>System.Collections.Generic.List`1[[Microsoft.Dism.Commands.ImageInfoObject, Microsoft.Dism.PowerShell,</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>Version=10.0.0.0, Culture=neutral, PublicKeyToken=null]]</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>System.Collections.Generic.List`1[[Microsoft.Dism.Commands.BasicImageInfoObject,</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>Microsoft.Dism.PowerShell, Version=10.0.0.0, Culture=neutral, PublicKeyToken=null]]</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>System.Collections.Generic.List`1[[Microsoft.Dism.Commands.MountedImageInfoObject,</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>Microsoft.Dism.PowerShell, Version=10.0.0.0, Culture=neutral, PublicKeyToken=null]]</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-LablyISODetais -ISO C:\ISOs\Windows10-Enterprise.iso</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>New-Lably</command:name>
+      <command:verb>New</command:verb>
+      <command:noun>Lably</command:noun>
+      <maml:description>
+        <maml:para>Creates a new empty lab in the current directory or defined path.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>This function is used to create a new Lably (lab or lab scaffold) that will be used to store the meta data for this specific lab. Function will create a scaffold.lably.json in the defined path that other Lably functions will use to store the metadata.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>New-Lably</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Path</maml:name>
+          <maml:description>
+            <maml:para>Optional parameter to define where the lably will be created. The scaffold, template cache, and (optionally) virtual disks folders will be created within this folder. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$PWD</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Name</maml:name>
+          <maml:description>
+            <maml:para>Optional name of the Lably. Used as a description when using and describing the lab, as well as the default prefix for the display name of VMs created in Hyper-V. If this parameter is not defined, it will default to the name of the folder it's being created it.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(Split-Path $Path -Leaf)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>CreateSwitch</maml:name>
+          <maml:description>
+            <maml:para>Name of switch to be created in Hyper-V for this lab. Either CreateSwitch or SwitchName are required. If neither parameter is defined, it will default creating a new switch using the name of the folder it's being created it.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(Split-Path $Path -Leaf)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>VirtualDiskPath</maml:name>
+          <maml:description>
+            <maml:para>Optional parameter to define the folder in which new differencing disks for this lab will be created when New-LablyVM is called. Defaults to a 'Virtual Disks' subfolder of the 'Path' parameter.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>SecretKeyFile</maml:name>
+          <maml:description>
+            <maml:para>Switch used to indicate that instead of using the computer/user accounts to encrypt secrets that an AES key file should be created. When using keyfiles, ensure that appropriate NTFS permissions are set on your Lably folder to ensure that keys cannot be read by other users.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>New-Lably</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Path</maml:name>
+          <maml:description>
+            <maml:para>Optional parameter to define where the lably will be created. The scaffold, template cache, and (optionally) virtual disks folders will be created within this folder. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$PWD</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Name</maml:name>
+          <maml:description>
+            <maml:para>Optional name of the Lably. Used as a description when using and describing the lab, as well as the default prefix for the display name of VMs created in Hyper-V. If this parameter is not defined, it will default to the name of the folder it's being created it.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(Split-Path $Path -Leaf)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>CreateSwitch</maml:name>
+          <maml:description>
+            <maml:para>Name of switch to be created in Hyper-V for this lab. Either CreateSwitch or SwitchName are required. If neither parameter is defined, it will default creating a new switch using the name of the folder it's being created it.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(Split-Path $Path -Leaf)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NATIPAddress</maml:name>
+          <maml:description>
+            <maml:para>Optional parameter to be used when using CreateSwitch to define the IP Address to create for this network to use to access the host's network.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NATRangeCIDR</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill NATRangeCIDR Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>VirtualDiskPath</maml:name>
+          <maml:description>
+            <maml:para>Optional parameter to define the folder in which new differencing disks for this lab will be created when New-LablyVM is called. Defaults to a 'Virtual Disks' subfolder of the 'Path' parameter.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>SecretKeyFile</maml:name>
+          <maml:description>
+            <maml:para>Switch used to indicate that instead of using the computer/user accounts to encrypt secrets that an AES key file should be created. When using keyfiles, ensure that appropriate NTFS permissions are set on your Lably folder to ensure that keys cannot be read by other users.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>New-Lably</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Path</maml:name>
+          <maml:description>
+            <maml:para>Optional parameter to define where the lably will be created. The scaffold, template cache, and (optionally) virtual disks folders will be created within this folder. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$PWD</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Name</maml:name>
+          <maml:description>
+            <maml:para>Optional name of the Lably. Used as a description when using and describing the lab, as well as the default prefix for the display name of VMs created in Hyper-V. If this parameter is not defined, it will default to the name of the folder it's being created it.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(Split-Path $Path -Leaf)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Switch</maml:name>
+          <maml:description>
+            <maml:para>Name of exiting Hyper-V switch to be used for this lab. Either CreateSwitch or SwitchName are required. If neither parameter is defined, it will default creating a new switch using the name of the folder it's being created it.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>VirtualDiskPath</maml:name>
+          <maml:description>
+            <maml:para>Optional parameter to define the folder in which new differencing disks for this lab will be created when New-LablyVM is called. Defaults to a 'Virtual Disks' subfolder of the 'Path' parameter.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>SecretKeyFile</maml:name>
+          <maml:description>
+            <maml:para>Switch used to indicate that instead of using the computer/user accounts to encrypt secrets that an AES key file should be created. When using keyfiles, ensure that appropriate NTFS permissions are set on your Lably folder to ensure that keys cannot be read by other users.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>Path</maml:name>
+        <maml:description>
+          <maml:para>Optional parameter to define where the lably will be created. The scaffold, template cache, and (optionally) virtual disks folders will be created within this folder. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$PWD</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>Name</maml:name>
+        <maml:description>
+          <maml:para>Optional name of the Lably. Used as a description when using and describing the lab, as well as the default prefix for the display name of VMs created in Hyper-V. If this parameter is not defined, it will default to the name of the folder it's being created it.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(Split-Path $Path -Leaf)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>CreateSwitch</maml:name>
+        <maml:description>
+          <maml:para>Name of switch to be created in Hyper-V for this lab. Either CreateSwitch or SwitchName are required. If neither parameter is defined, it will default creating a new switch using the name of the folder it's being created it.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(Split-Path $Path -Leaf)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>NATIPAddress</maml:name>
+        <maml:description>
+          <maml:para>Optional parameter to be used when using CreateSwitch to define the IP Address to create for this network to use to access the host's network.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>NATRangeCIDR</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill NATRangeCIDR Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>Switch</maml:name>
+        <maml:description>
+          <maml:para>Name of exiting Hyper-V switch to be used for this lab. Either CreateSwitch or SwitchName are required. If neither parameter is defined, it will default creating a new switch using the name of the folder it's being created it.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>VirtualDiskPath</maml:name>
+        <maml:description>
+          <maml:para>Optional parameter to define the folder in which new differencing disks for this lab will be created when New-LablyVM is called. Defaults to a 'Virtual Disks' subfolder of the 'Path' parameter.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>SecretKeyFile</maml:name>
+        <maml:description>
+          <maml:para>Switch used to indicate that instead of using the computer/user accounts to encrypt secrets that an AES key file should be created. When using keyfiles, ensure that appropriate NTFS permissions are set on your Lably folder to ensure that keys cannot be read by other users.</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. You cannot pipe objects to New-Lably.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None. The function will either complete successfully or throw an error.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>New-Lably -Name "Chris' Lab"</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>New-Lably -Name "Chris' Lab" -CreateSwitch "Test Switch #1"</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
+        <dev:code>New-Lably -Name "Chris' Lab" -CreateSwitch "Test Switch #2" -NATIPAddress 10.0.0.1 -NATIPCIDRRange 10.0.0.0/24</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 4 --------------------------</maml:title>
+        <dev:code>New-Lably -Name "Chris' Lab" -Switch "Existing Switch #3"</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 5 --------------------------</maml:title>
+        <dev:code>New-Lably -Name "Chris' Lab" -VirtualDiskPath "D:\LabVMs" -SecretKeyFile</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>New-LablyBaseVHD</command:name>
+      <command:verb>New</command:verb>
+      <command:noun>LablyBaseVHD</command:noun>
+      <maml:description>
+        <maml:para>Creates a new Base VHD file for use in creating new VMs.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>This function is used to creates a new Base VHD file for use in creating new VMs. It is not tied to any specific lab, any lab can use any of the Base VHDs. Once the VHD is created, the Register-LablyBaseVHD should be used to add it to the image registry.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>New-LablyBaseVHD</maml:name>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+          <maml:name>ISO</maml:name>
+          <maml:description>
+            <maml:para>Full or relative path to the ISO that has the Operating System installer on it.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+          <maml:name>VHD</maml:name>
+          <maml:description>
+            <maml:para>Full or relative path to where the Base VHD should be created.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>VHDSizeInBytes</maml:name>
+          <maml:description>
+            <maml:para>Optional size of the Base VHD. As the VHD expands to fit the content and doesn't use the full space unless necessary, there is unlikely to be a value in setting this parameter. Defaults to 127GB.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">Int64</command:parameterValue>
+          <dev:type>
+            <maml:name>Int64</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>136365211648</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Index</maml:name>
+          <maml:description>
+            <maml:para>Index number of the Operating System to create the Base VHD for. Default to 1. If you're unsure of the Index Number, use Get-LablyISODetails to identify it.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+          <dev:type>
+            <maml:name>Int32</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>1</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Force</maml:name>
+          <maml:description>
+            <maml:para>Switch that defines that the VHD should be overwritten if the file exists.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>ISO</maml:name>
+        <maml:description>
+          <maml:para>Full or relative path to the ISO that has the Operating System installer on it.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <maml:name>VHD</maml:name>
+        <maml:description>
+          <maml:para>Full or relative path to where the Base VHD should be created.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>VHDSizeInBytes</maml:name>
+        <maml:description>
+          <maml:para>Optional size of the Base VHD. As the VHD expands to fit the content and doesn't use the full space unless necessary, there is unlikely to be a value in setting this parameter. Defaults to 127GB.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Int64</command:parameterValue>
+        <dev:type>
+          <maml:name>Int64</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>136365211648</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>Index</maml:name>
+        <maml:description>
+          <maml:para>Index number of the Operating System to create the Base VHD for. Default to 1. If you're unsure of the Index Number, use Get-LablyISODetails to identify it.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+        <dev:type>
+          <maml:name>Int32</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>1</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>Force</maml:name>
+        <maml:description>
+          <maml:para>Switch that defines that the VHD should be overwritten if the file exists.</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. You cannot pipe objects to New-LablyBaseVHD.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None. The function will either complete successfully or throw an error.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>New-LablyBaseVHD -ISO C:\ISOs\Windows10-Enterprise.iso -Index 4 -VHD C:\VHDRepo\Win10Ent.vhdx</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>New-LablyVM</command:name>
+      <command:verb>New</command:verb>
+      <command:noun>LablyVM</command:noun>
+      <maml:description>
+        <maml:para>Creates a new VM in Hyper-V using a Base VHD.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>This function is used to create a new Hyper-V VM that will use a differencing disk based on a registered Base VHD.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>New-LablyVM</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+          <maml:name>Path</maml:name>
+          <maml:description>
+            <maml:para>Optional parameter to define where the lably that this VM will join is stored. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$PWD</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+          <maml:name>CPUCount</maml:name>
+          <maml:description>
+            <maml:para>Optional number of virtual CPUs to assign to the VM. Defaults to 1/4th of the total number of logical processors that the host has.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+          <dev:type>
+            <maml:name>Int32</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>[Math]::Max(1,$(Get-CimInstance -Class Win32_Processor).NumberOfLogicalProcessors/4)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+          <maml:name>ProductKey</maml:name>
+          <maml:description>
+            <maml:para>Optional product key that should be used when building the VM. The product key is typically stored in the Base VHD, so this parameter is only necessary if you didn't include one in the Base VHD or if you'd like to use a different one for this VM.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+          <maml:name>Timezone</maml:name>
+          <maml:description>
+            <maml:para>Optional TimeZone ID to use when building this VM. Defaults to the timezone of the host.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$(Get-Timezone).Id</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+          <maml:name>Locale</maml:name>
+          <maml:description>
+            <maml:para>Optional Windows Locale ID to use when building this VM. Defaults to the Locale ID of the host.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$(Get-WinSystemLocale).Name</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+          <maml:name>Template</maml:name>
+          <maml:description>
+            <maml:para>Optional template to be used. Templates will be loaded from the "Templates" subfolder of the module and custom ones can be installed into the Lably\Templates folder of the user profile. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+          <maml:name>DisplayName</maml:name>
+          <maml:description>
+            <maml:para>Optional DisplayName to be used in Hyper-V. Defaults to the hostname of the VM prefixed by the name of the Lably (e.g., [Chris' Lab] LABDC01).</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+          <maml:name>Hostname</maml:name>
+          <maml:description>
+            <maml:para>Optional Hostname for the VM. Defaults to 'LAB-' followed by a random string of 8 random alphanumeric characters. Some templates may require that a hostname be defined.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>"LAB-$([Guid]::NewGuid().ToString().split('-')[0].ToUpper())"</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+          <maml:name>BaseVHD</maml:name>
+          <maml:description>
+            <maml:para>The path or friendly name of the BaseVHD that should be used to create this VM. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+          <maml:name>AdminPassword</maml:name>
+          <maml:description>
+            <maml:para>SecureString input of the AdminPassword that should be used to login to the VM. This parameter will not take plain text, see examples for assistance creating secure strings.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">SecureString</command:parameterValue>
+          <dev:type>
+            <maml:name>SecureString</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+          <maml:name>MemorySizeInBytes</maml:name>
+          <maml:description>
+            <maml:para>Optional Memory that should be assigned to the VM. Defaults to 4GB. Although this parameter takes the value in bytes, PowerShell will calculate this value for you if you use MB or GB in after a value (e.g. 512MB or 2GB).</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">Int64</command:parameterValue>
+          <dev:type>
+            <maml:name>Int64</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>4294967296</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+          <maml:name>MemoryMinimumInBytes</maml:name>
+          <maml:description>
+            <maml:para>Optional Minimum Memory that should be assigned to the VM. Defaults to 512MB. Although this parameter takes the value in bytes, PowerShell will calculate this value for you if you use MB or GB in after a value (e.g. 512MB or 2GB).</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">Int64</command:parameterValue>
+          <dev:type>
+            <maml:name>Int64</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>536870912</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+          <maml:name>MemoryMaximumInBytes</maml:name>
+          <maml:description>
+            <maml:para>Optional Maximum Memory that should be assigned to the VM. Defaults to the same value supplied to MemorySizeInBytes. Although this parameter takes the value in bytes, PowerShell will calculate this value for you if you use MB or GB in after a value (e.g. 512MB or 2GB).</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">Int64</command:parameterValue>
+          <dev:type>
+            <maml:name>Int64</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$MemorySizeInBytes</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Force</maml:name>
+          <maml:description>
+            <maml:para>Switch that defines that the VHD should be overwritten if it already exists.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>Path</maml:name>
+        <maml:description>
+          <maml:para>Optional parameter to define where the lably that this VM will join is stored. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$PWD</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <maml:name>Template</maml:name>
+        <maml:description>
+          <maml:para>Optional template to be used. Templates will be loaded from the "Templates" subfolder of the module and custom ones can be installed into the Lably\Templates folder of the user profile. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <maml:name>DisplayName</maml:name>
+        <maml:description>
+          <maml:para>Optional DisplayName to be used in Hyper-V. Defaults to the hostname of the VM prefixed by the name of the Lably (e.g., [Chris' Lab] LABDC01).</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <maml:name>Hostname</maml:name>
+        <maml:description>
+          <maml:para>Optional Hostname for the VM. Defaults to 'LAB-' followed by a random string of 8 random alphanumeric characters. Some templates may require that a hostname be defined.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>"LAB-$([Guid]::NewGuid().ToString().split('-')[0].ToUpper())"</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <maml:name>BaseVHD</maml:name>
+        <maml:description>
+          <maml:para>The path or friendly name of the BaseVHD that should be used to create this VM. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <maml:name>AdminPassword</maml:name>
+        <maml:description>
+          <maml:para>SecureString input of the AdminPassword that should be used to login to the VM. This parameter will not take plain text, see examples for assistance creating secure strings.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">SecureString</command:parameterValue>
+        <dev:type>
+          <maml:name>SecureString</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <maml:name>MemorySizeInBytes</maml:name>
+        <maml:description>
+          <maml:para>Optional Memory that should be assigned to the VM. Defaults to 4GB. Although this parameter takes the value in bytes, PowerShell will calculate this value for you if you use MB or GB in after a value (e.g. 512MB or 2GB).</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Int64</command:parameterValue>
+        <dev:type>
+          <maml:name>Int64</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>4294967296</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+        <maml:name>MemoryMinimumInBytes</maml:name>
+        <maml:description>
+          <maml:para>Optional Minimum Memory that should be assigned to the VM. Defaults to 512MB. Although this parameter takes the value in bytes, PowerShell will calculate this value for you if you use MB or GB in after a value (e.g. 512MB or 2GB).</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Int64</command:parameterValue>
+        <dev:type>
+          <maml:name>Int64</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>536870912</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+        <maml:name>MemoryMaximumInBytes</maml:name>
+        <maml:description>
+          <maml:para>Optional Maximum Memory that should be assigned to the VM. Defaults to the same value supplied to MemorySizeInBytes. Although this parameter takes the value in bytes, PowerShell will calculate this value for you if you use MB or GB in after a value (e.g. 512MB or 2GB).</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Int64</command:parameterValue>
+        <dev:type>
+          <maml:name>Int64</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$MemorySizeInBytes</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+        <maml:name>CPUCount</maml:name>
+        <maml:description>
+          <maml:para>Optional number of virtual CPUs to assign to the VM. Defaults to 1/4th of the total number of logical processors that the host has.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+        <dev:type>
+          <maml:name>Int32</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>[Math]::Max(1,$(Get-CimInstance -Class Win32_Processor).NumberOfLogicalProcessors/4)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+        <maml:name>ProductKey</maml:name>
+        <maml:description>
+          <maml:para>Optional product key that should be used when building the VM. The product key is typically stored in the Base VHD, so this parameter is only necessary if you didn't include one in the Base VHD or if you'd like to use a different one for this VM.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+        <maml:name>Timezone</maml:name>
+        <maml:description>
+          <maml:para>Optional TimeZone ID to use when building this VM. Defaults to the timezone of the host.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$(Get-Timezone).Id</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+        <maml:name>Locale</maml:name>
+        <maml:description>
+          <maml:para>Optional Windows Locale ID to use when building this VM. Defaults to the Locale ID of the host.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$(Get-WinSystemLocale).Name</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>Force</maml:name>
+        <maml:description>
+          <maml:para>Switch that defines that the VHD should be overwritten if it already exists.</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. You cannot pipe objects to New-LablyVM.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None. The function will either complete successfully or throw an error.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>New-LablyVM -BaseVHD C:\BaseVHDs\Windows10-Ent.vhdx -AdminPassword $("S3cur3P@s5w0rd" | ConvertTo-SecureString -AsPlainText -Force)</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>New-LablyVM -BaseVHD C:\BaseVHDs\WindowsServer2022.vhdx -Template "Windows Active Directory Forest" -Hostname LABDC01 -MemorySizeInBytes 4GB -MemoryMinimumInBytes 512MB -MemoryMaximumInBytes 4GB -CPUCount 2</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
+        <dev:code>$AdminPassword = "MySuperPassword###1" | ConvertTo-SecureString -AsPlainText -Force</dev:code>
+        <dev:remarks>
+          <maml:para>New-LablyVM -BaseVHD C:\BaseVHDs\Windows10-Ent.vhdx -MemorySizeInBytes 4GB -Timezone "Eastern Standard Time" -Locale "en-us" -AdminPassword $AdminPassword</maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>Register-LablyBaseVHD</command:name>
+      <command:verb>Register</command:verb>
+      <command:noun>LablyBaseVHD</command:noun>
+      <maml:description>
+        <maml:para>Registers a Base VHD in the Lably Base Image Registry.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>This function is used to register a Base VHD in the Lably Base Image Registry that is stored in the Lably subfolder of your user profile. The Base Image Registry is used when creating new VMs.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Register-LablyBaseVHD</maml:name>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>VHD</maml:name>
+          <maml:description>
+            <maml:para>Full or relative path to the Base VHD. This can be created with New-LablyBaseVHD or manually.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>PartitionNumber</maml:name>
+          <maml:description>
+            <maml:para>Optional partition number on the VHD where the OS resides. This will be detected automatically, but may need to be defined if you've manually created a BaseVHD without using the Lably module.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+          <dev:type>
+            <maml:name>Int32</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>0</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>FriendlyName</maml:name>
+          <maml:description>
+            <maml:para>Optional friendly name for the Base VHD that you can use later to easily identify the purpose of the VHD.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>ProductKey</maml:name>
+          <maml:description>
+            <maml:para>The product key to use when building the VM. Required if you do not specify the -NoProductKey switch.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Register-LablyBaseVHD</maml:name>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>VHD</maml:name>
+          <maml:description>
+            <maml:para>Full or relative path to the Base VHD. This can be created with New-LablyBaseVHD or manually.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>PartitionNumber</maml:name>
+          <maml:description>
+            <maml:para>Optional partition number on the VHD where the OS resides. This will be detected automatically, but may need to be defined if you've manually created a BaseVHD without using the Lably module.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+          <dev:type>
+            <maml:name>Int32</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>0</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>FriendlyName</maml:name>
+          <maml:description>
+            <maml:para>Optional friendly name for the Base VHD that you can use later to easily identify the purpose of the VHD.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NoProductKey</maml:name>
+          <maml:description>
+            <maml:para>Switch used to define that you do not want to embed a product key when building VMs with this VHD. Not that some Operating Systems will not build without a product key defined.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>VHD</maml:name>
+        <maml:description>
+          <maml:para>Full or relative path to the Base VHD. This can be created with New-LablyBaseVHD or manually.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>PartitionNumber</maml:name>
+        <maml:description>
+          <maml:para>Optional partition number on the VHD where the OS resides. This will be detected automatically, but may need to be defined if you've manually created a BaseVHD without using the Lably module.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+        <dev:type>
+          <maml:name>Int32</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>0</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>FriendlyName</maml:name>
+        <maml:description>
+          <maml:para>Optional friendly name for the Base VHD that you can use later to easily identify the purpose of the VHD.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>ProductKey</maml:name>
+        <maml:description>
+          <maml:para>The product key to use when building the VM. Required if you do not specify the -NoProductKey switch.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>NoProductKey</maml:name>
+        <maml:description>
+          <maml:para>Switch used to define that you do not want to embed a product key when building VMs with this VHD. Not that some Operating Systems will not build without a product key defined.</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. You cannot pipe objects to Register-LablyBaseVHD.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None. The function will either complete successfully or throw an error.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Register-LablyBaseVHD -VHD C:\BaseVHDs\Windows10-Ent.vhdx -FriendlyName "Windows 10 Enterprise (April 2022)" -ProductKey "XYXY8-TFTF4-N0K3Y-J994X-FAKEX"</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>Remove-Lably</command:name>
+      <command:verb>Remove</command:verb>
+      <command:noun>Lably</command:noun>
+      <maml:description>
+        <maml:para>Remove an existing lab in the current directory or defined path.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>This function is used to remove a Lably from the current directory or defined path. It will also remove the VMs from Hyper-V and cleanup everything associated with the lab.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Remove-Lably</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+          <maml:name>Path</maml:name>
+          <maml:description>
+            <maml:para>Optional parameter to define where the lably is stored. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$PWD</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Confirm</maml:name>
+          <maml:description>
+            <maml:para>Optional Switch to bypass confirming that you want to delete the Lab and associated data.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>Path</maml:name>
+        <maml:description>
+          <maml:para>Optional parameter to define where the lably is stored. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$PWD</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>Confirm</maml:name>
+        <maml:description>
+          <maml:para>Optional Switch to bypass confirming that you want to delete the Lab and associated data.</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. You cannot pipe objects to New-Lably.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None. The function will either complete successfully or throw an error.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Remove-Lably</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Remove-Lably -Path C:\Labs\Windows10-Lab</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>Remove-LablyVM</command:name>
+      <command:verb>Remove</command:verb>
+      <command:noun>LablyVM</command:noun>
+      <maml:description>
+        <maml:para>Remove a VM from Lably and from Hyper-V.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>This function is used to remove a VM from Lably and from Hyper-V.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Remove-LablyVM</maml:name>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+          <maml:name>DisplayName</maml:name>
+          <maml:description>
+            <maml:para>Display Name of the VM to be removed. Either this or the VMID parameter is required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Path</maml:name>
+          <maml:description>
+            <maml:para>Optional parameter to define where the lably that this VM is a member of is stored. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$PWD</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Confirm</maml:name>
+          <maml:description>
+            <maml:para>Optional Switch to bypass confirming that you want to delete the Virtual Machine.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Remove-LablyVM</maml:name>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+          <maml:name>VMId</maml:name>
+          <maml:description>
+            <maml:para>Lably ID of the VM to be removed. Either this or the DisplayName parameter is required.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Path</maml:name>
+          <maml:description>
+            <maml:para>Optional parameter to define where the lably that this VM is a member of is stored. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$PWD</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Confirm</maml:name>
+          <maml:description>
+            <maml:para>Optional Switch to bypass confirming that you want to delete the Virtual Machine.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>Path</maml:name>
+        <maml:description>
+          <maml:para>Optional parameter to define where the lably that this VM is a member of is stored. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$PWD</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>DisplayName</maml:name>
+        <maml:description>
+          <maml:para>Display Name of the VM to be removed. Either this or the VMID parameter is required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>VMId</maml:name>
+        <maml:description>
+          <maml:para>Lably ID of the VM to be removed. Either this or the DisplayName parameter is required.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>Confirm</maml:name>
+        <maml:description>
+          <maml:para>Optional Switch to bypass confirming that you want to delete the Virtual Machine.</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. You cannot pipe objects to Remove-LablyVM.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None. The function will either complete successfully or throw an error.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Remove-LablyVM -DisplayName "[Chris' Lab] LABDC01"</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Remove-LablyVM -VMID 717b54e6-a50a-480e-8a3f-9f21ab2e08e9</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>Set-LablyBaseVHD</command:name>
+      <command:verb>Set</command:verb>
+      <command:noun>LablyBaseVHD</command:noun>
+      <maml:description>
+        <maml:para>Sets specific options in Base VHD registry</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>This function is used to set properties of Base VHDs in the Base VHD Registry.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Set-LablyBaseVHD</maml:name>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>VHD</maml:name>
+          <maml:description>
+            <maml:para>Full path to the Base VHD. Either VHD, ID, or FriendlyName are required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NewVHDPath</maml:name>
+          <maml:description>
+            <maml:para>Optional New Path for Base VHD. Will validate that the file exists unless -Force is specified.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NewFriendlyName</maml:name>
+          <maml:description>
+            <maml:para>Optional New Friendly New for this Base VHD.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NewOSEdition</maml:name>
+          <maml:description>
+            <maml:para>Optional New OS Edition for this Base VHD. This updates the registry only and not the VHD file.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NewOSVersion</maml:name>
+          <maml:description>
+            <maml:para>Optional New OS Version for this Base VHD. This updates the registry only and not the VHD file.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NewProductKey</maml:name>
+          <maml:description>
+            <maml:para>Optional New OS Product Key for this Base VHD. This updates the registry only and not the VHD file.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Force</maml:name>
+          <maml:description>
+            <maml:para>Switch that will set the new Base VHD Path even if it doesn't exist.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Set-LablyBaseVHD</maml:name>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>ID</maml:name>
+          <maml:description>
+            <maml:para>Registry ID of the Base VHD. Either VHD, ID, or FriendlyName are required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NewVHDPath</maml:name>
+          <maml:description>
+            <maml:para>Optional New Path for Base VHD. Will validate that the file exists unless -Force is specified.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NewFriendlyName</maml:name>
+          <maml:description>
+            <maml:para>Optional New Friendly New for this Base VHD.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NewOSEdition</maml:name>
+          <maml:description>
+            <maml:para>Optional New OS Edition for this Base VHD. This updates the registry only and not the VHD file.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NewOSVersion</maml:name>
+          <maml:description>
+            <maml:para>Optional New OS Version for this Base VHD. This updates the registry only and not the VHD file.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NewProductKey</maml:name>
+          <maml:description>
+            <maml:para>Optional New OS Product Key for this Base VHD. This updates the registry only and not the VHD file.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Force</maml:name>
+          <maml:description>
+            <maml:para>Switch that will set the new Base VHD Path even if it doesn't exist.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Set-LablyBaseVHD</maml:name>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>FriendlyName</maml:name>
+          <maml:description>
+            <maml:para>Friendly name for the Base VHD. Either VHD, ID, or FriendlyName are required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NewVHDPath</maml:name>
+          <maml:description>
+            <maml:para>Optional New Path for Base VHD. Will validate that the file exists unless -Force is specified.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NewFriendlyName</maml:name>
+          <maml:description>
+            <maml:para>Optional New Friendly New for this Base VHD.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NewOSEdition</maml:name>
+          <maml:description>
+            <maml:para>Optional New OS Edition for this Base VHD. This updates the registry only and not the VHD file.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NewOSVersion</maml:name>
+          <maml:description>
+            <maml:para>Optional New OS Version for this Base VHD. This updates the registry only and not the VHD file.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NewProductKey</maml:name>
+          <maml:description>
+            <maml:para>Optional New OS Product Key for this Base VHD. This updates the registry only and not the VHD file.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Force</maml:name>
+          <maml:description>
+            <maml:para>Switch that will set the new Base VHD Path even if it doesn't exist.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>VHD</maml:name>
+        <maml:description>
+          <maml:para>Full path to the Base VHD. Either VHD, ID, or FriendlyName are required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>ID</maml:name>
+        <maml:description>
+          <maml:para>Registry ID of the Base VHD. Either VHD, ID, or FriendlyName are required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>FriendlyName</maml:name>
+        <maml:description>
+          <maml:para>Friendly name for the Base VHD. Either VHD, ID, or FriendlyName are required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>NewVHDPath</maml:name>
+        <maml:description>
+          <maml:para>Optional New Path for Base VHD. Will validate that the file exists unless -Force is specified.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>NewFriendlyName</maml:name>
+        <maml:description>
+          <maml:para>Optional New Friendly New for this Base VHD.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>NewOSEdition</maml:name>
+        <maml:description>
+          <maml:para>Optional New OS Edition for this Base VHD. This updates the registry only and not the VHD file.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>NewOSVersion</maml:name>
+        <maml:description>
+          <maml:para>Optional New OS Version for this Base VHD. This updates the registry only and not the VHD file.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>NewProductKey</maml:name>
+        <maml:description>
+          <maml:para>Optional New OS Product Key for this Base VHD. This updates the registry only and not the VHD file.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>Force</maml:name>
+        <maml:description>
+          <maml:para>Switch that will set the new Base VHD Path even if it doesn't exist.</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. You cannot pipe objects to Register-LablyBaseVHD.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None. The function will either complete successfully or throw an error.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Set-LablyBaseVHD -VHD C:\BaseVHDs\Windows10-Ent.vhdx</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Set-LablyBaseVHD -ID "491e26d4-b6da-4828-b6ee-318536646f75"</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
+        <dev:code>Set-LablyBaseVHD -FriendlyName "Windows 10 Enterprise (April 2022)"</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>Start-Lably</command:name>
+      <command:verb>Start</command:verb>
+      <command:noun>Lably</command:noun>
+      <maml:description>
+        <maml:para>Starts all of the Virtual Machines that are members of the defined lably.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>This function is used to start all of the Virtual Machines that are members of the defined lably.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Start-Lably</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+          <maml:name>Path</maml:name>
+          <maml:description>
+            <maml:para>Optional parameter to define where the lably is stored. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$PWD</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>Path</maml:name>
+        <maml:description>
+          <maml:para>Optional parameter to define where the lably is stored. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$PWD</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. You cannot pipe objects to start-Lably.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None. The function will either complete successfully or throw an error.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Start-Lably</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>Stop-Lably</command:name>
+      <command:verb>Stop</command:verb>
+      <command:noun>Lably</command:noun>
+      <maml:description>
+        <maml:para>Starts all of the Virtual Machines that are members of the defined lably.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>This function is used to start all of the Virtual Machines that are members of the defined lably.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Stop-Lably</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+          <maml:name>Path</maml:name>
+          <maml:description>
+            <maml:para>Optional parameter to define where the lably is stored. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$PWD</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Force</maml:name>
+          <maml:description>
+            <maml:para>Switch that tells Hyper-V to force the shutdown of the VMs, even when the OS identifies processes that prevent shutdown.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>TurnOff</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill TurnOff Description }}</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>Path</maml:name>
+        <maml:description>
+          <maml:para>Optional parameter to define where the lably is stored. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$PWD</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>Force</maml:name>
+        <maml:description>
+          <maml:para>Switch that tells Hyper-V to force the shutdown of the VMs, even when the OS identifies processes that prevent shutdown.</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>TurnOff</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill TurnOff Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. You cannot pipe objects to Stop-Lably.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None. The function will either complete successfully or throw an error.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Stop-Lably</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>Test-Lably</command:name>
+      <command:verb>Test</command:verb>
+      <command:noun>Lably</command:noun>
+      <maml:description>
+        <maml:para>Tests the Lably Scaffold for Inconsistencies.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>This function is used to test your Lably scaffold against your file system and Hyper-V to ensure consistency.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Test-Lably</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+          <maml:name>Path</maml:name>
+          <maml:description>
+            <maml:para>Optional parameter to define where the lably is stored. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$PWD</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Fix</maml:name>
+          <maml:description>
+            <maml:para>Switch to resolve issues with if found.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>Path</maml:name>
+        <maml:description>
+          <maml:para>Optional parameter to define where the lably is stored. If this parameter is not defined, it will default to the path from which the function was called.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$PWD</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>Fix</maml:name>
+        <maml:description>
+          <maml:para>Switch to resolve issues with if found.</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. You cannot pipe objects to Test-Lably.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None. The function will either complete successfully or throw an error.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Test-Lably</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Test-Lably -Fix</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>Test-LablyBaseVHDRegistry</command:name>
+      <command:verb>Test</command:verb>
+      <command:noun>LablyBaseVHDRegistry</command:noun>
+      <maml:description>
+        <maml:para>Tests the Lably Base VHD registry.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>This function is used to test to ensure that all of the Base VHDs in the registry exist and are valid.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Test-LablyBaseVHDRegistry</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>Fix</maml:name>
+          <maml:description>
+            <maml:para>Switch to resolve issues with OS Edition and Version if found.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>Fix</maml:name>
+        <maml:description>
+          <maml:para>Switch to resolve issues with OS Edition and Version if found.</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. You cannot pipe objects to Test-LablyBaseVHDRegistry.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None. The function will either complete successfully or throw an error.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Test-LablyBaseVHDRegistry</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Test-LablyBaseVHDRegistry -Clean</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>Unregister-LablyBaseVHD</command:name>
+      <command:verb>Unregister</command:verb>
+      <command:noun>LablyBaseVHD</command:noun>
+      <maml:description>
+        <maml:para>Unregisters a Base VHD from the Lably Base Image Registry.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>This function is used to unregister a Base VHD from the Lably Base Image Registry that is stored in the Lably subfolder of your user profile. The Base Image Registry is used when creating new VMs.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Unregister-LablyBaseVHD</maml:name>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>VHD</maml:name>
+          <maml:description>
+            <maml:para>Full path to the Base VHD. Either VHD, ID, or FriendlyName are required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Unregister-LablyBaseVHD</maml:name>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>ID</maml:name>
+          <maml:description>
+            <maml:para>Registry ID of the Base VHD. Either VHD, ID, or FriendlyName are required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Unregister-LablyBaseVHD</maml:name>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>FriendlyName</maml:name>
+          <maml:description>
+            <maml:para>Friendly name for the Base VHD. Either VHD, ID, or FriendlyName are required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>VHD</maml:name>
+        <maml:description>
+          <maml:para>Full path to the Base VHD. Either VHD, ID, or FriendlyName are required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>ID</maml:name>
+        <maml:description>
+          <maml:para>Registry ID of the Base VHD. Either VHD, ID, or FriendlyName are required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>FriendlyName</maml:name>
+        <maml:description>
+          <maml:para>Friendly name for the Base VHD. Either VHD, ID, or FriendlyName are required. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. You cannot pipe objects to Register-LablyBaseVHD.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None. The function will either complete successfully or throw an error.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Unregister-LablyBaseVHD -VHD C:\BaseVHDs\Windows10-Ent.vhdx</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Unregister-LablyBaseVHD -ID "491e26d4-b6da-4828-b6ee-318536646f75"</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
+        <dev:code>Unregister-LablyBaseVHD -FriendlyName "Windows 10 Enterprise (April 2022)"</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+</helpItems>

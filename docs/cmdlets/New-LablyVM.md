@@ -12,11 +12,20 @@ Creates a new VM in Hyper-V using a Base VHD.
 
 ## SYNTAX
 
+### TemplateAnswers (Default)
 ```
-New-LablyVM [[-Path] <String>] [[-Template] <String>] [[-DisplayName] <String>] [[-Hostname] <String>]
- [-BaseVHD] <String> [-AdminPassword] <SecureString> [[-MemorySizeInBytes] <Int64>]
- [[-MemoryMinimumInBytes] <Int64>] [[-MemoryMaximumInBytes] <Int64>] [[-CPUCount] <Int32>]
- [[-ProductKey] <String>] [[-Timezone] <String>] [[-Locale] <String>] [-Force] [<CommonParameters>]
+New-LablyVM [-Path <String>] [-Template <String>] [-TemplateAnswers <Hashtable>] [-DisplayName <String>]
+ [-Hostname <String>] -BaseVHD <String> -AdminPassword <SecureString> [-MemorySizeInBytes <Int64>]
+ [-MemoryMinimumInBytes <Int64>] [-MemoryMaximumInBytes <Int64>] [-CPUCount <Int32>] [-ProductKey <String>]
+ [-Timezone <String>] [-Locale <String>] [-Force] [<CommonParameters>]
+```
+
+### TemplateAnswerFile
+```
+New-LablyVM [-Path <String>] [-Template <String>] [-TemplateAnswerFile <String>] [-DisplayName <String>]
+ [-Hostname <String>] -BaseVHD <String> -AdminPassword <SecureString> [-MemorySizeInBytes <Int64>]
+ [-MemoryMinimumInBytes <Int64>] [-MemoryMaximumInBytes <Int64>] [-CPUCount <Int32>] [-ProductKey <String>]
+ [-Timezone <String>] [-Locale <String>] [-Force] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -53,7 +62,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: Named
 Default value: $PWD
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -70,7 +79,37 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -TemplateAnswers
+{{ Fill TemplateAnswers Description }}
+
+```yaml
+Type: Hashtable
+Parameter Sets: TemplateAnswers
+Aliases:
+
+Required: False
+Position: Named
+Default value: @{}
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -TemplateAnswerFile
+{{ Fill TemplateAnswerFile Description }}
+
+```yaml
+Type: String
+Parameter Sets: TemplateAnswerFile
+Aliases:
+
+Required: False
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -86,7 +125,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -103,7 +142,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: Named
 Default value: "LAB-$([Guid]::NewGuid().ToString().split('-')[0].ToUpper())"
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -119,7 +158,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 5
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -135,7 +174,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 6
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -153,7 +192,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
+Position: Named
 Default value: 4294967296
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -171,7 +210,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 8
+Position: Named
 Default value: 536870912
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -189,7 +228,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 9
+Position: Named
 Default value: $MemorySizeInBytes
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -205,7 +244,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 10
+Position: Named
 Default value: [Math]::Max(1,$(Get-CimInstance -Class Win32_Processor).NumberOfLogicalProcessors/4)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -221,7 +260,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 11
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -237,7 +276,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 12
+Position: Named
 Default value: $(Get-Timezone).Id
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -253,7 +292,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 13
+Position: Named
 Default value: $(Get-WinSystemLocale).Name
 Accept pipeline input: False
 Accept wildcard characters: False

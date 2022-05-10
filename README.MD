@@ -2,7 +2,15 @@
 
 ## Beta Warning
 
-Lably is still in Beta. While it's unlikely to cause any issues, problems occuring are not out of the realm of possibility. Please make sure to backup any critical VM data and remember that this is for home labs and not for production use.
+Lably is still in Beta. While it's unlikely to cause any issues, problems occurring are not out of the realm of possibility. Please make sure to backup any critical VM data and remember that this is for home labs and not for production use.
+
+## Installing Lably
+
+You can install Lably from a PowerShell command line by executing:
+
+```ps
+Install-Module -Name Lably -AllowPrerelease
+```
 
 ## What is Lably?
 
@@ -22,7 +30,7 @@ Lably takes OS installation media in ISO format and creates baseline VHDs that a
 
 ## Building your Base VHDs
 
-Step one in using Lably is to have your arsinal of BaseVHDs that all of your Lablys can use going forward. Becuase Lably uses Differencing Disks from these Base VHDs, you'll only _need_ to do this once per OS that you want to use, however you may want to rebuild BaseVHDs over time to account for new Windows feature updates.
+Step one in using Lably is to have your arsenal of BaseVHDs that all of your Lablys can use going forward. Because Lably uses Differencing Disks from these Base VHDs, you'll only _need_ to do this once per OS that you want to use, however you may want to rebuild BaseVHDs over time to account for new Windows feature updates.
 
 ### Step 1: Find the Index from the ISO
 Many ISOs from Microsoft will contain a number of different OS installations. To start, you'll want to identify which index number you want to use.
@@ -30,7 +38,7 @@ Many ISOs from Microsoft will contain a number of different OS installations. To
 Run the following command:
 
 ```ps
-Get-LablyISODetails -ISO C:\ISOs\en-us_windows_server_2022_x64_dvd_620d7eac.iso`
+Get-LablyISODetails -ISO C:\ISOs\en-us_windows_server_2022_x64_dvd_620d7eac.iso
 ```
 
 You'll see output similar to the following:
@@ -61,7 +69,7 @@ ImageDescription : This option installs the full Windows graphical environment, 
 ImageSize        : 15,715,675,853 bytes
 ```
 
-Looking through the list of options, you may deside that you'd like to use `ImageIndex` number 4, which is `Windows Server 2022 Datacenter (Desktop Experience)`.
+Looking through the list of options, you may decide that you'd like to use `ImageIndex` number 4, which is `Windows Server 2022 Datacenter (Desktop Experience)`.
 
 ### Step 2: Creating the Base VHD
 

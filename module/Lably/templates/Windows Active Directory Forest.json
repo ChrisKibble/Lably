@@ -198,6 +198,7 @@
                 "Language":"PowerShell",
                 "RunWhen":"If('[[DHCP]]' -eq 'Y') { $true } else { $false }",
                 "Script":[
+                    "$WarningPreference = 'SilentlyContinue'",
                     "Add-WindowsFeature DHCP -IncludeManagementTools -ErrorAction Stop | Out-Null"
                 ]
             },

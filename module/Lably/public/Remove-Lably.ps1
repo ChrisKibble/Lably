@@ -68,8 +68,11 @@ Function Remove-Lably {
     $KeyFile = $Scaffold.Meta.KeyFile
     $Assets = $Scaffold.Assets
     $SwitchId = $Scaffold.Meta.SwitchId
+    $SwitchCreated = $Scaffold.Meta.SwitchCreated
     $TemplatePath = Join-Path $Path -ChildPath "Template Cache"
     $NetNAT = $Scaffold.Meta.NATName
+
+    $SwitchName = Get-VMSwitch -Id $SwitchId | Select-Object -ExpandProperty Name
 
     If(-Not($Confirm)) {
         Write-Host "WARNING! You are about to delete your Lably." -ForegroundColor Red
@@ -78,6 +81,7 @@ Function Remove-Lably {
         ForEach($Asset in $Assets) { Write-Host " - $($Asset.DisplayName) ($($Asset.VmId))" }
         Write-Host ""
         If($NetNAT) { Write-Host "Your NAT '$NetNAT' will be deleted."; Write-Host "" }
+        If($SwitchCreated) { Write-Host "VM Switch $SwitchName will be removed"}
         Write-Host "Your Template Cache ($TemplatePath) will be removed."
         Write-Host "Your current scaffold ($LablyScaffold) will be removed."
         Write-Host ""
@@ -93,13 +97,15 @@ Function Remove-Lably {
         Remove-LablyVM -Path $Path -VMId $Asset.VMId -Confirm | Out-Null
     }
 
-    $SwitchName = Get-VMSwitch -Id $SwitchId | Select-Object -ExpandProperty Name
+    If($SwitchCreated) {
 
-    If(-Not(Get-VMNetworkAdapter -All | Where-Object { $_.SwitchName -eq $SwitchName -and $_.VMName })) {
-        Write-Host "Removing Switch $SwitchName"
-        Get-VMSwitch -Id $SwitchId | Remove-VMSwitch -Force
-    } Else {
-        Write-Host "Will not remove virtual switch as it's being used by other VMs."
+        If(-Not(Get-VMNetworkAdapter -All | Where-Object { $_.SwitchName -eq $SwitchName -and $_.VMName })) {
+            Write-Host "Removing Switch $SwitchName"
+            Get-VMSwitch -Id $SwitchId | Remove-VMSwitch -Force
+        } Else {
+            Write-Host "Will not remove virtual switch as it's being used by other VMs."
+        }
+
     }
 
     If($NetNAT) {
@@ -115,7 +121,7 @@ Function Remove-Lably {
     
     ForEach($CachedTemplate in (Get-ChildItem -Path $TemplatePath -Filter *.json -ErrorAction SilentlyContinue)) {
         Try {
-            Remove-Item $CachedTemplate
+            Remove-Item $CachedTemplate.FullName -ErrorAction Stop
         } Catch {
             Write-Warning "Could not delete $CachedTemplate. $($_.Exception.Message)"
         }

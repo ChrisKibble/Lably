@@ -119,6 +119,7 @@ Function New-Lably {
     }
 
     If($Switch) {
+        Write-Host "Should use switch $switch"
         Try {
             $VMSwitch = Get-VMSwitch -Name $Switch -ErrorAction Stop
         } Catch {
@@ -126,7 +127,7 @@ Function New-Lably {
         }
     }
 
-    If($CreateSwitch) {
+    If(-Not($Switch)) {
 
         $CreateSwitch = $CreateSwitch -replace "[^A-Za-z0-9 ]",""
 
@@ -173,7 +174,7 @@ Function New-Lably {
             If($NATIP) {
                 Write-Verbose "Configuring New NAT Rule"
                 Try {
-                    $NewNAT = New-NetNat -Name "LablyNAT ($CreateSwitch)" -InternalIPInterfaceAddressPrefix $NATRangeCIDR                
+                    $NewNAT = New-NetNat -Name "LablyNAT ($CreateSwitch)" -InternalIPInterfaceAddressPrefix $NATRangeCIDR -ErrorAction Stop                
                 } Catch {
                     Write-Warning "Unable to create new NAT rule. Aborting NAT setup. $($_.Exception.Message)"
                 }
@@ -216,6 +217,7 @@ Function New-Lably {
             Meta = @{
                 Name = $Name
                 SwitchId = $VMSwitch.Id
+                SwitchCreated = $(If($Switch) { $false } else { $true })
                 NATName = $(If($NewNAT) { $NewNAT.Name } else { $null })
                 NATIPCIDR = $NATRangeCIDR
                 VirtualDiskPath = $VirtualDiskPath

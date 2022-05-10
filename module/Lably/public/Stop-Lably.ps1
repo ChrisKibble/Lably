@@ -1,4 +1,4 @@
-Function Start-Lably {
+Function Stop-Lably {
 
     <#
     
@@ -14,9 +14,17 @@ Function Start-Lably {
     
     Optional parameter to define where the lably is stored. If this parameter is not defined, it will default to the path from which the function was called.
 
+    .PARAMETER Force
+    
+    Switch that tells Hyper-V to force the shutdown of the VMs, even when the OS identifies processes that prevent shutdown.
+
+    .PARAMETER Force
+    
+    Switch that tells Hyper-V to turn the VMs off instead of the normal shutdown.
+    
     .INPUTS
 
-    None. You cannot pipe objects to start-Lably.
+    None. You cannot pipe objects to Stop-Lably.
 
     .OUTPUTS
 
@@ -24,7 +32,7 @@ Function Start-Lably {
     
     .EXAMPLE
 
-    Start-Lably
+    Stop-Lably
 
     #>
 
@@ -32,6 +40,12 @@ Function Start-Lably {
     Param(
         [Parameter(Mandatory=$False)]
         [String]$Path = $PWD,
+        
+        [Parameter(Mandatory=$False)]
+        [Switch]$Force,
+        
+        [Parameter(Mandatory=$False)]
+        [Switch]$TurnOff
     )
 
     ValidateModuleRun -RequiresAdministrator
@@ -44,7 +58,7 @@ Function Start-Lably {
     }
 
     Try {
-        $Scaffold = Get-Content $LablyScaffold
+        $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
     } Catch {
         Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
     }
@@ -55,19 +69,15 @@ Function Start-Lably {
             If(-Not($VM)) {
                 Write-Warning "VM with ID '$($Asset.VMID)' does not exist."
             } Else {
-                If($VM.State -eq [Microsoft.HyperV.PowerShell.VMState]::Off) {
-                    Write-Host "Starting $($VM.Name)"
-                    $VM | Start-VM
-                    If($DelaySeconds -gt 0) {
-                        Write-Verbose "Sleeping $DelaySeconds Seconds"
-                        Start-Sleep -Seconds $DelaySeconds
-                    }
+                If($VM.State -eq [Microsoft.HyperV.PowerShell.VMState]::Running) {
+                    Write-Host "Stopping $($VM.Name) with Force=$Force"
+                    $VM | Stop-VM -Force:$Force -TurnOff:$TurnOff
                 } Else {
-                    Write-Verbose "$($VM.Name) is not in state 'OFF'.  State is '$($VM.State)'"
+                    Write-Verbose "$($VM.Name) is not in state 'Running'.  State is '$($VM.State)'"
                 }
             }
         } Catch {
-            Write-Warning "Could not start $($Asset.DisplayName) - $($_.Exception.Message)"
+            Write-Warning "Could not stop $($Asset.DisplayName) - $($_.Exception.Message)"
         }
     }
 
