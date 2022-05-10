@@ -121,6 +121,22 @@ The `Name` and `Action` properties are required for each step in this section. T
 
 When the action is defined as `Script`, a `Language` property and an array named `Script` should be supplied as shown in the example above. As the script must be stored in JSON, you may need to use escape characters in some of your code to ensure it can be saved in JSON properly (e.g., escaping backslashes) and read by Lably.
 
+You can use variables from the Input section in your Script by surrounding them with square brackets. For example, if you had an input with the name `UserName`, you could write something like `Write-Host 'Hello There [[UserName]]` to echo that variable out during the build process. Variable must but alphanumeric, are not case sensitive, but cannot use spaces or special characters.
+
+If you would prefer that values not be expanded, you can supply the `ExpandVariables` properly and set it to false for that specific script in your template, like so:
+
+```json
+"Asset":{
+    "PostBuild":[
+            {
+                "Name":"Install Remote Server Administration Tools",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "ExpandVariable":false,
+                "Script":["Write-Host 'This will not expand: [[UserName]]"]
+            },
+```
+
 ### Reboot Action
 
 Use the `Reboot` action to reboot the VM and wait for it to come back online. By default, Lably will use the known administrator username and password to reconnect to the VM when it comes back online. During certain operations (such as promoting a server to a domain controller), the username may change as part of the reboot. If this happens, you can use the `ValidationCredential` section, as shown in this example, to change the credentials used.
