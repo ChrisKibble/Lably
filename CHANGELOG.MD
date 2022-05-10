@@ -5,6 +5,7 @@
 ### Fixes
 
 - **Breaking Change**: Resolved issue where sometimes InputResponses were written improperly to the Scaffold. If this happened in a Scaffold you use in a later version of the Lably module, it may not work with new functions. It's recommended you rebuild your lab or manually fix the JSON object in your Scaffold.
+- Fixed error when no requirements were needed in a VM template
 - Minor Fixes to Spelling, Grammar, and Spacing
 
 ### Other Changes & Enhancements
