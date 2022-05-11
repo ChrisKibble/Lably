@@ -440,6 +440,7 @@ Function New-LablyVM {
         
         $ThisAsset = [PSCustomObject]@{
             DisplayName = $DisplayName
+            Hostname = $Hostname
             CreatedUTC = $(Get-DateUTC)
             TemplateGuid = $LablyTemplate.Meta.Id
             BaseVHD = $RegistryEntry.Id
