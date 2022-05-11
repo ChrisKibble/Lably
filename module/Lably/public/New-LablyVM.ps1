@@ -487,10 +487,12 @@ Function New-LablyVM {
     If($Template) {
         $TemplatePath = Join-Path $Path -ChildPath "Template Cache"
         $TemplateCacheFile = Join-Path $TemplatePath -ChildPath "$($LablyTemplate.Meta.Id).json"
-        Try {
-            Copy-Item -Path $TemplateFile -Destination $TemplateCacheFile -Force -ErrorAction Stop
-        } Catch {
-            Write-Warning "Unable to cache template. $($_.Exception.Message)"
+        If($TemplateFile -ne $TemplateCacheFile) {
+            Try {
+                Copy-Item -Path $TemplateFile -Destination $TemplateCacheFile -Force -ErrorAction Stop
+            } Catch {
+                Write-Warning "Unable to cache template. $($_.Exception.Message)"
+            }
         }
     }
 
