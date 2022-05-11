@@ -1,3 +1,4 @@
 *.md.bak
+*.code-workspace
 .vscode
 Invoke-Tests.ps1
