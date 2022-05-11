@@ -161,6 +161,7 @@
                 "Action":"Script",
                 "Language":"PowerShell",
                 "Script":[
+                    "$ProgressPreference = 'SilentlyContinue'",
                     "$PrefixLength = 0; \"[[SubnetMask]]\".Split('.') | ForEach-Object { while(0 -ne $_) { $_ = ($_ -shl 1) -band [byte]::MaxValue; $PrefixLength++ } }",
                     "$IPSettings = @{",
                     "     InterfaceIndex = $(Get-NetAdapter | Select -First 1).ifIndex",
@@ -178,17 +179,18 @@
                 "Language":"PowerShell",
                 "Script":[
                     "$WarningPreference = 'SilentlyContinue'",
+                    "$ProgressPreference = 'SilentlyContinue'",
                     "Add-WindowsFeature AD-Domain-Services -ErrorAction Stop | Out-Null",
                     "Install-ADDSForest -Force -DomainName [[DomainName]] -DomainNetBiosName [[NetBIOSName]] -InstallDNS -SafeModeAdministratorPassword $('[[DSRMPassword]]' | ConvertTo-SecureString -AsPlainText -Force) -NoRebootOnCompletion | Out-Null"
                 ]
-            },
-            
+            },            
             {
                 "Name":"Install Remote Server Administration Tools",
                 "Action":"Script",
                 "Language":"PowerShell",
                 "Script":[
                     "$WarningPreference = 'SilentlyContinue'",
+                    "$ProgressPreference = 'SilentlyContinue'",
                     "Get-WindowsFeature -Name RSAT* | Where { $_.InstallState -eq \"Available\" } | Install-WindowsFeature | Out-Null"
                 ]
             },
@@ -199,6 +201,7 @@
                 "RunWhen":"If('[[DHCP]]' -eq 'Y') { $true } else { $false }",
                 "Script":[
                     "$WarningPreference = 'SilentlyContinue'",
+                    "$ProgressPreference = 'SilentlyContinue'",
                     "Add-WindowsFeature DHCP -IncludeManagementTools -ErrorAction Stop | Out-Null"
                 ]
             },
@@ -214,6 +217,7 @@
                 "Action":"Script",
                 "Language":"PowerShell",
                 "Script":[
+                    "$ProgressPreference = 'SilentlyContinue'",
                     "Do {",
                     "   Try {",
                     "       get-adrootdse -ErrorAction Stop | Out-Null",
@@ -233,6 +237,7 @@
                 "Action":"Script",
                 "Language":"PowerShell",
                 "Script":[
+                    "$ProgressPreference = 'SilentlyContinue'",
                     "Get-ADObject -SearchBase ((Get-ADRootDSE).ConfigurationNamingContext) -Filter \"objectClass -eq 'site' -and name -eq 'Default-First-Site-Name'\" -ErrorAction Stop | Rename-ADObject -NewName '[[NetBIOSName]]-Site' -ErrorAction Stop"
                 ],
                 "Credential":{
@@ -248,6 +253,7 @@
                     "Username":"[[NetBIOSName]]\\Administrator"
                 },
                 "Script":[
+                    "$ProgressPreference = 'SilentlyContinue'",
                     "Set-ItemProperty -Path registry::HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\ServerManager\\Roles\\12 -Name ConfigurationState -Value 2",
                     "Add-DhcpServerSecurityGroup",
                     "Do { Try { Add-DhcpServerInDC -DnsName ([System.Net.Dns]::GetHostByName($env:computerName).HostName) -IPAddress [[IPAddress]]; $DHCPNotReady = $False } Catch { $DHCPNotReady = $True; Start-Sleep -Seconds 10 } } Until ($DHCPNotReady -eq $False)",
