@@ -48,7 +48,7 @@ Function Get-AnswersToInputQuestions {
             "Name" = $PromptName
             "ValidateRegEx" = $ValidateRegEx
             "Prompt" = $PromptValue
-            "ValidateMesssage" = $ValidateValue
+            "ValidateMessage" = $ValidateValue
             "AskWhen" = $AskWhen
             "Secure" = [Boolean]$Secure
         }
@@ -124,7 +124,7 @@ Function Get-AnswersToInputQuestions {
                     $ValueNoError = $True
  
                     If($Val -notmatch $P.ValidateRegEx) {
-                        Write-Warning "Response failed validation. $($P.ValidateMesssage)"
+                        Write-Warning "Response failed validation. $($P.ValidateMessage)"
                         Write-Host ""
                         $ValueNoError = $False
                     }
