@@ -441,6 +441,8 @@ Function New-LablyVM {
             $ScaffoldResponse = $InputResponse | ConvertTo-Json -Depth 100 | ConvertFrom-Json
 
             ForEach($SecureProperty in $ScaffoldResponse | Where-Object { $_.Secure -eq $True }) {
+                $SecureProperty.Val = Get-EncryptedString -PlainText $SecureProperty.Val -SecretType $Scaffold.Secrets.SecretType -SecretKeyFile $Scaffold.Secrets.KeyFile
+                <#
                 If($SecretType -eq "PowerShell") {
                     $SecureProperty.Val = $SecureProperty.Val | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString
                 } ElseIf ($SecretType -eq "KeyFile") {
@@ -448,6 +450,7 @@ Function New-LablyVM {
                 } Else {
                     Throw "Unable to encrypt secrets, SecretType is not defined."
                 }
+                #>
             }
 
             Add-Member -InputObject $ThisAsset -MemberType NoteProperty -Name InputResponse -Value $ScaffoldResponse.PSObject.BaseObject
