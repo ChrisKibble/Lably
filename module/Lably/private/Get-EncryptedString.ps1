@@ -6,18 +6,18 @@ Function Get-EncryptedString {
         [String]$PlainText,
 
         [Parameter(Mandatory=$False)]
-        [ValidateSet("PowerShell","SecretKey")]
+        [ValidateSet("PowerShell","KeyFile")]
         [String]$SecretType = "PowerShell",
 
         [Parameter(Mandatory=$False)]
         [String]$SecretKeyFile
     )
 
-    If($SecretType -eq "SecretKey" -and -not $SecretKeyFile) {
+    If($SecretType -eq "KeyFile" -and -not $SecretKeyFile) {
         Throw "KeyFile must be defined."
     }
 
-    If($SecretType -eq "SecretKey") {
+    If($SecretType -eq "KeyFile") {
         Try {
             $SecretsKey = [Byte[]](Get-Content $SecretKeyFile -ErrorAction Stop)
         } Catch {
@@ -29,7 +29,7 @@ Function Get-EncryptedString {
         $SecureString = $PlainText | ConvertTo-SecureString -AsPlainText -Force
         If($SecretType -eq "PowerShell") {
             $EncryptedText = $SecureString | ConvertFrom-SecureString
-        } elseif($SecretType -eq "SecretKey") {
+        } elseif($SecretType -eq "KeyFile") {
             $EncryptedText = $SecureString | ConvertFrom-SecureString -Key $SecretsKey
         }
     } Catch {
