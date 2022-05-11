@@ -157,19 +157,6 @@ Function New-LablyVM {
         Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
     }
 
-    If($Scaffold.Secrets.SecretType -eq "PowerShell") {
-        $SecretType = "PowerShell"
-    } ElseIf($Scaffold.Secrets.SecretType -eq "KeyFile") {
-        $SecretType = "KeyFile"
-        Try {
-            $SecretsKey = Get-Content $Scaffold.secrets.KeyFile
-        } Catch {
-            Throw "Unable to read Secrets key file."
-        }
-    } Else {
-        Throw "Invalid secrets type in Scaffold File."
-    }
-
     $SwitchId = $Scaffold.Meta.SwitchId
 
     If(-Not($SwitchId)) {
@@ -427,17 +414,9 @@ Function New-LablyVM {
             Add-Member -InputObject $Scaffold -MemberType NoteProperty -Name Assets -Value @() -ErrorAction SilentlyContinue
         }
         
-        $AdminPasswordAsBTSR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($AdminPassword)
-        $AdminPasswordAsString = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($AdminPasswordAsBTSR)
+        $SecureAdminPassword = Get-DecryptedString -EncryptedText $AdminPassword 
+        $SecureAdminPassword = Get-EncryptedString -PlainText $SecureAdminPassword -SecretType $Scaffold.Secrets.SecretType -SecretKeyFile $Scaffold.secrets.KeyFile
 
-        If($SecretType -eq "PowerShell") {
-            $SecureAdminPassword = $AdminPasswordAsString | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString
-        } ElseIf ($SecretType -eq "KeyFile") {
-            $SecureAdminPassword = $AdminPasswordAsString | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString -Key $SecretsKey
-        } Else {
-            Throw "Unable to encrypt secrets, SecretType is not defined."
-        }
-        
         $ThisAsset = [PSCustomObject]@{
             DisplayName = $DisplayName
             Hostname = $Hostname
