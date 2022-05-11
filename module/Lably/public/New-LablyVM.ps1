@@ -446,6 +446,15 @@ Function New-LablyVM {
             BaseVHD = $RegistryEntry.Id
             VMId = $NewVM.VMId
             AdminPassword = $SecureAdminPassword
+            ProductKey = $ProductKey
+            Timezone = $Timezone
+            Locale = $Locale
+            Hardware = @{
+                MemorySizeInBytes = $MemorySizeInBytes
+                MemoryMinimumInBytes = $MemoryMinimumInBytes
+                MemoryMaximumInBytes = $MemoryMaximumInBytes
+                CPUCount = $CPUCount
+            }
         }
 
         If($InputResponse) {
