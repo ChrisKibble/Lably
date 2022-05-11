@@ -210,7 +210,7 @@ Function New-LablyVM {
         Throw "Unable to read Base Image Registry. $($_.Exception.Message)"
     }
     
-    $RegistryEntry = $BaseImageRegistry.BaseImages.Where{($_.ImagePath -eq $BaseVHD -or $_.FriendlyName -eq $BaseVHD)}[0]
+    $RegistryEntry = $BaseImageRegistry.BaseImages.Where{($_.ImagePath -eq $BaseVHD -or $_.FriendlyName -eq $BaseVHD -or $_.Id -eq $BaseVHD)}[0]
 
     If(-Not($RegistryEntry)) {
         Throw "Cannot Find Base VHD."
@@ -221,7 +221,7 @@ Function New-LablyVM {
     If(-Not(Test-Path $BaseVHD -ErrorAction SilentlyContinue)) {
         Throw "Cannot find $BaseVHD"
     }
-    
+
     If($Template) {
 
         If($Template -like "`"*`"") {
@@ -234,7 +234,9 @@ Function New-LablyVM {
         $ModuleTemplateFolder = Join-Path (Split-Path $PSScriptRoot) -ChildPath "Templates"
         $ModuleTemplateFile = Join-Path $ModuleTemplateFolder -ChildPath "$Template.json"
 
-        If(Test-Path $UserTemplateFile) {
+        If(Test-Path $Template) {
+            $TemplateFile = $Template
+        } ElseIf(Test-Path $UserTemplateFile) {
             $TemplateFile = $UserTemplateFile
         } ElseIf(Test-Path $ModuleTemplateFile) {
             $TemplateFile = $ModuleTemplateFile
