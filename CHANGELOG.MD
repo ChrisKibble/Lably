@@ -11,6 +11,9 @@
 ### Other Changes & Enhancements
 - New `ExpandVariables` property in templates to stop [[VARIABLES]] from expanding, documented in template docs files.
 
+### Template Changes
+- Windows Domain Controller will no longer output progress bars, making it cleaner in some PowerShell windows.
+
 ## Beta v0.2 -> v0.3
 
 ### Fixes
