@@ -146,16 +146,7 @@ Function New-LablyVM {
     $VMGUID = [GUID]::NewGuid().Guid
 
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
-
-    If(-Not(Test-Path $LablyScaffold -ErrorAction SilentlyContinue)){
-        Throw "There is no Lably at $Path."
-    }
-
-    Try {
-        $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
-    } Catch {
-        Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
-    }
+    $Scaffold = Import-LablyScaffold -LablyScaffold $LablyScaffold -ErrorAction Stop
 
     $SwitchId = $Scaffold.Meta.SwitchId
 
@@ -442,15 +433,6 @@ Function New-LablyVM {
 
             ForEach($SecureProperty in $ScaffoldResponse | Where-Object { $_.Secure -eq $True }) {
                 $SecureProperty.Val = Get-EncryptedString -PlainText $SecureProperty.Val -SecretType $Scaffold.Secrets.SecretType -SecretKeyFile $Scaffold.Secrets.KeyFile
-                <#
-                If($SecretType -eq "PowerShell") {
-                    $SecureProperty.Val = $SecureProperty.Val | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString
-                } ElseIf ($SecretType -eq "KeyFile") {
-                    $SecureProperty.Val = $SecureProperty.Val | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString -Key $SecretsKey
-                } Else {
-                    Throw "Unable to encrypt secrets, SecretType is not defined."
-                }
-                #>
             }
 
             Add-Member -InputObject $ThisAsset -MemberType NoteProperty -Name InputResponse -Value $ScaffoldResponse.PSObject.BaseObject
