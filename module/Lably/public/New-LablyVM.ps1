@@ -177,7 +177,7 @@ Function New-LablyVM {
         $DisplayName = $Hostname
     }
 
-    If($DisplayName -notlike "\[$($Scaffold.Meta.Name)\]*") {
+    If($DisplayName -notmatch "\[$($Scaffold.Meta.Name)\] .*") {
         $DisplayName = "[$($Scaffold.Meta.Name)] $DisplayName"
     }
 
