@@ -94,6 +94,12 @@ Function Reset-Lably {
         [System.Collections.Hashtable]$TemplateAnswers = @{}
         
         If($asset.InputResponse) {
+            
+            $Asset.InputResponse | Where-Object { $_.Secure -eq $True } | ForEach-Object {
+                # Because template answers normally come from the user, we need to use a normal secure string and not one that uses our secret.
+                $_.Val = $(Get-DecryptedString -EncryptedText $_.val -SecretType $Scaffold.Secrets.SecretType -SecretKeyFile $Scaffold.Secrets.KeyFile) | ConvertTo-SecureString -AsPlainText -Force
+            }
+
             $asset.InputResponse | ForEach-Object {
                 $TemplateAnswers.Add($_.Name,$_.Val)
             }    
@@ -117,10 +123,8 @@ Function Reset-Lably {
             $TemplatePath = Join-Path $TemplateCache -ChildPath "$($Asset.TemplateGuid).json"
             $LablyVM.Add("Template", $TemplatePath)
             $LablyVM.Add("TemplateAnswers", $TemplateAnswers)
-            
         }
 
-        
         New-LablyVM @LablyVM
     }
 
