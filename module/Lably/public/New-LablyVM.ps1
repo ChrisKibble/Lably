@@ -148,20 +148,18 @@ Function New-LablyVM {
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
     $Scaffold = Import-LablyScaffold -LablyScaffold $LablyScaffold -ErrorAction Stop
 
-    $SwitchId = $Scaffold.Meta.SwitchId
-
-    If(-Not($SwitchId)) {
+    If(-Not($Scaffold.Meta.SwitchId)) {
         Throw "Lably Scaffold missing SwitchId. File may be corrupt."
     }
 
-    If(-Not(Get-VMSwitch -Id $SwitchId -ErrorAction SilentlyContinue)) {
+    If(-Not(Get-VMSwitch -Id $Scaffold.Meta.SwitchId -ErrorAction SilentlyContinue)) {
         Throw "Switch in Lably Scaffold does not exist."
     }
 
     Try {
-        $SwitchName = $(Get-VMSwitch -Id $SwitchId | Select-Object -First 1).Name
+        $SwitchName = $(Get-VMSwitch -Id $Scaffold.Meta.SwitchId | Select-Object -First 1).Name
     } Catch {
-        Throw "Unable to get name of switch $SwitchId."
+        Throw "Unable to get name of switch $Scaffold.Meta.SwitchId."
     }
 
     If(-Not($DisplayName)) {
