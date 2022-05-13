@@ -54,6 +54,8 @@ Function Get-AnswersToInputQuestions {
         }
     }
     
+
+
     $InputResponse = @()
 
     $QNumber = 0
@@ -74,12 +76,10 @@ Function Get-AnswersToInputQuestions {
             $InitialAnswer = $TemplateAnswers[$P.Name]
 
             If($P.Secure) {
-                Try {
-                    $InitialAnswer = $InitialAnswer | ConvertTo-SecureString -ErrorAction Stop
-                    # If this works, it's already an encrypted string
-                } Catch {
-                    # Else, we need to convert the plain text string first.
-                    $InitialAnswer = $InitialAnswer | ConvertTo-SecureString -AsPlainText -Force
+                If($InitialAnswer -is [SecureString]) {
+                    # We need to convert this back to plain text.
+                    # Answer from hash input or template wouldn't be using the Scaffold's secret.
+                    $InitialAnswer = Get-DecryptedString -EncryptedText $InitialAnswer -SecretType PowerShell
                 }
             }
         }
