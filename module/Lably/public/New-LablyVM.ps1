@@ -148,10 +148,6 @@ Function New-LablyVM {
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
     $Scaffold = Import-LablyScaffold -LablyScaffold $LablyScaffold -ErrorAction Stop
 
-    If(-Not($Scaffold.Meta.SwitchId)) {
-        Throw "Lably Scaffold missing SwitchId. File may be corrupt."
-    }
-
     If(-Not(Get-VMSwitch -Id $Scaffold.Meta.SwitchId -ErrorAction SilentlyContinue)) {
         Throw "Switch in Lably Scaffold does not exist."
     }
@@ -174,9 +170,7 @@ Function New-LablyVM {
         Throw "VM '$DisplayName' already exists."
     }
 
-    $vhdRoot = Join-Path $Scaffold.Meta.VirtualDiskPath -ChildPath $VMGUID
-
-    If(-Not($VHDRoot)) {
+    If(-Not($Scaffold.Meta.VirtualDiskPath)) {
         Throw "No Virtual Disk Path defined in Lably Scaffold."
     }
 
@@ -253,16 +247,16 @@ Function New-LablyVM {
 
     }
 
-    If(-Not(Test-Path $vhdRoot)) {
+    If(-Not(Test-Path $Scaffold.Meta.VirtualDiskPath)) {
         Try {
-            New-Item -ItemType Directory -Path $vhdRoot -ErrorAction Stop | Out-Null
+            New-Item -ItemType Directory -Path $Scaffold.Meta.VirtualDiskPath -ErrorAction Stop | Out-Null
         } Catch {
-            Throw "Cannot create $vhdRoot. $($_.Exception.Message)"
+            Throw "Cannot create $($Scaffold.Meta.VirtualDiskPath). $($_.Exception.Message)"
         }
     
     }
 
-    $OSVHDPath = Join-Path $vhdRoot -ChildPath "OSDisk.vhdx"
+    $OSVHDPath = Join-Path $Scaffold.Meta.VirtualDiskPath -ChildPath "OSDisk.vhdx"
 
     If($(Test-Path $OSVHDPath) -and $Force) {
         Try {

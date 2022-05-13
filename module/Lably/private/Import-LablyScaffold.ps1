@@ -16,6 +16,10 @@ Function Import-LablyScaffold {
         Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
     }
 
+    If(-Not($Scaffold.Meta.SwitchId)) {
+        Throw "Lably Scaffold missing SwitchId. File may be corrupt."
+    }
+
     Return $Scaffold
 
 }
