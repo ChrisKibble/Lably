@@ -6,9 +6,11 @@
 
 - **Breaking Change**: Resolved issue where sometimes InputResponses were written improperly to the Scaffold. If this happened in a Scaffold you use in a later version of the Lably module, it may not work with new functions. It's recommended you rebuild your lab or manually fix the JSON object in your Scaffold.
 - Fixed error when no requirements were needed in a VM template
+- Rewrote most of the encryption/decryption work across modules to be centralized and modular
 - Minor Fixes to Spelling, Grammar, and Spacing
 
 ### Other Changes & Enhancements
+- New `Reset-Lably` function to rebuild your lab from scratch using the existing Scaffold
 - New `ExpandVariables` property in templates to stop [[VARIABLES]] from expanding, documented in template docs files.
 
 ### Template Changes

@@ -177,7 +177,7 @@ Function New-LablyVM {
         $DisplayName = $Hostname
     }
 
-    If($DisplayName -notlike "\[$($Scaffold.Meta.Name)\]*") {
+    If($DisplayName -notmatch "\[$($Scaffold.Meta.Name)\] .*") {
         $DisplayName = "[$($Scaffold.Meta.Name)] $DisplayName"
     }
 
@@ -197,7 +197,7 @@ Function New-LablyVM {
         Throw "Unable to read Base Image Registry. $($_.Exception.Message)"
     }
     
-    $RegistryEntry = $BaseImageRegistry.BaseImages.Where{($_.ImagePath -eq $BaseVHD -or $_.FriendlyName -eq $BaseVHD)}[0]
+    $RegistryEntry = $BaseImageRegistry.BaseImages.Where{($_.ImagePath -eq $BaseVHD -or $_.FriendlyName -eq $BaseVHD -or $_.Id -eq $BaseVHD)}[0]
 
     If(-Not($RegistryEntry)) {
         Throw "Cannot Find Base VHD."
@@ -208,7 +208,7 @@ Function New-LablyVM {
     If(-Not(Test-Path $BaseVHD -ErrorAction SilentlyContinue)) {
         Throw "Cannot find $BaseVHD"
     }
-    
+
     If($Template) {
 
         If($Template -like "`"*`"") {
@@ -221,7 +221,9 @@ Function New-LablyVM {
         $ModuleTemplateFolder = Join-Path (Split-Path $PSScriptRoot) -ChildPath "Templates"
         $ModuleTemplateFile = Join-Path $ModuleTemplateFolder -ChildPath "$Template.json"
 
-        If(Test-Path $UserTemplateFile) {
+        If(Test-Path $Template) {
+            $TemplateFile = $Template
+        } ElseIf(Test-Path $UserTemplateFile) {
             $TemplateFile = $UserTemplateFile
         } ElseIf(Test-Path $ModuleTemplateFile) {
             $TemplateFile = $ModuleTemplateFile
@@ -417,11 +419,21 @@ Function New-LablyVM {
 
         $ThisAsset = [PSCustomObject]@{
             DisplayName = $DisplayName
+            Hostname = $Hostname
             CreatedUTC = $(Get-DateUTC)
             TemplateGuid = $LablyTemplate.Meta.Id
             BaseVHD = $RegistryEntry.Id
             VMId = $NewVM.VMId
             AdminPassword = $SecureAdminPassword
+            ProductKey = $ProductKey
+            Timezone = $Timezone
+            Locale = $Locale
+            Hardware = @{
+                MemorySizeInBytes = $MemorySizeInBytes
+                MemoryMinimumInBytes = $MemoryMinimumInBytes
+                MemoryMaximumInBytes = $MemoryMaximumInBytes
+                CPUCount = $CPUCount
+            }
         }
 
         If($InputResponse) {
@@ -457,10 +469,12 @@ Function New-LablyVM {
     If($Template) {
         $TemplatePath = Join-Path $Path -ChildPath "Template Cache"
         $TemplateCacheFile = Join-Path $TemplatePath -ChildPath "$($LablyTemplate.Meta.Id).json"
-        Try {
-            Copy-Item -Path $TemplateFile -Destination $TemplateCacheFile -Force -ErrorAction Stop
-        } Catch {
-            Write-Warning "Unable to cache template. $($_.Exception.Message)"
+        If($TemplateFile -ne $TemplateCacheFile) {
+            Try {
+                Copy-Item -Path $TemplateFile -Destination $TemplateCacheFile -Force -ErrorAction Stop
+            } Catch {
+                Write-Warning "Unable to cache template. $($_.Exception.Message)"
+            }
         }
     }
 
