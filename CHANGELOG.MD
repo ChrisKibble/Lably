@@ -10,7 +10,7 @@
 - Minor Fixes to Spelling, Grammar, and Spacing
 
 ### Other Changes & Enhancements
-- New 'Reset-Lably' function to rebuild your lab from scratch using the existing Scaffold
+- New `Reset-Lably` function to rebuild your lab from scratch using the existing Scaffold
 - New `ExpandVariables` property in templates to stop [[VARIABLES]] from expanding, documented in template docs files.
 
 ### Template Changes
