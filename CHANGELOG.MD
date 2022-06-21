@@ -8,6 +8,7 @@
 - Fixed error when no requirements were needed in a VM template
 - Rewrote most of the encryption/decryption work across modules to be centralized and modular
 - Minor Fixes to Spelling, Grammar, and Spacing
+- AD Template was installing too much, tightend up to just what is required (Credit: Adam Gell)
 
 ### Other Changes & Enhancements
 - New `Reset-Lably` function to rebuild your lab from scratch using the existing Scaffold
