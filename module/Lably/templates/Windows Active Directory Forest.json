@@ -191,7 +191,7 @@
                 "Script":[
                     "$WarningPreference = 'SilentlyContinue'",
                     "$ProgressPreference = 'SilentlyContinue'",
-                    "Get-WindowsFeature -Name RSAT* | Where { $_.InstallState -eq \"Available\" } | Install-WindowsFeature | Out-Null"
+                    "Get-WindowsFeature -Name RSAT-AD-Tools, RSAT-AD-PowerShell, RSAT-ADDS, RSAT-AD-AdminCenter, RSAT-ADDS-Tools, RSAT-ADLDS, RSAT-DHCP, RSAT-DNS-Server   | Where { $_.InstallState -eq \"Available\" } | Install-WindowsFeature | Out-Null"
                 ]
             },
             {

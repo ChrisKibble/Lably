@@ -10,6 +10,8 @@ Anthony Fontanez [[Web](https://anthonyfontanez.com/)] [[Twitter](https://twitte
 
 Chris (ccatlett1984#4498) and Kieteldood#2051 from the [WinAdmins](https://winadmins.io) #PowerShell channel, who were there to help me when I hit road bumps.
 
+Adam Gell (Discord: quaxim#7933) from the [WinAdmins](https://winadmins.io) Discord for some template help and overall inspiration.
+
 ## Sites & Apps
 
 [This function](https://github.com/greyhamwoohoo/new-vm-from-iso) from [Greyhamwoohoo](https://github.com/greyhamwoohoo) where I got to learn about building base VHDs.
