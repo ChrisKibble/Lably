@@ -146,31 +146,16 @@ Function New-LablyVM {
     $VMGUID = [GUID]::NewGuid().Guid
 
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
+    $Scaffold = Import-LablyScaffold -LablyScaffold $LablyScaffold -ErrorAction Stop
 
-    If(-Not(Test-Path $LablyScaffold -ErrorAction SilentlyContinue)){
-        Throw "There is no Lably at $Path."
-    }
-
-    Try {
-        $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
-    } Catch {
-        Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
-    }
-
-    $SwitchId = $Scaffold.Meta.SwitchId
-
-    If(-Not($SwitchId)) {
-        Throw "Lably Scaffold missing SwitchId. File may be corrupt."
-    }
-
-    If(-Not(Get-VMSwitch -Id $SwitchId -ErrorAction SilentlyContinue)) {
+    If(-Not(Get-VMSwitch -Id $Scaffold.Meta.SwitchId -ErrorAction SilentlyContinue)) {
         Throw "Switch in Lably Scaffold does not exist."
     }
 
     Try {
-        $SwitchName = $(Get-VMSwitch -Id $SwitchId | Select-Object -First 1).Name
+        $SwitchName = $(Get-VMSwitch -Id $Scaffold.Meta.SwitchId | Select-Object -First 1).Name
     } Catch {
-        Throw "Unable to get name of switch $SwitchId."
+        Throw "Unable to get name of switch $Scaffold.Meta.SwitchId."
     }
 
     If(-Not($DisplayName)) {
@@ -185,9 +170,7 @@ Function New-LablyVM {
         Throw "VM '$DisplayName' already exists."
     }
 
-    $vhdRoot = Join-Path $Scaffold.Meta.VirtualDiskPath -ChildPath $VMGUID
-
-    If(-Not($VHDRoot)) {
+    If(-Not($Scaffold.Meta.VirtualDiskPath)) {
         Throw "No Virtual Disk Path defined in Lably Scaffold."
     }
 
@@ -264,16 +247,16 @@ Function New-LablyVM {
 
     }
 
-    If(-Not(Test-Path $vhdRoot)) {
+    If(-Not(Test-Path $Scaffold.Meta.VirtualDiskPath)) {
         Try {
-            New-Item -ItemType Directory -Path $vhdRoot -ErrorAction Stop | Out-Null
+            New-Item -ItemType Directory -Path $Scaffold.Meta.VirtualDiskPath -ErrorAction Stop | Out-Null
         } Catch {
-            Throw "Cannot create $vhdRoot. $($_.Exception.Message)"
+            Throw "Cannot create $($Scaffold.Meta.VirtualDiskPath). $($_.Exception.Message)"
         }
     
     }
 
-    $OSVHDPath = Join-Path $vhdRoot -ChildPath "OSDisk.vhdx"
+    $OSVHDPath = Join-Path $Scaffold.Meta.VirtualDiskPath -ChildPath "OSDisk.vhdx"
 
     If($(Test-Path $OSVHDPath) -and $Force) {
         Try {
@@ -442,15 +425,6 @@ Function New-LablyVM {
 
             ForEach($SecureProperty in $ScaffoldResponse | Where-Object { $_.Secure -eq $True }) {
                 $SecureProperty.Val = Get-EncryptedString -PlainText $SecureProperty.Val -SecretType $Scaffold.Secrets.SecretType -SecretKeyFile $Scaffold.Secrets.KeyFile
-                <#
-                If($SecretType -eq "PowerShell") {
-                    $SecureProperty.Val = $SecureProperty.Val | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString
-                } ElseIf ($SecretType -eq "KeyFile") {
-                    $SecureProperty.Val = $SecureProperty.Val | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString -Key $SecretsKey
-                } Else {
-                    Throw "Unable to encrypt secrets, SecretType is not defined."
-                }
-                #>
             }
 
             Add-Member -InputObject $ThisAsset -MemberType NoteProperty -Name InputResponse -Value $ScaffoldResponse.PSObject.BaseObject

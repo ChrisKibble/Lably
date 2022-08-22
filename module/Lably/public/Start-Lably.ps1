@@ -37,17 +37,7 @@ Function Start-Lably {
     ValidateModuleRun -RequiresAdministrator
 
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
-    Write-Verbose "Reading Lably Scaffolding File at $LablyScaffold"
-
-    If(-Not(Test-Path $LablyScaffold -ErrorAction SilentlyContinue)){
-        Throw "There is no Lably at $Path."
-    }
-
-    Try {
-        $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
-    } Catch {
-        Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
-    }
+    $Scaffold = Import-LablyScaffold -LablyScaffold $LablyScaffold -ErrorAction Stop
 
     ForEach($Asset in $Scaffold.Assets) {
         Try {
