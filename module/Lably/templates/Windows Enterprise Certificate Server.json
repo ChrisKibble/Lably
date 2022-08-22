@@ -1,0 +1,123 @@
+{
+    "Meta": {
+        "Id":"d7ab0ab5-4dec-4749-a5e5-5cf5671aa7d4",
+        "Name":"Windows-Enterprise-Cert-Server",
+        "Version":"1.0",
+        "Author":"Chris Kibble",
+        "Description":"Windows server for certificate services.",
+        "Schema":"0.1"
+    },
+    "Input": [{
+        "IPAddress":{
+            "Prompt":{
+                "en-us":"Enter a static IP address for this server"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in valid IPv4 address format."
+                },
+                "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            }
+        },
+        "SubnetMask":{
+            "Prompt":{
+                "en-us":"Enter a subnet mask for this server"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in valid IPv4 address format."
+                },
+                "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            }
+        },
+        "Gateway":{
+            "Prompt":{
+                "en-us":"Enter a Gateway/Router IP for this server (or 0.0.0.0 for none)"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in valid IPv4 address format."
+                },
+                "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            }
+        },        
+        "DomainName":{
+            "Prompt":{
+                "en-us":"Enter the NetBIOS or DNS name of the domain you want to join"
+            }
+        },
+        "DomainUserName":{
+            "Prompt":{
+                "en-us":"Enter the username of an Enterprise Administrator (e.g. DOMAIN\\ServerAdmin01)"
+            }
+        },        
+        "DomainUserPass":{
+            "Prompt":{
+                "en-us":"Enter the password for the Enterprise Administrator"
+            },
+            "Secure": true
+        }
+    }],
+    "Requirements":{
+        "BaseVHD":{
+            "OSName":["Windows"],
+            "OSVersion":["10.0.*"]
+        }
+    },
+    "Asset":{
+        "PostBuild":[
+            {
+                "Name":"Configure Static IP Address",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "$PrefixLength = 0; \"[[SubnetMask]]\".Split('.') | ForEach-Object { while(0 -ne $_) { $_ = ($_ -shl 1) -band [byte]::MaxValue; $PrefixLength++ } }",
+                    "$IPSettings = @{",
+                    "     InterfaceIndex = $(Get-NetAdapter | Select -First 1).ifIndex",
+                    "     PrefixLength = $PrefixLength",
+                    "     IPAddress = '[[IPAddress]]'",
+                    "}",
+                    "If('[[Gateway]]' -ne '0.0.0.0' -and '[[Gateway]]' -ne $null) { $IPSettings.Add('DefaultGateway','[[Gateway]]') } ",
+                    "New-NetIPAddress @IPSettings | Out-Null",
+                    "If('[[DNS]]' -ne '0.0.0.0' -and '[[DNS]]' -ne $null) { ",
+                    "   Set-DnsClientServerAddress -InterfaceIndex $(Get-NetAdapter | Select -First 1).ifIndex -ServerAddresses [[IPAddress]] | Out-Null",
+                    "}"
+                ],
+                "RunWhen":"If('[[DHCP]]' -eq 'N') { $true } else { $false }"
+            },
+            {
+                "Name":"Join Domain",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "$WarningPreference = 'SilentlyContinue'",
+                    "$DomainPassword = ConvertTo-SecureString \"[[DomainUserPass]]\" -AsPlainText -Force",
+                    "$DomainCred = New-Object System.Management.Automation.PSCredential(\"[[DomainUserName]]\", $DomainPassword)",
+                    "Add-Computer -DomainName [[DomainName]] -DomainCred $DomainCred"
+                ]
+            },
+            {
+                "Name":"Reboot to Complete Domain Join",
+                "Action":"Reboot"
+            },
+            {
+                "Name":"Create GPO Registry File",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "$gpoRegPol = 'UFJlZwEAAABbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAQwByAHkAcAB0AG8AZwByAGEAcABoAHkAXABBAHUAdABvAEUAbgByAG8AbABsAG0AZQBuAHQAAAA7AEEARQBQAG8AbABpAGMAeQAAADsABAAAADsABAAAADsABwAAAF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAEMAcgB5AHAAdABvAGcAcgBhAHAAaAB5AFwAQQB1AHQAbwBFAG4AcgBvAGwAbABtAGUAbgB0AAAAOwBPAGYAZgBsAGkAbgBlAEUAeABwAGkAcgBhAHQAaQBvAG4AUABlAHIAYwBlAG4AdAAAADsABAAAADsABAAAADsACgAAAF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAEMAcgB5AHAAdABvAGcAcgBhAHAAaAB5AFwAQQB1AHQAbwBFAG4AcgBvAGwAbABtAGUAbgB0AAAAOwBPAGYAZgBsAGkAbgBlAEUAeABwAGkAcgBhAHQAaQBvAG4AUwB0AG8AcgBlAE4AYQBtAGUAcwAAADsAAQAAADsABgAAADsATQBZAAAAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABBAEMAUgBTAFwAQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEEAQwBSAFMAXABDAFIATABzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABBAEMAUgBTAFwAQwBUAEwAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAFMAeQBzAHQAZQBtAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAFwAQwBBAFwAQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEMAQQBcAEMAUgBMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEMAQQBcAEMAVABMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEQAaQBzAGEAbABsAG8AdwBlAGQAXABDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAFMAeQBzAHQAZQBtAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAFwARABpAHMAYQBsAGwAbwB3AGUAZABcAEMAUgBMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEQAaQBzAGEAbABsAG8AdwBlAGQAXABDAFQATABzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABEAFAATgBHAFIAQQBcAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABEAFAATgBHAFIAQQBcAEMAUgBMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEQAUABOAEcAUgBBAFwAQwBUAEwAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAFMAeQBzAHQAZQBtAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAFwARgBWAEUAXABDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAFMAeQBzAHQAZQBtAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAFwARgBWAEUAXABDAFIATABzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABGAFYARQBcAEMAVABMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEYAVgBFAF8ATgBLAFAAXABDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAFMAeQBzAHQAZQBtAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAFwARgBWAEUAXwBOAEsAUABcAEMAUgBMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEYAVgBFAF8ATgBLAFAAXABDAFQATABzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABSAG8AbwB0AFwAQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAFIAbwBvAHQAXABDAFIATABzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABSAG8AbwB0AFwAQwBUAEwAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAFMAeQBzAHQAZQBtAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAFwAVAByAHUAcwB0AFwAQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAFQAcgB1AHMAdABcAEMAUgBMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAFQAcgB1AHMAdABcAEMAVABMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAFQAcgB1AHMAdABlAGQAUABlAG8AcABsAGUAXABDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAFMAeQBzAHQAZQBtAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAFwAVAByAHUAcwB0AGUAZABQAGUAbwBwAGwAZQBcAEMAUgBMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAFQAcgB1AHMAdABlAGQAUABlAG8AcABsAGUAXABDAFQATABzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABUAHIAdQBzAHQAZQBkAFAAdQBiAGwAaQBzAGgAZQByAFwAQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAFQAcgB1AHMAdABlAGQAUAB1AGIAbABpAHMAaABlAHIAXABDAFIATABzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABUAHIAdQBzAHQAZQBkAFAAdQBiAGwAaQBzAGgAZQByAFwAQwBUAEwAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0A'",
+                    "$bytes = [Convert]::FromBase64String($gpoRegPol)",
+                    "[IO.File]::WriteAllBytes(\"$env:temp\\registry.pol\", $bytes)"
+                ]
+            }            
+        ]
+    },
+    "Properties":{
+        "Microsoft-ActiveDirectory-Forests":{
+            "Value":"[[DomainName]]"
+        },
+        "Microsoft-ActiveDirectory-Domains":{
+            "Value":"[[DomainName]]"
+        }
+    }
+}
