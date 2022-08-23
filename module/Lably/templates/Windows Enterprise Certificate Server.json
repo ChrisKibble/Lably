@@ -30,6 +30,17 @@
                 "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
             }
         },
+        "DNS":{
+            "Prompt":{
+                "en-us":"Enter a DNS Server to use (typically the IP of your closest Domain Controller)"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in valid IPv4 address format."
+                },
+                "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            }
+        },        
         "Gateway":{
             "Prompt":{
                 "en-us":"Enter a Gateway/Router IP for this server (or 0.0.0.0 for none)"
@@ -56,6 +67,22 @@
                 "en-us":"Enter the password for the Enterprise Administrator"
             },
             "Secure": true
+        },
+        "CACommonName":{
+            "Prompt":{
+                "en-us":"What is the Common Name you'd like for the for CA (e.g. 'My Demo Lab')"
+            }
+        },
+        "WorkstationAuth":{
+            "Prompt":{
+                "en-us":"Would you like to configure a Workstation Authentication Certificate and Setup AutoEnrollment? (Y/N)"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Please enter only Y or N."
+                },
+                "RegEx":"^(Y|N)$"
+            }
         }
     }],
     "Requirements":{
@@ -80,11 +107,8 @@
                     "}",
                     "If('[[Gateway]]' -ne '0.0.0.0' -and '[[Gateway]]' -ne $null) { $IPSettings.Add('DefaultGateway','[[Gateway]]') } ",
                     "New-NetIPAddress @IPSettings | Out-Null",
-                    "If('[[DNS]]' -ne '0.0.0.0' -and '[[DNS]]' -ne $null) { ",
-                    "   Set-DnsClientServerAddress -InterfaceIndex $(Get-NetAdapter | Select -First 1).ifIndex -ServerAddresses [[IPAddress]] | Out-Null",
-                    "}"
-                ],
-                "RunWhen":"If('[[DHCP]]' -eq 'N') { $true } else { $false }"
+                    "Set-DnsClientServerAddress -InterfaceIndex $(Get-NetAdapter | Select -First 1).ifIndex -ServerAddresses [[DNSIP]] | Out-Null"
+                ]
             },
             {
                 "Name":"Join Domain",
@@ -102,6 +126,105 @@
                 "Action":"Reboot"
             },
             {
+                "Name":"Install AD Certificate Services and Supporting Windows Features",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "$ProgressPreference = 'SilentlyContinue'",
+                    "Install-WindowsFeature -Name AD-Certificate,GPMC,RSAT-AD-PowerShell,ADLDS -ErrorAction Stop -IncludeManagementTools -IncludeAllSubFeature",
+                    "Add-WindowsCapability -Online -Name Rsat.GroupPolicy.Management.Tools~~~~0.0.1.0"
+                ]
+            },
+            {
+                "Name":"Installing AD Certificate Services Certificate Authority and Web Enrollment",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "Install-AdcsCertificationAuthority -CAType EnterpriseRootCA -ValidityPeriodUnits 20 -ValidityPeriod Years -CACommonName \"[[CACommonName]]\" -Confirm:$False",
+                    "Install-AdcsWebEnrollment -Force | Out-Null"
+                ],
+                "Credential":{
+                    "Username":"[[DomainUserName]]",
+                    "Password":"[[DomainUserPass]]"
+                }
+            },
+            {
+                "Name":"Configuring CRL to be added to the Certificate CDP",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "Get-CACrlDistributionPoint | Where-Object { $_.Uri -like \"*://<ServerDNSName>/CertEnroll/<CAName><CRLNameSuffix><DeltaCRLAllowed>.crl\" } | Remove-CACrlDistributionPoint -Confirm:$False | Out-Null",
+                    "Add-CACrlDistributionPoint -Uri \"http://<ServerDNSName>/CertEnroll/<CAName><CRLNameSuffix><DeltaCRLAllowed>.crl\" -AddToCertificateCdp -AddToFreshestCrl -Confirm:$False | Out-Null",
+                    "Add-CACrlDistributionPoint -Uri \"file://<ServerDNSName>/CertEnroll/<CAName><CRLNameSuffix><DeltaCRLAllowed>.crl\" -AddToCertificateCdp -AddToFreshestCrl -Confirm:$False | Out-Null"
+                ],
+                "Credential":{
+                    "Username":"[[DomainUserName]]",
+                    "Password":"[[DomainUserPass]]"
+                }
+            },
+            {
+                "Name":"Configuring AIA to be added to the Certificate",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "Get-CAAuthorityInformationAccess | Where-Object { $_.Uri -like \"*://<ServerDNSName>/CertEnroll/*\" } | Remove-CAAuthorityInformationAccess -Confirm:$False | Out-Null",
+                    "Add-CAAuthorityInformationAccess -Uri \"http://<ServerDNSName>/CertEnroll/<ServerDNSName>_<CAName><CertificateName>.crt\" -AddToCertificateAia -Confirm:$False | Out-Null",
+                    "Add-CAAuthorityInformationAccess -Uri \"file://<ServerDNSName>/CertEnroll/<ServerDNSName>_<CAName><CertificateName>.crt\" -AddToCertificateAia -Confirm:$False | Out-Null"
+                ],
+                "Credential":{
+                    "Username":"[[DomainUserName]]",
+                    "Password":"[[DomainUserPass]]"
+                }
+            },
+            {
+                "Name":"Restarting Certificate Services",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "Restart-Service \"CertSvc\""
+                ],
+                "Credential":{
+                    "Username":"[[DomainUserName]]",
+                    "Password":"[[DomainUserPass]]"
+                }
+            },
+            {
+                "Name":"Duplicate Workstation Authentication Template",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "$DefaultTemplate = \"CN=Workstation,CN=Certificate Templates,CN=Public Key Services,CN=Services,CN=Configuration,$((Get-ADRootDSE).defaultNamingContext)\"",
+                    "Start-Process \"ldifde\" -ArgumentList \"-m -v -d `\"$DefaultTemplate`\" -f `\"$env:temp\\Workstation.ldf`\"\" -NoNewWindow -Wait",
+                    "$Template = Get-Content \"$env:temp\\Workstation.ldf\"",
+                    "$Template = $Template -replace [RegEx]::Escape(\"CN=Workstation\"),\"CN=Lab-Workstation\"",
+                    "$Template = $Template -replace [RegEx]::Escape(\"cn: Workstation\"),\"cn: Lab-Workstation\"",
+                    "$Template = $Template -replace [RegEx]::Escape(\"displayName: Workstation Authentication\"),\"displayName: Lab - Workstation Authentication\"",
+                    "$Template | Out-File \"$env:temp\\Workstation.ldf\"",
+                    "Start-Process \"ldifde\" -ArgumentList \"-i -f `\"$env:temp\\Workstation.ldf`\"\" -NoNewWindow -Wait",
+                    "# Remove-Item \"$env:temp\\Workstation.ldf\"",
+                    "Start-Process dsacls.exe -ArgumentList \"`\"$NewTemplate`\" /g `\"NT AUTHORITY\\Authenticated Users`\":CA;Enroll\" -NoNewWindow -Wait",
+                    "Start-Process dsacls.exe -ArgumentList \"`\"$NewTemplate`\" /g `\"NT AUTHORITY\\Authenticated Users`\":CA;AutoEnrollment\" -NoNewWindow -Wait"
+                ],
+                "RunWhen":"If('[[WorkstationAuth]]' -eq 'Y') { $true } else { $false }",
+                "Credential":{
+                    "Username":"[[DomainUserName]]",
+                    "Password":"[[DomainUserPass]]"
+                }
+            },
+            {
+                "Name":"Enroll New Certificate Template",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "Add-CATemplate \"Lab-Workstation\" -Confirm:$False"
+                ],
+                "RunWhen":"If('[[WorkstationAuth]]' -eq 'Y') { $true } else { $false }",
+                "Credential":{
+                    "Username":"[[DomainUserName]]",
+                    "Password":"[[DomainUserPass]]"
+                }
+            },
+            {
                 "Name":"Create GPO Registry File",
                 "Action":"Script",
                 "Language":"PowerShell",
@@ -109,8 +232,14 @@
                     "$gpoRegPol = 'UFJlZwEAAABbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAQwByAHkAcAB0AG8AZwByAGEAcABoAHkAXABBAHUAdABvAEUAbgByAG8AbABsAG0AZQBuAHQAAAA7AEEARQBQAG8AbABpAGMAeQAAADsABAAAADsABAAAADsABwAAAF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAEMAcgB5AHAAdABvAGcAcgBhAHAAaAB5AFwAQQB1AHQAbwBFAG4AcgBvAGwAbABtAGUAbgB0AAAAOwBPAGYAZgBsAGkAbgBlAEUAeABwAGkAcgBhAHQAaQBvAG4AUABlAHIAYwBlAG4AdAAAADsABAAAADsABAAAADsACgAAAF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAEMAcgB5AHAAdABvAGcAcgBhAHAAaAB5AFwAQQB1AHQAbwBFAG4AcgBvAGwAbABtAGUAbgB0AAAAOwBPAGYAZgBsAGkAbgBlAEUAeABwAGkAcgBhAHQAaQBvAG4AUwB0AG8AcgBlAE4AYQBtAGUAcwAAADsAAQAAADsABgAAADsATQBZAAAAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABBAEMAUgBTAFwAQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEEAQwBSAFMAXABDAFIATABzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABBAEMAUgBTAFwAQwBUAEwAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAFMAeQBzAHQAZQBtAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAFwAQwBBAFwAQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEMAQQBcAEMAUgBMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEMAQQBcAEMAVABMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEQAaQBzAGEAbABsAG8AdwBlAGQAXABDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAFMAeQBzAHQAZQBtAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAFwARABpAHMAYQBsAGwAbwB3AGUAZABcAEMAUgBMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEQAaQBzAGEAbABsAG8AdwBlAGQAXABDAFQATABzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABEAFAATgBHAFIAQQBcAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABEAFAATgBHAFIAQQBcAEMAUgBMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEQAUABOAEcAUgBBAFwAQwBUAEwAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAFMAeQBzAHQAZQBtAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAFwARgBWAEUAXABDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAFMAeQBzAHQAZQBtAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAFwARgBWAEUAXABDAFIATABzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABGAFYARQBcAEMAVABMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEYAVgBFAF8ATgBLAFAAXABDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAFMAeQBzAHQAZQBtAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAFwARgBWAEUAXwBOAEsAUABcAEMAUgBMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAEYAVgBFAF8ATgBLAFAAXABDAFQATABzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABSAG8AbwB0AFwAQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAFIAbwBvAHQAXABDAFIATABzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABSAG8AbwB0AFwAQwBUAEwAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAFMAeQBzAHQAZQBtAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAFwAVAByAHUAcwB0AFwAQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAFQAcgB1AHMAdABcAEMAUgBMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAFQAcgB1AHMAdABcAEMAVABMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAFQAcgB1AHMAdABlAGQAUABlAG8AcABsAGUAXABDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0AWwBTAG8AZgB0AHcAYQByAGUAXABQAG8AbABpAGMAaQBlAHMAXABNAGkAYwByAG8AcwBvAGYAdABcAFMAeQBzAHQAZQBtAEMAZQByAHQAaQBmAGkAYwBhAHQAZQBzAFwAVAByAHUAcwB0AGUAZABQAGUAbwBwAGwAZQBcAEMAUgBMAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAFQAcgB1AHMAdABlAGQAUABlAG8AcABsAGUAXABDAFQATABzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABUAHIAdQBzAHQAZQBkAFAAdQBiAGwAaQBzAGgAZQByAFwAQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAAAA7AAAAOwAAAAAAOwAAAAAAOwBdAFsAUwBvAGYAdAB3AGEAcgBlAFwAUABvAGwAaQBjAGkAZQBzAFwATQBpAGMAcgBvAHMAbwBmAHQAXABTAHkAcwB0AGUAbQBDAGUAcgB0AGkAZgBpAGMAYQB0AGUAcwBcAFQAcgB1AHMAdABlAGQAUAB1AGIAbABpAHMAaABlAHIAXABDAFIATABzAAAAOwAAADsAAAAAADsAAAAAADsAXQBbAFMAbwBmAHQAdwBhAHIAZQBcAFAAbwBsAGkAYwBpAGUAcwBcAE0AaQBjAHIAbwBzAG8AZgB0AFwAUwB5AHMAdABlAG0AQwBlAHIAdABpAGYAaQBjAGEAdABlAHMAXABUAHIAdQBzAHQAZQBkAFAAdQBiAGwAaQBzAGgAZQByAFwAQwBUAEwAcwAAADsAAAA7AAAAAAA7AAAAAAA7AF0A'",
                     "$bytes = [Convert]::FromBase64String($gpoRegPol)",
                     "[IO.File]::WriteAllBytes(\"$env:temp\\registry.pol\", $bytes)"
-                ]
-            }            
+                ],
+                "RunWhen":"If('[[WorkstationAuth]]' -eq 'Y') { $true } else { $false }",
+                "Credential":{
+                    "Username":"[[DomainUserName]]",
+                    "Password":"[[DomainUserPass]]"
+                }
+            }
+            
         ]
     }
 }
