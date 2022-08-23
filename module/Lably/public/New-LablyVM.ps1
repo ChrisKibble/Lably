@@ -143,34 +143,17 @@ Function New-LablyVM {
 
     ValidateModuleRun -RequiresAdministrator
 
-    $VMGUID = [GUID]::NewGuid().Guid
-
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
+    $Scaffold = Import-LablyScaffold -LablyScaffold $LablyScaffold -ErrorAction Stop
 
-    If(-Not(Test-Path $LablyScaffold -ErrorAction SilentlyContinue)){
-        Throw "There is no Lably at $Path."
-    }
-
-    Try {
-        $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
-    } Catch {
-        Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
-    }
-
-    $SwitchId = $Scaffold.Meta.SwitchId
-
-    If(-Not($SwitchId)) {
-        Throw "Lably Scaffold missing SwitchId. File may be corrupt."
-    }
-
-    If(-Not(Get-VMSwitch -Id $SwitchId -ErrorAction SilentlyContinue)) {
+    If(-Not(Get-VMSwitch -Id $Scaffold.Meta.SwitchId -ErrorAction SilentlyContinue)) {
         Throw "Switch in Lably Scaffold does not exist."
     }
 
     Try {
-        $SwitchName = $(Get-VMSwitch -Id $SwitchId | Select-Object -First 1).Name
+        $SwitchName = $(Get-VMSwitch -Id $Scaffold.Meta.SwitchId | Select-Object -First 1).Name
     } Catch {
-        Throw "Unable to get name of switch $SwitchId."
+        Throw "Unable to get name of switch $Scaffold.Meta.SwitchId."
     }
 
     If(-Not($DisplayName)) {
@@ -185,9 +168,7 @@ Function New-LablyVM {
         Throw "VM '$DisplayName' already exists."
     }
 
-    $vhdRoot = Join-Path $Scaffold.Meta.VirtualDiskPath -ChildPath $VMGUID
-
-    If(-Not($VHDRoot)) {
+    If(-Not($Scaffold.Meta.VirtualDiskPath)) {
         Throw "No Virtual Disk Path defined in Lably Scaffold."
     }
 
@@ -264,16 +245,17 @@ Function New-LablyVM {
 
     }
 
-    If(-Not(Test-Path $vhdRoot)) {
+    If(-Not(Test-Path $Scaffold.Meta.VirtualDiskPath)) {
         Try {
-            New-Item -ItemType Directory -Path $vhdRoot -ErrorAction Stop | Out-Null
+            New-Item -ItemType Directory -Path $Scaffold.Meta.VirtualDiskPath -ErrorAction Stop | Out-Null
         } Catch {
-            Throw "Cannot create $vhdRoot. $($_.Exception.Message)"
+            Throw "Cannot create $($Scaffold.Meta.VirtualDiskPath). $($_.Exception.Message)"
         }
     
     }
 
-    $OSVHDPath = Join-Path $vhdRoot -ChildPath "OSDisk.vhdx"
+    $OSVHDPath = Join-Path $Scaffold.Meta.VirtualDiskPath -ChildPath $([GUID]::NewGuid().Guid)
+    $OSVHDPath = Join-Path $OSVHDPath -ChildPath "OSDisk.vhdx"
 
     If($(Test-Path $OSVHDPath) -and $Force) {
         Try {
@@ -383,7 +365,7 @@ Function New-LablyVM {
     }
 
     Write-Host "[Hyper-V] " -ForegroundColor Magenta -NoNewline
-    Write-Host "Configuring VM Memory with Min=$([Math]::Round($MemoryMinimumInBytes/1GB,2))GB, Max=$([Math]::Round($MemoryMaximumInBytes/1GB,2))GB, Startup=$([Math]::Round($MemorySizeInBytes/1GB,2))GB,." -NoNewline
+    Write-Host "Configuring VM Memory with Min=$([Math]::Round($MemoryMinimumInBytes/1GB,2))GB, Max=$([Math]::Round($MemoryMaximumInBytes/1GB,2))GB, Startup=$([Math]::Round($MemorySizeInBytes/1GB,2))GB." -NoNewline
 
     Try {
         Set-VMMemory -VM $NewVM -MinimumBytes $MemoryMinimumInBytes -MaximumBytes $MemoryMaximumInBytes -ErrorAction Stop
@@ -442,15 +424,6 @@ Function New-LablyVM {
 
             ForEach($SecureProperty in $ScaffoldResponse | Where-Object { $_.Secure -eq $True }) {
                 $SecureProperty.Val = Get-EncryptedString -PlainText $SecureProperty.Val -SecretType $Scaffold.Secrets.SecretType -SecretKeyFile $Scaffold.Secrets.KeyFile
-                <#
-                If($SecretType -eq "PowerShell") {
-                    $SecureProperty.Val = $SecureProperty.Val | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString
-                } ElseIf ($SecretType -eq "KeyFile") {
-                    $SecureProperty.Val = $SecureProperty.Val | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString -Key $SecretsKey
-                } Else {
-                    Throw "Unable to encrypt secrets, SecretType is not defined."
-                }
-                #>
             }
 
             Add-Member -InputObject $ThisAsset -MemberType NoteProperty -Name InputResponse -Value $ScaffoldResponse.PSObject.BaseObject
@@ -485,7 +458,6 @@ Function New-LablyVM {
 
     Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
     Write-Host "VM Creation Complete. Starting VM to Apply Template." -ForegroundColor Green
-    Write-Host ""
 
     Try {
         $NewVM | Start-VM -ErrorAction Stop

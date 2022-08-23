@@ -49,16 +49,7 @@ Function Test-Lably {
     ValidateModuleRun -RequiresAdministrator
 
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
-
-    If(-Not(Test-Path $LablyScaffold -ErrorAction SilentlyContinue)){
-        Throw "There is no Lably at $Path."
-    }
-
-    Try {
-        $Scaffold = Get-Content $LablyScaffold | ConvertFrom-Json
-    } Catch {
-        Throw "Unable to import Lably scaffold. $($_.Exception.Message)"
-    }
+    $Scaffold = Import-LablyScaffold -LablyScaffold $LablyScaffold -ErrorAction Stop
 
     $FixApplied = $False
 
@@ -102,7 +93,7 @@ Function Test-Lably {
         Write-Host " Secret Type is KeyFile." -NoNewline
         If(-Not($Scaffold.Secrets.KeyFile)) {
             Write-Host " No KeyFile Defined." -NoNewline
-            Write-Host " Failed." -ErrorAction SilentlyContinue
+            Write-Host " Failed." -ForegroundColor Red
         } ElseIf(-Not(Test-Path $Scaffold.Secrets.KeyFile -ErrorAction SilentlyContinue)) {
             Write-Host " File is missing ($($Scaffold.Secrets.KeyFile))." -NoNewline
             Write-Host " Failed." -ForegroundColor Red
@@ -122,6 +113,9 @@ Function Test-Lably {
                 Write-Host " Failed." -ForegroundColor Red
             }
         }
+    } Else {
+        Write-Host " Invalid Secret Type is Defined." -NoNewline
+        Write-Host " Failed." -ForegroundColor Red
     }
 
     ForEach($Asset in $Scaffold.Assets) {

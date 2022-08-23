@@ -14,6 +14,14 @@ Function New-LablyAnswerFile {
 
     Template to be used. Templates will be loaded from the "Templates" subfolder of the module and custom ones can be installed into the Lably\Templates folder of the user profile. This parameter supports auto-complete, you can tab through options or use CTRL+SPACE to view all options.
 
+   .PARAMETER IncludeHelperMessages
+
+    Help messages will be exported to the JSON file to make it easier to fill out. These can be removed after the template has been filled out, however they will not impact a new VM build if left inside the JSON file.
+
+    .PARAMETER CompressJson
+
+    Resulting JSON will be compressed instead of broken up by line. This is the equivalent of `ConvertTo-Json -Compress`.
+
     .INPUTS
 
     None. You cannot pipe objects to New-LablyAnswerFile.
@@ -34,7 +42,10 @@ Function New-LablyAnswerFile {
         [String]$Template,
         
         [Parameter(Mandatory=$False)]
-        [Switch]$IncludeHelpMessages
+        [Switch]$IncludeHelpMessages,
+
+        [Parameter(Mandatory=$False)]
+        [Switch]$CompressJson
     )
 
     # User Template over Module Template - Look at User Templates First
@@ -54,11 +65,21 @@ Function New-LablyAnswerFile {
 
     $PromptList = [Ordered]@{}
 
-    ForEach($TemplatePrompt in ($LablyTemplate.input[0].psobject.properties.name)) {
-        $PromptName = $TemplatePrompt
+    ForEach($PromptName in ($LablyTemplate.input[0].psobject.properties.name)) {
         $PromptList.Add($PromptName, $null)
+
+        If($IncludeHelpMessages) {
+            ForEach($PromptMsg in $LablyTemplate.Input."$PromptName".prompt.psobject.properties) {
+                [Boolean]$PromptSecure = $LablyTemplate.Input."$PromptName".Secure
+                $ValidateRegEx = $LablyTemplate.Input."$PromptName".Validate.RegEx
+
+                $PromptList.Add("$($PromptName)_#HelpMsg-$($PromptMsg.Name)", $PromptMsg.Value)
+                $PromptList.Add("$($PromptName)_#Secure", $PromptSecure)
+                $PromptList.Add("$($PromptName)_#ValidationRegEx", $ValidateRegEx)
+            }
+        }
     }
  
-    $PromptList | ConvertTo-Json
+    $PromptList | ConvertTo-Json -Compress:$CompressJson
 
 }

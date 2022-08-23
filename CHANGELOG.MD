@@ -9,7 +9,7 @@
 - Rewrote most of the encryption/decryption work across modules to be centralized and modular
 - Minor behind the scenes code cleanup
 - Minor Fixes to Spelling, Grammar, and Spacing
-- AD Template was installing too much, tightend up to just what is required (Credit: Adam Gell)
+- AD Template was installing too much, tightened up to just what is required (Credit: Adam Gell)
 
 ### Other Changes & Enhancements
 - Answers for `New-LablyVM` can be supplied in a hash table or answer file

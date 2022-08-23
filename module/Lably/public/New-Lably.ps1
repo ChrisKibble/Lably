@@ -119,7 +119,7 @@ Function New-Lably {
     }
 
     If($Switch) {
-        Write-Host "Should use switch $switch"
+        Write-Verbose "Switch Parameter Defined, Using Existing Switch '$Switch'"
         Try {
             $VMSwitch = Get-VMSwitch -Name $Switch -ErrorAction Stop
         } Catch {
@@ -130,19 +130,21 @@ Function New-Lably {
     If(-Not($Switch)) {
 
         $CreateSwitch = $CreateSwitch -replace "[^A-Za-z0-9 ]",""
+        Write-Verbose "Creating New Switch '$CreateSwitch'"
 
         If(Get-VMSwitch -Name $CreateSwitch -ErrorAction SilentlyContinue) {
             Throw "Virtual Adapter '$CreateSwitch' already exists."
         }
         
         Try {
-            Write-Verbose "Creating Switch '$CreateSwitch'."
             $VMSwitch = New-VMSwitch -Name $CreateSwitch -SwitchType Internal
         } Catch {
             Throw "Cannot create '$CreateSwitch'. $($_.Exception.Message)"
         }
 
         If($NATIPAddress) {
+
+            Write-Verbose "NATIPAddress Parameter Defined."
 
             If(Get-NetIPAddress -IPAddress $NATIPAddress -ErrorAction SilentlyContinue) {
                 Throw "NAT IP Address $NATIPAddress Already Exists on System. This must be unique."
@@ -151,9 +153,10 @@ Function New-Lably {
             Write-Verbose "Setting up NAT for Switch"
             $SwitchMAC = Get-VMNetworkAdapter -ManagementOS | Where-Object { $_.Name -eq $CreateSwitch } | Select-Object -ExpandProperty MacAddress
             Write-Verbose "Virtual Switch MAC Address is $SwitchMAC"
+            
             If(-Not($SwitchMAC)) {
-                Write-Warning "Could not find MAC Address of Virtual Switch. Aborting NAT setup."
                 $VirtualAdapter = ""
+                Write-Warning "Could not find MAC Address of Virtual Switch. Aborting NAT setup."
             } Else {
                 $VirtualAdapter = Get-NetAdapter | Where-Object { $($_.MacAddress -Replace '-','') -eq $SwitchMAC }
                 Write-Verbose "Virtual Adapter is '$($VirtualAdapter.Name)'"
@@ -184,13 +187,18 @@ Function New-Lably {
 
     If(-Not($VirtualDiskPath)) {
         $VirtualDiskPath = Join-Path $Path -ChildPath "Virtual Disks"
+        Write-Verbose "Virtual Disk Path not Defined. Using '$VirtualDiskPath'"
     }
 
     If($SecretKeyFile) {
+
+        Write-Verbose "Setting Secret Type to KeyFile"
+
         $SecretType = "KeyFile"
         Try {
             $KeyFilePath = Join-Path $env:USERPROFILE -ChildPath "Lably\Keys"
             If(-Not(Test-Path $KeyFilePath -ErrorAction SilentlyContinue)) {
+                Write-Verbose "Creating '$KeyFilePath'"
                 New-Item -ItemType Directory -Path $KeyFilePath -ErrorAction Stop | Out-Null
             }
         } Catch {
@@ -198,6 +206,7 @@ Function New-Lably {
         }
 
         Try {
+            Write-Verbose "Creating KeyFile with Random Key"
             $KeyFile = Join-Path $KeyFilePath -ChildPath "$Name.$((New-TimeSpan -Start (Get-Date "01/01/1970") -End (Get-Date)).TotalSeconds).key"
             $KeyAES = New-Object Byte[] 32
             [Security.Cryptography.RNGCryptoServiceProvider]::Create().GetBytes($KeyAES)
@@ -206,6 +215,7 @@ Function New-Lably {
             Throw "Unable to create secure key. $($_.Exception.Message)"
         }
     } else {
+        Write-Verbose "Setting Secret Type to PowerShell"
         $SecretType = "PowerShell"
         $KeyFile = $null
     }
