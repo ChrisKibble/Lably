@@ -93,7 +93,7 @@ Function Test-Lably {
         Write-Host " Secret Type is KeyFile." -NoNewline
         If(-Not($Scaffold.Secrets.KeyFile)) {
             Write-Host " No KeyFile Defined." -NoNewline
-            Write-Host " Failed." -ErrorAction SilentlyContinue
+            Write-Host " Failed." -ForegroundColor Red
         } ElseIf(-Not(Test-Path $Scaffold.Secrets.KeyFile -ErrorAction SilentlyContinue)) {
             Write-Host " File is missing ($($Scaffold.Secrets.KeyFile))." -NoNewline
             Write-Host " Failed." -ForegroundColor Red
@@ -113,6 +113,9 @@ Function Test-Lably {
                 Write-Host " Failed." -ForegroundColor Red
             }
         }
+    } Else {
+        Write-Host " Invalid Secret Type is Defined." -NoNewline
+        Write-Host " Failed." -ForegroundColor Red
     }
 
     ForEach($Asset in $Scaffold.Assets) {
