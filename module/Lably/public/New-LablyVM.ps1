@@ -366,7 +366,7 @@ Function New-LablyVM {
     }
 
     Write-Host "[Hyper-V] " -ForegroundColor Magenta -NoNewline
-    Write-Host "Configuring VM Memory with Min=$([Math]::Round($MemoryMinimumInBytes/1GB,2))GB, Max=$([Math]::Round($MemoryMaximumInBytes/1GB,2))GB, Startup=$([Math]::Round($MemorySizeInBytes/1GB,2))GB,." -NoNewline
+    Write-Host "Configuring VM Memory with Min=$([Math]::Round($MemoryMinimumInBytes/1GB,2))GB, Max=$([Math]::Round($MemoryMaximumInBytes/1GB,2))GB, Startup=$([Math]::Round($MemorySizeInBytes/1GB,2))GB." -NoNewline
 
     Try {
         Set-VMMemory -VM $NewVM -MinimumBytes $MemoryMinimumInBytes -MaximumBytes $MemoryMaximumInBytes -ErrorAction Stop
