@@ -8,7 +8,7 @@ Function Get-LablyTemplate {
     Try {
         $Template = Get-Content $TemplateFile | ConvertFrom-Json
     } Catch {
-        Throw "Unable to read Template. $($_.Exeption.Message)"
+        Throw "Unable to read Template. $($_.Exception.Message)"
     }
 
     Return $Template
