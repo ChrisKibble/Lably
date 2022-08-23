@@ -106,7 +106,7 @@
                     "If('[[Gateway]]' -ne '0.0.0.0' -and '[[Gateway]]' -ne $null) { $IPSettings.Add('DefaultGateway','[[Gateway]]') } ",
                     "New-NetIPAddress @IPSettings | Out-Null",
                     "If('[[DNS]]' -ne '0.0.0.0' -and '[[DNS]]' -ne $null) { ",
-                    "   Set-DnsClientServerAddress -InterfaceIndex $(Get-NetAdapter | Select -First 1).ifIndex -ServerAddresses [[IPAddress]] | Out-Null",
+                    "   Set-DnsClientServerAddress -InterfaceIndex $(Get-NetAdapter | Select -First 1).ifIndex -ServerAddresses [[DNS]] | Out-Null",
                     "}"
                 ],
                 "RunWhen":"If('[[DHCP]]' -eq 'N') { $true } else { $false }"
