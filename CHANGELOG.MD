@@ -17,9 +17,9 @@
 - New `Reset-Lably` function to rebuild your lab from scratch using the existing Scaffold
 - New `New-LablyAnswerFile` to create empty answer files for a given template
 
-
 ### Template Changes
 - Windows Domain Controller will no longer output progress bars, making it cleaner in some PowerShell windows.
+- Fixed issue in Domain Client template that would cause the VM to use itself for DNS when not using DHCP
 
 ## Beta v0.2 -> v0.3
 
