@@ -458,7 +458,6 @@ Function New-LablyVM {
 
     Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
     Write-Host "VM Creation Complete. Starting VM to Apply Template." -ForegroundColor Green
-    Write-Host ""
 
     Try {
         $NewVM | Start-VM -ErrorAction Stop
