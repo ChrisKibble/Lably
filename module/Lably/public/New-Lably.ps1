@@ -130,7 +130,7 @@ Function New-Lably {
     If(-Not($Switch)) {
 
         $CreateSwitch = $CreateSwitch -replace "[^A-Za-z0-9 ]",""
-        Write-Verbose "Switch Parameter Not Defined. Creating New Switch '$CreateSwitch'"
+        Write-Verbose "Creating New Switch '$CreateSwitch'"
 
         If(Get-VMSwitch -Name $CreateSwitch -ErrorAction SilentlyContinue) {
             Throw "Virtual Adapter '$CreateSwitch' already exists."
