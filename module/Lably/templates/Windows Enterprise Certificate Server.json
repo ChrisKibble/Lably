@@ -62,7 +62,8 @@
         "BaseVHD":{
             "OSName":["Windows"],
             "OSVersion":["10.0.*"]
-        }
+        },
+        "DenyDefaultHostname":true
     },
     "Asset":{
         "PostBuild":[
@@ -111,13 +112,5 @@
                 ]
             }            
         ]
-    },
-    "Properties":{
-        "Microsoft-ActiveDirectory-Forests":{
-            "Value":"[[DomainName]]"
-        },
-        "Microsoft-ActiveDirectory-Domains":{
-            "Value":"[[DomainName]]"
-        }
     }
 }
