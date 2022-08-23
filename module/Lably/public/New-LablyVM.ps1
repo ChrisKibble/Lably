@@ -143,8 +143,6 @@ Function New-LablyVM {
 
     ValidateModuleRun -RequiresAdministrator
 
-    $VMGUID = [GUID]::NewGuid().Guid
-
     $LablyScaffold = Join-Path $Path -ChildPath "scaffold.lably.json"
     $Scaffold = Import-LablyScaffold -LablyScaffold $LablyScaffold -ErrorAction Stop
 
