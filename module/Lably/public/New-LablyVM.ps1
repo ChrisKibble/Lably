@@ -468,7 +468,7 @@ Function New-LablyVM {
     Try {
         [PSCredential]$BuildAdministrator = New-Object System.Management.Automation.PSCredential("$Hostname\Administrator", $AdminPassword)
     } Catch {
-        Throw "Could not create credential object to connect to new virtual machine."
+        Throw "Could not create credential object to connect to new virtual machine. $($_.Exception.Message)"
     }
 
     $WaitStart = Get-Date
@@ -531,18 +531,22 @@ Function New-LablyVM {
             
             If($Step.Credential.Username) {
                 $StepAdminName = Literalize -InputResponse $InputResponse -InputData $Step.Credential.Username
+                $StepAdminPass = Literalize -InputResponse $InputResponse -InputData $Step.Credential.Password | ConvertTo-SecureString -AsPlainText -Force
             } Else {
                 $StepAdminName = $BuildAdministrator.Username
+                $StepAdminPass = $AdminPassword
             }
 
             If($Step.ValidationCredential.Username) {
                 $ValidationAdminName = Literalize -InputResponse $InputResponse -InputData $Step.ValidationCredential.Username
+                $ValidationAdminPass = Literalize -InputResponse $InputResponse -InputData $Step.ValidationCredential.Password | ConvertTo-SecureString -AsPlainText -Force
             } else {
                 $ValidationAdminName = $BuildAdministrator.Username
+                $ValidationAdminPass = $AdminPassword
             }
 
-            [PSCredential]$StepAdministrator = New-Object System.Management.Automation.PSCredential($StepAdminName, $AdminPassword)
-            [PSCredential]$ValidationAdministrator = New-Object System.Management.Automation.PSCredential($ValidationAdminName, $AdminPassword)
+            [PSCredential]$StepAdministrator = New-Object System.Management.Automation.PSCredential($StepAdminName, $StepAdminPass)
+            [PSCredential]$ValidationAdministrator = New-Object System.Management.Automation.PSCredential($ValidationAdminName, $ValidationAdminPass)
 
         } Catch {
             Throw "Could not create credential object to connect to new virtual machine."
