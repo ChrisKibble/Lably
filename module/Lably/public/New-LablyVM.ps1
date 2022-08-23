@@ -254,7 +254,8 @@ Function New-LablyVM {
     
     }
 
-    $OSVHDPath = Join-Path $Scaffold.Meta.VirtualDiskPath -ChildPath "OSDisk.vhdx"
+    $OSVHDPath = Join-Path $Scaffold.Meta.VirtualDiskPath -ChildPath $([GUID]::NewGuid().Guid)
+    $OSVHDPath = Join-Path $OSVHDPath -ChildPath "OSDisk.vhdx"
 
     If($(Test-Path $OSVHDPath) -and $Force) {
         Try {
