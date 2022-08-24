@@ -62,6 +62,10 @@ Function New-LablyVM {
 
     Optional Windows Locale ID to use when building this VM. Defaults to the Locale ID of the host.
 
+    .PARAMETER Transcript
+
+    Optional switch that defines if the powershell executed during the VM build should be logged into a transcript file.
+
     .PARAMETER Force
 
     Switch that defines that the VHD should be overwritten if it already exists.
@@ -136,6 +140,9 @@ Function New-LablyVM {
 
         [Parameter(Mandatory=$False)]
         [String]$Locale = $(Get-WinSystemLocale).Name,
+
+        [Parameter(Mandatory=$False)]
+        [Switch]$Transcript = $False,
 
         [Parameter(Mandatory=$False)]
         [Switch]$Force
@@ -514,6 +521,14 @@ Function New-LablyVM {
     Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
     Write-Host "Starting Post Build Steps from Template"
 
+    If($Transcript) {
+        $TranscriptFolder = Join-Path $env:temp -ChildPath LablyTranscripts
+        Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
+        Write-Host "Transcript Log Path: $TranscriptFolder"
+        Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
+        Write-Host "Warning: Transcript logs could contain sensitive information. Secure or delete these files when done." -ForegroundColor Red
+    }
+
     ForEach($Step in $LablyTemplate.Asset.PostBuild) {
 
         If($Step.RunWhen) {
@@ -567,11 +582,31 @@ Function New-LablyVM {
                         }
                         $stepScriptBlock = [ScriptBlock]::Create($StepScript)
 
+                        If($Transcript) {
+                            $TranscriptFile = Join-Path $TranscriptFolder -ChildPath "$(Get-Date -Format 'yyyyMMddHHmmss').$($NewVM.VMId).$($Step.Name -replace '[^A-Z0-9]','').log"
+                            If(-Not(Get-Item $TranscriptFolder -ErrorAction SilentlyContinue)) {
+                                New-Item -Path $TranscriptFolder -ItemType Directory | Out-Null
+                            }
+                            "*" * 50 | Out-File $TranscriptFile
+                            "Executed Code" | Out-File $TranscriptFile -Append
+                            "*" * 50 | Out-File $TranscriptFile -Append
+                            $stepScriptBlock.ToString() | Out-File $TranscriptFile -Append
+                            "*" * 50 | Out-File $TranscriptFile -Append
+                            ""  | Out-File $TranscriptFile -Append
+                        }
+
                         Try {
-                            Invoke-Command -VMId $NewVM.VMId -ScriptBlock $stepScriptBlock -Credential $StepAdministrator
+                            $vmIc = Invoke-Command -VMId $NewVM.VMId -ScriptBlock $stepScriptBlock -Credential $StepAdministrator
                         } Catch {
                             Write-Warning "Unable to run Step - $($_.Exception.Message)"
+                        } Finally {
+                            If($Transcript) {
+                                $vmIc | Out-File $TranscriptFile -Append
+                                Write-Host "[Lably] " -ForegroundColor Magenta -NoNewline
+                                Write-Host "Transcript: $(Split-Path $TranscriptFile -Leaf)." -ForegroundColor DarkGray
+                            }
                         }
+
                     }
                     default {
                         Write-Warning "Unknown Script Language '$($Step.Language)'"
