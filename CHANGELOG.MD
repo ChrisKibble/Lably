@@ -16,6 +16,7 @@
 - New `ExpandVariables` property in templates to stop [[VARIABLES]] from expanding, documented in template docs files.
 - New `Reset-Lably` function to rebuild your lab from scratch using the existing Scaffold
 - New `New-LablyAnswerFile` to create empty answer files for a given template
+- New `New-LablyVM` parameter `-Transcript` which will log the code run and the results
 
 ### Template Changes
 - Windows Domain Controller will no longer output progress bars, making it cleaner in some PowerShell windows.
