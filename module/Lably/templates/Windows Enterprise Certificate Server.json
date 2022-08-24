@@ -106,8 +106,8 @@
                     "     IPAddress = '[[IPAddress]]'",
                     "}",
                     "If('[[Gateway]]' -ne '0.0.0.0' -and '[[Gateway]]' -ne $null) { $IPSettings.Add('DefaultGateway','[[Gateway]]') } ",
-                    "New-NetIPAddress @IPSettings | Out-Null",
-                    "Set-DnsClientServerAddress -InterfaceIndex $(Get-NetAdapter | Select -First 1).ifIndex -ServerAddresses [[DNSIP]] | Out-Null"
+                    "New-NetIPAddress @IPSettings",
+                    "Set-DnsClientServerAddress -InterfaceIndex $(Get-NetAdapter | Select -First 1).ifIndex -ServerAddresses [[DNSIP]]"
                 ]
             },
             {
@@ -141,7 +141,7 @@
                 "Language":"PowerShell",
                 "Script":[
                     "Install-AdcsCertificationAuthority -CAType EnterpriseRootCA -ValidityPeriodUnits 20 -ValidityPeriod Years -CACommonName \"[[CACommonName]]\" -Confirm:$False",
-                    "Install-AdcsWebEnrollment -Force | Out-Null"
+                    "Install-AdcsWebEnrollment -Force"
                 ],
                 "Credential":{
                     "Username":"[[DomainUserName]]",
@@ -153,9 +153,9 @@
                 "Action":"Script",
                 "Language":"PowerShell",
                 "Script":[
-                    "Get-CACrlDistributionPoint | Where-Object { $_.Uri -like \"*://<ServerDNSName>/CertEnroll/<CAName><CRLNameSuffix><DeltaCRLAllowed>.crl\" } | Remove-CACrlDistributionPoint -Confirm:$False | Out-Null",
-                    "Add-CACrlDistributionPoint -Uri \"http://<ServerDNSName>/CertEnroll/<CAName><CRLNameSuffix><DeltaCRLAllowed>.crl\" -AddToCertificateCdp -AddToFreshestCrl -Confirm:$False | Out-Null",
-                    "Add-CACrlDistributionPoint -Uri \"file://<ServerDNSName>/CertEnroll/<CAName><CRLNameSuffix><DeltaCRLAllowed>.crl\" -AddToCertificateCdp -AddToFreshestCrl -Confirm:$False | Out-Null"
+                    "Get-CACrlDistributionPoint | Where-Object { $_.Uri -like \"*://<ServerDNSName>/CertEnroll/<CAName><CRLNameSuffix><DeltaCRLAllowed>.crl\" } | Remove-CACrlDistributionPoint -Confirm:$False",
+                    "Add-CACrlDistributionPoint -Uri \"http://<ServerDNSName>/CertEnroll/<CAName><CRLNameSuffix><DeltaCRLAllowed>.crl\" -AddToCertificateCdp -AddToFreshestCrl -Confirm:$False",
+                    "Add-CACrlDistributionPoint -Uri \"file://<ServerDNSName>/CertEnroll/<CAName><CRLNameSuffix><DeltaCRLAllowed>.crl\" -AddToCertificateCdp -AddToFreshestCrl -Confirm:$False"
                 ],
                 "Credential":{
                     "Username":"[[DomainUserName]]",
@@ -167,9 +167,9 @@
                 "Action":"Script",
                 "Language":"PowerShell",
                 "Script":[
-                    "Get-CAAuthorityInformationAccess | Where-Object { $_.Uri -like \"*://<ServerDNSName>/CertEnroll/*\" } | Remove-CAAuthorityInformationAccess -Confirm:$False | Out-Null",
-                    "Add-CAAuthorityInformationAccess -Uri \"http://<ServerDNSName>/CertEnroll/<ServerDNSName>_<CAName><CertificateName>.crt\" -AddToCertificateAia -Confirm:$False | Out-Null",
-                    "Add-CAAuthorityInformationAccess -Uri \"file://<ServerDNSName>/CertEnroll/<ServerDNSName>_<CAName><CertificateName>.crt\" -AddToCertificateAia -Confirm:$False | Out-Null"
+                    "Get-CAAuthorityInformationAccess | Where-Object { $_.Uri -like \"*://<ServerDNSName>/CertEnroll/*\" } | Remove-CAAuthorityInformationAccess -Confirm:$False",
+                    "Add-CAAuthorityInformationAccess -Uri \"http://<ServerDNSName>/CertEnroll/<ServerDNSName>_<CAName><CertificateName>.crt\" -AddToCertificateAia -Confirm:$False",
+                    "Add-CAAuthorityInformationAccess -Uri \"file://<ServerDNSName>/CertEnroll/<ServerDNSName>_<CAName><CertificateName>.crt\" -AddToCertificateAia -Confirm:$False"
                 ],
                 "Credential":{
                     "Username":"[[DomainUserName]]",
