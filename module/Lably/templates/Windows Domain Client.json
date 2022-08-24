@@ -104,9 +104,9 @@
                     "     IPAddress = '[[IPAddress]]'",
                     "}",
                     "If('[[Gateway]]' -ne '0.0.0.0' -and '[[Gateway]]' -ne $null) { $IPSettings.Add('DefaultGateway','[[Gateway]]') } ",
-                    "New-NetIPAddress @IPSettings | Out-Null",
+                    "New-NetIPAddress @IPSettings",
                     "If('[[DNS]]' -ne '0.0.0.0' -and '[[DNS]]' -ne $null) { ",
-                    "   Set-DnsClientServerAddress -InterfaceIndex $(Get-NetAdapter | Select -First 1).ifIndex -ServerAddresses [[DNS]] | Out-Null",
+                    "   Set-DnsClientServerAddress -InterfaceIndex $(Get-NetAdapter | Select -First 1).ifIndex -ServerAddresses [[DNS]]",
                     "}"
                 ],
                 "RunWhen":"If('[[DHCP]]' -eq 'N') { $true } else { $false }"
