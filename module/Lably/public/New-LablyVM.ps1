@@ -587,11 +587,11 @@ Function New-LablyVM {
                             If(-Not(Get-Item $TranscriptFolder -ErrorAction SilentlyContinue)) {
                                 New-Item -Path $TranscriptFolder -ItemType Directory | Out-Null
                             }
-                            "*" * 50 | Out-File $TranscriptFile
+                            "#" * 50 | Out-File $TranscriptFile
                             "Executed Code" | Out-File $TranscriptFile -Append
-                            "*" * 50 | Out-File $TranscriptFile -Append
+                            "#" * 50 | Out-File $TranscriptFile -Append
                             $stepScriptBlock.ToString() | Out-File $TranscriptFile -Append
-                            "*" * 50 | Out-File $TranscriptFile -Append
+                            "#" * 50 | Out-File $TranscriptFile -Append
                             ""  | Out-File $TranscriptFile -Append
                         }
 
