@@ -126,7 +126,7 @@
                 "Action":"Reboot"
             },
             {
-                "Name":"Install AD Certificate Services and Supporting Windows Features",
+                "Name":"Installing ADCS and Supporting Features",
                 "Action":"Script",
                 "Language":"PowerShell",
                 "Script":[
@@ -136,7 +136,7 @@
                 ]
             },
             {
-                "Name":"Installing AD Certificate Services Certificate Authority and Web Enrollment",
+                "Name":"Installing Certificate Authority and Web Enrollment",
                 "Action":"Script",
                 "Language":"PowerShell",
                 "Script":[
@@ -193,6 +193,7 @@
                 "Action":"Script",
                 "Language":"PowerShell",
                 "Script":[
+                    "$VerbosePreference = 'Continue'",
                     "$DefaultTemplate = \"CN=Workstation,CN=Certificate Templates,CN=Public Key Services,CN=Services,CN=Configuration,$((Get-ADRootDSE).defaultNamingContext)\"",
                     "Start-Process \"ldifde\" -ArgumentList \"-m -v -d `\"$DefaultTemplate`\" -f `\"$env:temp\\Workstation.ldf`\"\" -NoNewWindow -Wait",
                     "$Template = Get-Content \"$env:temp\\Workstation.ldf\"",
@@ -217,6 +218,7 @@
                 "Action":"Script",
                 "Language":"PowerShell",
                 "Script":[
+                    "$VerbosePreference = 'Continue'",
                     "Add-CATemplate \"Lab-Workstation\" -Confirm:$False"
                 ],
                 "RunWhen":"If('[[WorkstationAuth]]' -eq 'Y') { $true } else { $false }",
