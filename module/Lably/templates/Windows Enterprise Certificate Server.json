@@ -1,0 +1,183 @@
+{
+    "Meta": {
+        "Id":"d7ab0ab5-4dec-4749-a5e5-5cf5671aa7d4",
+        "Name":"Windows-Enterprise-Cert-Server",
+        "Version":"1.0",
+        "Author":"Chris Kibble",
+        "Description":"Windows server for certificate services.",
+        "Schema":"0.1"
+    },
+    "Input": [{
+        "IPAddress":{
+            "Prompt":{
+                "en-us":"Enter a static IP address for this server"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in valid IPv4 address format."
+                },
+                "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            }
+        },
+        "SubnetMask":{
+            "Prompt":{
+                "en-us":"Enter a subnet mask for this server"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in valid IPv4 address format."
+                },
+                "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            }
+        },
+        "DNSIP":{
+            "Prompt":{
+                "en-us":"Enter a DNS Server to use (typically the IP of your closest Domain Controller)"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in valid IPv4 address format."
+                },
+                "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            }
+        },        
+        "Gateway":{
+            "Prompt":{
+                "en-us":"Enter a Gateway/Router IP for this server (or 0.0.0.0 for none)"
+            },
+            "Validate":{
+                "Message":{
+                    "en-us":"Must be in valid IPv4 address format."
+                },
+                "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            }
+        },        
+        "DomainName":{
+            "Prompt":{
+                "en-us":"Enter the NetBIOS or DNS name of the domain you want to join"
+            }
+        },
+        "DomainUserName":{
+            "Prompt":{
+                "en-us":"Enter the username of an Enterprise Administrator (e.g. DOMAIN\\ServerAdmin01)"
+            }
+        },        
+        "DomainUserPass":{
+            "Prompt":{
+                "en-us":"Enter the password for the Enterprise Administrator"
+            },
+            "Secure": true
+        },
+        "CACommonName":{
+            "Prompt":{
+                "en-us":"What is the Common Name you'd like for the for CA (e.g. 'My Demo Lab')"
+            }
+        }
+    }],
+    "Requirements":{
+        "BaseVHD":{
+            "OSName":["Windows"],
+            "OSVersion":["10.0.*"]
+        },
+        "DenyDefaultHostname":true
+    },
+    "Asset":{
+        "PostBuild":[
+            {
+                "Name":"Configure Static IP Address",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "$PrefixLength = 0; \"[[SubnetMask]]\".Split('.') | ForEach-Object { while(0 -ne $_) { $_ = ($_ -shl 1) -band [byte]::MaxValue; $PrefixLength++ } }",
+                    "$IPSettings = @{",
+                    "     InterfaceIndex = $(Get-NetAdapter | Select -First 1).ifIndex",
+                    "     PrefixLength = $PrefixLength",
+                    "     IPAddress = '[[IPAddress]]'",
+                    "}",
+                    "If('[[Gateway]]' -ne '0.0.0.0' -and '[[Gateway]]' -ne $null) { $IPSettings.Add('DefaultGateway','[[Gateway]]') } ",
+                    "New-NetIPAddress @IPSettings",
+                    "Set-DnsClientServerAddress -InterfaceIndex $(Get-NetAdapter | Select -First 1).ifIndex -ServerAddresses [[DNSIP]]"
+                ]
+            },
+            {
+                "Name":"Join Domain",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "$WarningPreference = 'SilentlyContinue'",
+                    "$DomainPassword = ConvertTo-SecureString \"[[DomainUserPass]]\" -AsPlainText -Force",
+                    "$DomainCred = New-Object System.Management.Automation.PSCredential(\"[[DomainUserName]]\", $DomainPassword)",
+                    "Add-Computer -DomainName [[DomainName]] -DomainCred $DomainCred"
+                ]
+            },
+            {
+                "Name":"Reboot to Complete Domain Join",
+                "Action":"Reboot"
+            },
+            {
+                "Name":"Installing ADCS and Supporting Features",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "$ProgressPreference = 'SilentlyContinue'",
+                    "$WarningPreference = 'SilentlyContinue'",
+                    "Install-WindowsFeature -Name AD-Certificate,GPMC,RSAT-AD-PowerShell,ADLDS -ErrorAction Stop -IncludeManagementTools -IncludeAllSubFeature",
+                    "Add-WindowsCapability -Online -Name Rsat.GroupPolicy.Management.Tools~~~~0.0.1.0"
+                ]
+            },
+            {
+                "Name":"Installing Certificate Authority and Web Enrollment",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "Install-AdcsCertificationAuthority -CAType EnterpriseRootCA -ValidityPeriodUnits 20 -ValidityPeriod Years -CACommonName \"[[CACommonName]]\" -Confirm:$False",
+                    "Install-AdcsWebEnrollment -Force"
+                ],
+                "Credential":{
+                    "Username":"[[DomainUserName]]",
+                    "Password":"[[DomainUserPass]]"
+                }
+            },
+            {
+                "Name":"Configuring CRL to be added to the Certificate CDP",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "Get-CACrlDistributionPoint | Where-Object { $_.Uri -like \"*://<ServerDNSName>/CertEnroll/<CAName><CRLNameSuffix><DeltaCRLAllowed>.crl\" } | Remove-CACrlDistributionPoint -Confirm:$False",
+                    "Add-CACrlDistributionPoint -Uri \"http://<ServerDNSName>/CertEnroll/<CAName><CRLNameSuffix><DeltaCRLAllowed>.crl\" -AddToCertificateCdp -AddToFreshestCrl -Confirm:$False",
+                    "Add-CACrlDistributionPoint -Uri \"file://<ServerDNSName>/CertEnroll/<CAName><CRLNameSuffix><DeltaCRLAllowed>.crl\" -AddToCertificateCdp -AddToFreshestCrl -Confirm:$False"
+                ],
+                "Credential":{
+                    "Username":"[[DomainUserName]]",
+                    "Password":"[[DomainUserPass]]"
+                }
+            },
+            {
+                "Name":"Configuring AIA to be added to the Certificate",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "Get-CAAuthorityInformationAccess | Where-Object { $_.Uri -like \"*://<ServerDNSName>/CertEnroll/*\" } | Remove-CAAuthorityInformationAccess -Confirm:$False",
+                    "Add-CAAuthorityInformationAccess -Uri \"http://<ServerDNSName>/CertEnroll/<ServerDNSName>_<CAName><CertificateName>.crt\" -AddToCertificateAia -Confirm:$False",
+                    "Add-CAAuthorityInformationAccess -Uri \"file://<ServerDNSName>/CertEnroll/<ServerDNSName>_<CAName><CertificateName>.crt\" -AddToCertificateAia -Confirm:$False"
+                ],
+                "Credential":{
+                    "Username":"[[DomainUserName]]",
+                    "Password":"[[DomainUserPass]]"
+                }
+            },
+            {
+                "Name":"Restarting Certificate Services",
+                "Action":"Script",
+                "Language":"PowerShell",
+                "Script":[
+                    "Restart-Service \"CertSvc\""
+                ],
+                "Credential":{
+                    "Username":"[[DomainUserName]]",
+                    "Password":"[[DomainUserPass]]"
+                }
+            }            
+        ]
+    }
+}
