@@ -30,7 +30,7 @@
                 "RegEx":"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
             }
         },
-        "DNS":{
+        "DNSIP":{
             "Prompt":{
                 "en-us":"Enter a DNS Server to use (typically the IP of your closest Domain Controller)"
             },
@@ -201,7 +201,8 @@
                     "$Template = $Template -replace [RegEx]::Escape(\"displayName: Workstation Authentication\"),\"displayName: Lab - Workstation Authentication\"",
                     "$Template | Out-File \"$env:temp\\Workstation.ldf\"",
                     "Start-Process \"ldifde\" -ArgumentList \"-i -f `\"$env:temp\\Workstation.ldf`\"\" -NoNewWindow -Wait",
-                    "# Remove-Item \"$env:temp\\Workstation.ldf\"",
+                    "Remove-Item \"$env:temp\\Workstation.ldf\"",
+                    "$NewTemplate = \"CN=Lab-Workstation,CN=Certificate Templates,CN=Public Key Services,CN=Services,CN=Configuration,$((Get-ADRootDSE).defaultNamingContext)\"",
                     "Start-Process dsacls.exe -ArgumentList \"`\"$NewTemplate`\" /g `\"NT AUTHORITY\\Authenticated Users`\":CA;Enroll\" -NoNewWindow -Wait",
                     "Start-Process dsacls.exe -ArgumentList \"`\"$NewTemplate`\" /g `\"NT AUTHORITY\\Authenticated Users`\":CA;AutoEnrollment\" -NoNewWindow -Wait"
                 ],
