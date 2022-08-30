@@ -72,17 +72,6 @@
             "Prompt":{
                 "en-us":"What is the Common Name you'd like for the for CA (e.g. 'My Demo Lab')"
             }
-        },
-        "WorkstationAuth":{
-            "Prompt":{
-                "en-us":"Would you like to configure a Workstation Authentication Certificate and Setup AutoEnrollment? (Y/N)"
-            },
-            "Validate":{
-                "Message":{
-                    "en-us":"Please enter only Y or N."
-                },
-                "RegEx":"^(Y|N)$"
-            }
         }
     }],
     "Requirements":{
